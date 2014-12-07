@@ -2836,7 +2836,7 @@ struct arg_rex * arg_rexn(const char * shortopts,
     size_t nbytes;
     struct arg_rex *result;
     struct privhdr *priv;
-    int errorcode, i;
+    int i;
     const TRexChar *error = NULL;
     TRex *rex = NULL;
 
@@ -2896,7 +2896,6 @@ struct arg_rex * arg_rexn(const char * shortopts,
     rex = trex_compile(priv->pattern, &error, priv->flags);
     if (rex == NULL)
     {
-        errorcode = EREGNOMATCH;
         ARG_LOG(("argtable: %s \"%s\"\n", error ? error : _TREXC("undefined"), priv->pattern));
         ARG_LOG(("argtable: Bad argument table.\n"));
     }
@@ -3000,7 +2999,6 @@ static int trex_newnode(TRex *exp, TRexNodeType type)
 	if(type == OP_EXPR)
 		n.right = exp->_nsubexpr++;
 	if(exp->_nallocated < (exp->_nsize + 1)) {
-		int oldsize = exp->_nallocated;
 		exp->_nallocated *= 2;
 		exp->_nodes = (TRexNode *)realloc(exp->_nodes, exp->_nallocated * sizeof(TRexNode));
 	}
@@ -3180,7 +3178,6 @@ static int trex_element(TRex *exp)
 	}
 
 	{
-		int op;
 		TRexBool isgreedy = TRex_False;
 		unsigned short p0 = 0, p1 = 0;
 		switch(*exp->_p){
@@ -3214,7 +3211,6 @@ static int trex_element(TRex *exp)
 		}
 		if(isgreedy) {
 			int nnode = trex_newnode(exp,OP_GREEDY);
-			op = OP_GREEDY;
 			exp->_nodes[nnode].left = ret;
 			exp->_nodes[nnode].right = ((p0)<<16)|p1;
 			ret = nnode;
