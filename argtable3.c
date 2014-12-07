@@ -3833,7 +3833,7 @@ struct longoptions
     struct option *options;
 };
 
-#ifndef NDEBUG
+#if 0
 static
 void dump_longoptions(struct longoptions * longoptions)
 {
