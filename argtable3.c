@@ -3425,20 +3425,19 @@ static const TRexChar *trex_matchnode(TRex* exp,TRexNode *node,const TRexChar *s
 	case OP_EOL:
 		if(str == exp->_eol) return str;
 		return NULL;
-	case OP_DOT:{
-		*str++;
-				}
+	case OP_DOT:
+		str++;
 		return str;
 	case OP_NCLASS:
 	case OP_CLASS:
 		if(trex_matchclass(exp,&exp->_nodes[node->left],*str)?(type == OP_CLASS?TRex_True:TRex_False):(type == OP_NCLASS?TRex_True:TRex_False)) {
-			*str++;
+                        str++;
 			return str;
 		}
 		return NULL;
 	case OP_CCLASS:
 		if(trex_matchcclass(node->left,*str)) {
-			*str++;
+                        str++;
 			return str;
 		}
 		return NULL;
@@ -3451,7 +3450,7 @@ static const TRexChar *trex_matchnode(TRex* exp,TRexNode *node,const TRexChar *s
 		{
 			if (*str != node->type) return NULL;
 		}
-		*str++;
+		str++;
 		return str;
 	}
 	return NULL;
@@ -3542,7 +3541,7 @@ TRexBool trex_searchrange(TRex* exp,const TRexChar* text_begin,const TRexChar* t
 				break;
 			node = exp->_nodes[node].next;
 		}
-		*text_begin++;
+		text_begin++;
 	} while(cur == NULL && text_begin != text_end);
 
 	if(cur == NULL)
