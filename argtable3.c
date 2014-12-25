@@ -354,6 +354,7 @@ static const char illoptchar[] = "unknown option -- %c";
 static const char illoptstring[] = "unknown option -- %s";
 
 
+
 #ifdef _WIN32
 
 /* Windows needs warnx().  We change the definition though:
@@ -367,24 +368,26 @@ static const char illoptstring[] = "unknown option -- %s";
 #include <stdarg.h>
 
 extern char opterrmsg[128];
-char opterrmsg[128]; /* last error message is stored here */
+char opterrmsg[128]; /* buffer for the last error message */
 
 static void warnx(const char *fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
+    /*
+    Make sure opterrmsg is always zero-terminated despite the _vsnprintf()
+    implementation specifics and manually suppress the warning.
+    */
+    memset(opterrmsg, 0, sizeof opterrmsg);
 	if (fmt != NULL)
-		_vsnprintf(opterrmsg, 128, fmt, ap);
-	else
-		opterrmsg[0]='\0';
+		_vsnprintf(opterrmsg, sizeof(opterrmsg) - 1, fmt, ap);
 	va_end(ap);
 
-	fprintf(stderr, opterrmsg);
-	fprintf(stderr, "\n");
+#pragma warning(suppress: 6053)
+	fprintf(stderr, "%s\n", opterrmsg);
 }
 
 #endif /*_WIN32*/
-
 
 
 /*
