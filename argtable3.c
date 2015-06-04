@@ -383,6 +383,8 @@ static void warnx(const char *fmt, ...)
 	fprintf(stderr, "\n");
 }
 
+#else
+#include <err.h>
 #endif /*_WIN32*/
 
 
