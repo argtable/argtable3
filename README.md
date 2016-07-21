@@ -76,43 +76,23 @@ The project homepage of argtable 2.x is http://argtable.sourceforge.net/
 
 Here is a list of contributors who have helped to improve argtable:
 
-Contributor               Activities
------------               ----------
-Nina Clemson              Editing the original argtable-1.0 documentation.
-Livio Bertacco            For bug fixes and the argtable-2.x Visual C++
-                          Makefiles.
-Justin Dearing            For bug fixes and Windows DLL support, plus code
-                          support for the Open Watcom compiler and help with the
-                          Mac OS X configuration.
-Asa Packer                Contributing bug fixes and upgrades to the Visual C++
-                          Makefiles.
-Danilo Cicerone           For the Italian translation of "Introduction to
-                          Argtable-2x" on http://www.digitazero.org.
-Uli Fouquet               For configuration patches and documentation related to
-                          cross-compiling argtable from Unix to Windows, as well
-                          as providing the arg_print_glossary_gnu function.
-Shachar Shemesh           For Debian package integration and kick-starting the
-                          migration to automake/autoconf.
-Jasper Lievisse Adriaanse Maintaining the argtable package in OpenBSD ports.
-Ulrich Mohr               For bug fixes relating to Texas Instrument DSP
-                          platforms.
-John Vickers              For bug fixes relating to Solaris/Motorola platforms.
-Steve O'Neil              For bug fixes relating to Solaris/Motorola platforms.
-Lori A. Pritchett-Sheats  Fixing a makefile bug relating to "make dist".
-Paolo Bormida             For instructions on building argtable with date and
-                          regex support on Windows.
-Michel Valin              For bug fixes relating to the configure scripts on IBM
-                          AIX platforms and instructions on compiling the
-                          example code under AIX.
-Steve Christensen         Providing prebuilt packages for SPARC/Solaris and
-                          x86/Solaris platforms on www.sunfreeware.com.
-Jess Portnoy              Reworking the rpm package and integrating argtable
-                          into Fedora Linux.
-Michael Brown             Incorporating support for pkg-config into the autoconf
-                          scripts.
-Alexander Lindert         For extensions to the parser to support hex, octal and
-                          binary integer formats as well as KB/MB/GB suffixes.
-Rob Zaborowski            Providing build configuration files for CMake.
-Moczik Gabor              For bug fixes relating to the parsing of filepaths and
-                          filename extensions.
-
+- **Nina Clemson**: Editing the original argtable-1.0 documentation.
+- **Livio Bertacco**: For bug fixes and the argtable-2.x Visual C++ Makefiles.                              
+- **Justin Dearing**: For bug fixes and Windows DLL support, plus code support for the Open Watcom compiler and help with the Mac OS X configuration.
+- **Asa Packer**: Contributing bug fixes and upgrades to the Visual C++ Makefiles.
+- **Danilo Cicerone**: For the Italian translation of "Introduction to Argtable-2x" on http://www.digitazero.org.
+- **Uli Fouquet**: For configuration patches and documentation related to cross-compiling argtable from Unix to Windows, as well as providing the arg_print_glossary_gnu function.
+- **Shachar Shemesh**: For Debian package integration and kick-starting the migration to automake/autoconf.
+- **Jasper Lievisse Adriaanse**:  Maintaining the argtable package in OpenBSD ports.
+- **Ulrich Mohr**: For bug fixes relating to Texas Instrument DSP platforms.
+- **John Vickers**: For bug fixes relating to Solaris/Motorola platforms.
+- **Steve O'Neil**: For bug fixes relating to Solaris/Motorola platforms.
+- **Lori A. Pritchett-Sheats**: Fixing a makefile bug relating to "make dist".
+- **Paolo Bormida**: For instructions on building argtable with date and regex support on Windows.
+- **Michel Valin**: For bug fixes relating to the configure scripts on IBM AIX platforms and instructions on compiling the example code under AIX.
+- **Steve Christensen**: Providing prebuilt packages for SPARC/Solaris and x86/Solaris platforms on www.sunfreeware.com.
+- **Jess Portnoy**: Reworking the rpm package and integrating argtable into Fedora Linux.
+- **Michael Brown**: Incorporating support for pkg-config into the autoconf scripts.
+- **Alexander Lindert**: For extensions to the parser to support hex, octal and binary integer formats as well as KB/MB/GB suffixes.
+- **Rob Zaborowski**: Providing build configuration files for CMake.
+- **Moczik Gabor**: For bug fixes relating to the parsing of filepaths and filename extensions.
