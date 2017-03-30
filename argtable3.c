@@ -2253,7 +2253,11 @@ static int arg_int_scanfn(struct arg_int *parent, const char *argval)
         /* Safety check for integer overflow. WARNING: this check    */
         /* achieves nothing on machines where size(int)==size(long). */
         if ( val > INT_MAX || val < INT_MIN )
-            errorcode = EOVERFLOW_;
+#ifdef __STDC_WANT_SECURE_LIB__
+                errorcode = EOVERFLOW_;          /* Overflow would occur if we proceed */
+#else
+                errorcode = EOVERFLOW;          /* Overflow would occur if we proceed */
+#endif
 
         /* Detect any suffixes (KB,MB,GB) and multiply argument value appropriately. */
         /* We need to be mindful of integer overflows when using such big numbers.   */
