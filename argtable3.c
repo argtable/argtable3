@@ -4840,10 +4840,10 @@ void arg_print_formatted( FILE *fp,
                           const unsigned rmargin,
                           const char *text )
 {
-    const unsigned textlen = strlen( text );
-    unsigned line_start = 0;
-    unsigned line_end = textlen + 1;
-    const unsigned colwidth = (rmargin - lmargin) + 1;
+    const size_t textlen = strlen( text );
+	size_t line_start = 0;
+	size_t line_end = textlen + 1;
+    const size_t colwidth = (rmargin - lmargin) + 1;
 
     while (line_end - 1 > line_start )
     {
