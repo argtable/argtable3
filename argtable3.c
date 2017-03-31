@@ -4841,8 +4841,8 @@ void arg_print_formatted( FILE *fp,
                           const char *text )
 {
     const size_t textlen = strlen( text );
-	size_t line_start = 0;
-	size_t line_end = textlen + 1;
+    size_t line_start = 0;
+    size_t line_end = textlen + 1;
     const size_t colwidth = (rmargin - lmargin) + 1;
 
     while (line_end - 1 > line_start )
