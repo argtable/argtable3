@@ -3060,13 +3060,17 @@ static int trex_newnode(TRex *exp, TRexNodeType type)
 {
 	TRexNode n;
 	int newid;
+    TRexNode* tmpNode;
 	n.type = type;
 	n.next = n.right = n.left = -1;
 	if(type == OP_EXPR)
 		n.right = exp->_nsubexpr++;
 	if(exp->_nallocated < (exp->_nsize + 1)) {
 		exp->_nallocated *= 2;
-		exp->_nodes = (TRexNode *)realloc(exp->_nodes, exp->_nallocated * sizeof(TRexNode));
+        tmpNode = (TRexNode *)realloc(exp->_nodes, exp->_nallocated * sizeof(TRexNode));
+	    if(tmpNode != NULL) {
+	        exp->_nodes = tmpNode;
+	    }
 	}
 	exp->_nodes[exp->_nsize++] = n;
 	newid = exp->_nsize - 1;
