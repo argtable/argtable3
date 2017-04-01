@@ -223,13 +223,13 @@ void dbg_printf(const char *fmt, ...)
 struct option {
 	/* name of long option */
 	const char *name;
+    /* if not NULL, set *flag to val when option found */
+    int *flag;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
 	int has_arg;
-	/* if not NULL, set *flag to val when option found */
-	int *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
 	int val;
 };
