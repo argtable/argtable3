@@ -28,18 +28,15 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
+.PHONY: all build_examples build_tests cleanall
 all: build_examples build_tests
 
 build_examples:
-	cd $(MAKEDIR)/examples
-	$(MAKE) /F Makefile.nmake
+	$(MAKE) -C examples
 	
 build_tests:
-	cd $(MAKEDIR)/tests
-	$(MAKE) /F Makefile.nmake
+	$(MAKE) -C tests
 	
 cleanall:
-	cd $(MAKEDIR)/examples
-	$(MAKE) /F Makefile.nmake cleanall
-	cd $(MAKEDIR)/tests
-	$(MAKE) /F Makefile.nmake cleanall
+	$(MAKE) -C examples cleanall
+	$(MAKE) -C tests cleanall
