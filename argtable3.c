@@ -3469,7 +3469,7 @@ static const TRexChar *trex_matchnode(TRex* exp,TRexNode *node,const TRexChar *s
 			} while((n->next != -1) && (n = &exp->_nodes[n->next]));
 
 			if(capture != -1)
-				exp->_matches[capture].len = cur - exp->_matches[capture].begin;
+				exp->_matches[capture].len = (int)(cur - exp->_matches[capture].begin);
 			return cur;
 	}
 	case OP_WB:
@@ -4830,7 +4830,7 @@ void arg_print_formatted( FILE *fp,
                           const unsigned rmargin,
                           const char *text )
 {
-    const unsigned textlen = strlen( text );
+    const unsigned textlen = (unsigned)strlen( text );
     unsigned line_start = 0;
     unsigned line_end = textlen + 1;
     const unsigned colwidth = (rmargin - lmargin) + 1;
