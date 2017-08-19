@@ -58,7 +58,7 @@ endif
 all: testall runtests
 
 testall: testall.c testarglit.c testargstr.c testargint.c testargdate.c \
-	testargdbl.c testargfile.c testargrex.c testargint.c testargdate.c \
+	testargdbl.c testargfile.c testargrex.c \
 	$(ARGTABLE_SRC) $(ARGTABLE_HEADER)
 	
 	$(MKDIR) bin
@@ -74,7 +74,6 @@ testall: testall.c testarglit.c testargstr.c testargint.c testargdate.c \
 
 runtests:
 	bin/testall
-
 
 cleanall:
 	$(RMDIR) bin
