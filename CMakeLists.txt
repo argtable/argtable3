@@ -34,10 +34,10 @@ project(argtable3)
 option(argtable3_build_tests "Build argtable3 unit tests." ON)
 option(argtable3_build_examples "Build argtable3 examples." ON)
 
-if (argtable3_build_tests)
+if(argtable3_build_tests)
   add_subdirectory(tests)
 endif()
 
-if (argtable3_build_examples)
+if(argtable3_build_examples)
   add_subdirectory(examples)
 endif()
