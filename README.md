@@ -2,44 +2,48 @@
 Introduction of Argtable3
 =========================
 
-Argtable is an open source ANSI C library that parses GNU-style command-line
+**Argtable3** is an open source ANSI C library that parses GNU-style command-line
 options. It simplifies command-line parsing by defining a declarative-style API
-that you can use to specify what your command-line syntax looks like. Argtable
+that you can use to specify what your command-line syntax looks like. Argtable3
 will automatically generate consistent error handling logic and textual
 descriptions of the command line syntax, which are essential but tedious to
 implement for a robust CLI program.
 
 
-Quick Start of Argtable3
-========================
+Quick Start
+-----------
 
 Argtable3 is a single-file ANSI-C library. All you have to do is adding
-argtable3.c to your projects, and including argtable3.h in your source code.
+`argtable3.c` to your projects, and including `argtable3.h` in your source code.
 
 
 Documentation and Examples
-==========================
+--------------------------
 
 To learn how to use the Argtable3 API, you can see the documentation on the web
-site, or examples in the examples folder.
+site, or examples in the `examples` folder.
 
 To build the examples, open the console window of your favorite development
-environments, go to the examples folder, and use the included Makefiles to build
+environments, go to the `examples` folder, and use the included Makefiles to build
 the examples.
 
 If you use GCC (Linux, MinGW, Cygwin), type:
 
-  $ make
+```
+$ make
+```
 
 If you use Microsoft Visual C++ compiler, type:
 
-  $ nmake /f Makefile.nmake
+```
+$ nmake /f Makefile.nmake
+```
 
-To cleanup, type "make cleanall" or "nmake /f Makefile.nmake cleanall".
+To cleanup, type `make cleanall` or `nmake /f Makefile.nmake cleanall`.
 
 
 Unit Tests
-==========
+----------
 
 Argtable3 is a BSD-licensed open source library, so you can modify the library
 anyway you want. However, before committing your code to your own repository or
@@ -47,30 +51,34 @@ the Argtable3 official repository, please make sure your changes can pass the
 unit tests included in the distribution.
 
 To build and run the unit tests, open the console window of your favorite
-development environments, go to the tests folder, and use the included Makefiles
+development environments, go to the `tests` folder, and use the included Makefiles
 to build and run the unit tests.
 
 If you use GCC (Linux, MinGW, Cygwin), type:
 
-  $ make
+```
+$ make
+```
 
 If you use Microsoft Visual C++ compiler, type:
 
-  $ nmake /f Makefile.nmake
+```
+$ nmake /f Makefile.nmake
+```
 
-To cleanup, type "make cleanall" or "nmake /f Makefile.nmake cleanall".
+To cleanup, type `make cleanall` or `nmake /f Makefile.nmake cleanall`.
 
 
 Authors
-=======
+-------
 
-argtable is Copyright (C) 1998-2001,2003-2011 Stewart Heitmann.
+Argtable is Copyright (C) 1998-2001,2003-2011 Stewart Heitmann.
 Parts are Copyright (C) 1989-1994, 1996-1999, 2001, 2003
   Free Software Foundation, Inc.
 
-argtable was written by Stewart Heitmann <sheitmann@users.sourceforge.net>
+Argtable was written by Stewart Heitmann <sheitmann@users.sourceforge.net>
 
-argtable is now maintained by Tom G. Huang <tomghuang@gmail.com>
+Argtable is now maintained by Tom G. Huang <tomghuang@gmail.com>
 The project homepage of argtable 3.x is http://www.argtable.org
 The project homepage of argtable 2.x is http://argtable.sourceforge.net/
 
