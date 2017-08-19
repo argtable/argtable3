@@ -16,6 +16,45 @@ Quick Start
 Argtable3 is a single-file ANSI-C library. All you have to do is adding
 `argtable3.c` to your projects, and including `argtable3.h` in your source code.
 
+If you have modified Argtable3 and want to quickly verify whether the
+modifications break any existing code or not, you can run the following commands
+in the project root directory to build both examples and unit tests and run unit
+tests:
+
+* If you use GCC (Linux, MinGW, Cygwin), type:
+
+  ```
+  $ make
+  ```
+
+  To cleanup, type:
+  
+  ```
+  make cleanall
+  ```
+
+* If you use Microsoft Visual C++ compiler, type:
+
+  ```
+  $ nmake /f Makefile.nmake
+  ```
+
+  To cleanup, type:
+  
+  ```
+  nmake /f Makefile.nmake cleanall
+  ```
+
+If you want to use CMake to generate Visual Studio 2017 x64 solution file, type:
+
+```
+$ mkdir build
+$ cd build
+$ cmake -G "Visual Studio 15 2017 Win64" ..
+```
+  
+To cleanup, just remove the `build` directory.
+
 
 Documentation and Examples
 --------------------------
@@ -27,20 +66,31 @@ To build the examples, open the console window of your favorite development
 environments, go to the `examples` folder, and use the included Makefiles to build
 the examples.
 
-If you use GCC (Linux, MinGW, Cygwin), type:
+* If you use GCC (Linux, MinGW, Cygwin), type:
 
-```
-$ make
-```
+  ```
+  $ make
+  ```
 
-If you use Microsoft Visual C++ compiler, type:
+  To cleanup, type:
+  
+  ```
+  make cleanall
+  ```
 
-```
-$ nmake /f Makefile.nmake
-```
 
-To cleanup, type `make cleanall` or `nmake /f Makefile.nmake cleanall`.
+* If you use Microsoft Visual C++ compiler, type:
 
+  ```
+  $ nmake /f Makefile.nmake
+  ```
+
+  To cleanup, type:
+  
+  ```
+  nmake /f Makefile.nmake cleanall
+  ```
+  
 
 Unit Tests
 ----------
@@ -54,20 +104,31 @@ To build and run the unit tests, open the console window of your favorite
 development environments, go to the `tests` folder, and use the included Makefiles
 to build and run the unit tests.
 
-If you use GCC (Linux, MinGW, Cygwin), type:
+* If you use GCC (Linux, MinGW, Cygwin), type:
 
-```
-$ make
-```
+  ```
+  $ make
+  ```
 
-If you use Microsoft Visual C++ compiler, type:
+  To cleanup, type:
+  
+  ```
+  make cleanall
+  ```
 
-```
-$ nmake /f Makefile.nmake
-```
 
-To cleanup, type `make cleanall` or `nmake /f Makefile.nmake cleanall`.
+* If you use Microsoft Visual C++ compiler, type:
 
+  ```
+  $ nmake /f Makefile.nmake
+  ```
+
+  To cleanup, type:
+  
+  ```
+  nmake /f Makefile.nmake cleanall
+  ```
+  
 
 Authors
 -------
