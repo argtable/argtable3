@@ -2298,7 +2298,7 @@ static int arg_int_scanfn(struct arg_int *parent, const char *argval)
 
         /* if success then store result in parent->ival[] array */
         if (errorcode == 0)
-            parent->ival[parent->count++] = val;
+            parent->ival[parent->count++] = (int)val;
     }
 
     /* printf("%s:scanfn(%p,%p) returns %d\n",__FILE__,parent,argval,errorcode); */
