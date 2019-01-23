@@ -21,10 +21,10 @@ int main(int argc, char *argv[])
         file    = arg_filen(NULL, NULL, "<file>", 1, 100, "input files"),
         end     = arg_end(20),
     };
-    
+
     int exitcode = 0;
     char progname[] = "testargtable2.exe";
-    
+
     int nerrors;
     nerrors = arg_parse(argc,argv,argtable);
 
