@@ -1,7 +1,7 @@
 ################################################################################
 # This file is part of the argtable3 library.
 #
-# Copyright (C) 2016-2017 Tom G. Huang
+# Copyright (C) 2019 Tom G. Huang
 # <tomghuang@gmail.com>
 # All rights reserved.
 #
@@ -28,26 +28,44 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-if(MSVC)
-  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-endif()
-
-include_directories(
-  ${PROJECT_SOURCE_DIR}
+# DEB and RPM disabled by default, but can be built manually via `cpack -G DEB`
+set(CPACK_GENERATOR
+    TGZ
+    ZIP
 )
 
-set(TEST_SRC_FILES
-  testall.c
-  testarglit.c
-  testargstr.c
-  testargint.c
-  testargdate.c
-  testargdbl.c
-  testargfile.c
-  testargrex.c
-  CuTest.c
+set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY 0)
+set(CPACK_INSTALL_CMAKE_PROJECTS
+    "${CMAKE_BINARY_DIR}"
+    "${PROJECT_NAME}"
+    ALL
+    .
 )
 
-add_executable(testall ${TEST_SRC_FILES})
-target_link_libraries(testall argtable3)
-add_test(NAME testall COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} "$<TARGET_FILE:testall>")
+
+set(CPACK_PACKAGE_VENDOR "Tom G. Huang")
+set(CPACK_PACKAGE_CONTACT "Tom G. Huang <tomghuang@gmail.com>")
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_PACKAGE_VERSION
+    ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
+if (PROJECT_VERSION_TWEAK)
+    set(CPACK_PACKAGE_VERSION ${CPACK_PACKAGE_VERSION}.${PROJECT_VERSION_TWEAK})
+endif ()
+set(CPACK_PACKAGE_RELOCATABLE ON)
+
+# Debian Specific
+set(CPACK_DEBIAN_PACKAGE_SECTION                    devel)
+set(CPACK_DEBIAN_PACKAGE_PRIORITY                   optional)
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS                  ON)
+set(CPACK_DEBIAN_PACKAGE_RELEASE                    1)
+set(CPACK_DEBIAN_FILE_NAME                          DEB-DEFAULT)
+set(CPACK_DEBIAN_PACKAGE_CONTROL_STRICT_PERMISSION  ON)
+
+# RPM Specific
+set(CPACK_RPM_FILE_NAME                         RPM-DEFAULT)
+set(CPACK_RPM_PACKAGE_LICENSE                   "BSD 3-Clause")
+set(CPACK_RPM_RELOCATION_PATHS                  /)
+
+include(CPack)

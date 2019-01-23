@@ -1,7 +1,7 @@
 ################################################################################
 # This file is part of the argtable3 library.
 #
-# Copyright (C) 2016-2017 Tom G. Huang
+# Copyright (C) 2019 Tom G. Huang
 # <tomghuang@gmail.com>
 # All rights reserved.
 #
@@ -28,16 +28,41 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-cmake_minimum_required(VERSION 2.8.12)
-project(argtable3)
+cmake_minimum_required(VERSION 3.0.0)
 
+file(STRINGS "version.txt" VERSION)
+project(argtable3 VERSION "${VERSION}")
+
+option(CONAN "Enable Conan dependency manager" ON)
+option(BUILD_SHARED_LIBS "Build shared library when enabled, static otherwise" ON)
 option(argtable3_build_tests "Build argtable3 unit tests." ON)
 option(argtable3_build_examples "Build argtable3 examples." ON)
 
+if (CONAN AND EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+  include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+  conan_basic_setup(TARGETS)
+  string(REPLACE ";" ":" LINK_FLAGS "${CONAN_LIB_DIRS}")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-rpath-link,${LINK_FLAGS}")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath-link,${LINK_FLAGS}")
+endif ()
+
+add_library(argtable3 argtable3.c)
+target_include_directories(argtable3 PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
+    $<INSTALL_INTERFACE:include>
+)
+install(TARGETS argtable3 EXPORT ${PROJECT_NAME}-config DESTINATION lib)
+install(FILES "${CMAKE_CURRENT_LIST_DIR}/argtable3.h" DESTINATION include)
+
 if(argtable3_build_tests)
+  enable_testing()
   add_subdirectory(tests)
 endif()
 
 if(argtable3_build_examples)
   add_subdirectory(examples)
 endif()
+
+install(EXPORT ${PROJECT_NAME}-config DESTINATION lib/cmake/${PROJECT_NAME})
+
+include(./ArgTable3CPack.cmake)

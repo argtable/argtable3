@@ -1,7 +1,7 @@
 ################################################################################
 # This file is part of the argtable3 library.
 #
-# Copyright (C) 2016-2017 Tom G. Huang
+# Copyright (C) 2018 Tom G. Huang
 # <tomghuang@gmail.com>
 # All rights reserved.
 #
@@ -28,26 +28,11 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-if(MSVC)
-  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-endif()
+cmake_minimum_required(VERSION 3.0)
 
-include_directories(
-  ${PROJECT_SOURCE_DIR}
-)
+project(ArgTable3Sample)
 
-set(TEST_SRC_FILES
-  testall.c
-  testarglit.c
-  testargstr.c
-  testargint.c
-  testargdate.c
-  testargdbl.c
-  testargfile.c
-  testargrex.c
-  CuTest.c
-)
+find_package(argtable3 REQUIRED)
 
-add_executable(testall ${TEST_SRC_FILES})
-target_link_libraries(testall argtable3)
-add_test(NAME testall COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} "$<TARGET_FILE:testall>")
+add_executable(testargtable3 testargtable3.c)
+target_link_libraries(testargtable3 argtable3)
