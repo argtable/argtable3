@@ -4,3 +4,12 @@
 build/
 examples/bin/
 tests/bin/
+
+# Ignore JetBrains and Eclipse IDE metadata and default build directories
+.idea/
+.settings/
+.project
+.cproject
+Release/
+Debug/
+cmake-build-*/
