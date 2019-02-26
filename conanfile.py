@@ -36,7 +36,7 @@ class ArgTable3(ConanFile):
     name = 'argtable3'
     description = 'A single-file, ANSI C, command-line parsing library that parses GNU-style command-line options.'
     url = 'https://github.com/argtable/argtable3'
-    version = tools.load('version.txt').strip() + '-1'
+    version = tools.load('version.txt').strip() + '-2'
     license = 'BSD 3-Clause'
     settings = 'os', 'compiler', 'build_type', 'arch'
     options = {

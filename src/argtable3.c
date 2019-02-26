@@ -39,6 +39,10 @@
     #define ISSPACE isspace
 #endif
 
+#ifdef _WIN32
+#define	REPLACE_GETOPT		/* use this getopt as the system getopt(3) */
+#endif
+
 /*******************************************************************************
  * This file is part of the argtable3 library.
  *
@@ -165,6 +169,11 @@ void dbg_printf(const char *fmt, ...)
     vfprintf(stderr, fmt, args);
     va_end(args);
 }
+
+
+#ifndef REPLACE_GETOPT
+#include <getopt.h>
+#else
 
 /*	$Id: getopt.h,v 1.1 2009/10/16 19:50:28 rodney Exp rodney $ */
 /*	$OpenBSD: getopt.h,v 1.1 2002/12/03 20:24:29 millert Exp $	*/
@@ -313,6 +322,7 @@ extern   char *suboptarg;               /* getsubopt(3) external variable */
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#endif /* REPLACE_GETOPT */
 
 #if 0
 #include <err.h>
@@ -320,9 +330,6 @@ extern   char *suboptarg;               /* getsubopt(3) external variable */
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-
-
-#define	REPLACE_GETOPT		/* use this getopt as the system getopt(3) */
 
 #ifdef REPLACE_GETOPT
 int	opterr = 1;		/* if error message should be printed */
@@ -345,8 +352,10 @@ char    *optarg;		/* argument associated with option */
 
 #define	EMSG		""
 
+#ifdef REPLACE_GETOPT
 static int getopt_internal(int, char * const *, const char *,
 			   const struct option *, int *, int);
+#endif
 static int parse_long_options(char * const *, const char *,
 			      const struct option *, int *, int);
 static int gcd(int, int);
@@ -368,9 +377,7 @@ static const char illoptstring[] = "unknown option -- %s";
 
 
 
-#ifdef __linux__
-#include <err.h>
-#else
+#ifdef _WIN32
 /* Windows needs warnx().  We change the definition though:
  *  1. (another) global is defined, opterrmsg, which holds the error message
  *  2. errors are always printed out on stderr w/o the program name
@@ -406,7 +413,9 @@ static void warnx(const char *fmt, ...)
 #pragma warning(suppress: 6053)
 	fprintf(stderr, "%s\n", opterrmsg);
 }
-#endif /*_WIN32*/
+#else /* __linux__ */
+#include <err.h>
+#endif /* _WIN32 */
 
 
 /*
@@ -583,6 +592,7 @@ parse_long_options(char * const *nargv, const char *options,
 		return (long_options[match].val);
 }
 
+#ifdef REPLACE_GETOPT
 /*
  * getopt_internal --
  *	Parse argc/argv argument vector.  Called by user level routines.
@@ -793,7 +803,6 @@ start:
 	return (optchar);
 }
 
-#ifdef REPLACE_GETOPT
 /*
  * getopt --
  *	Parse argc/argv argument vector.
@@ -814,7 +823,6 @@ getopt(int nargc, char * const *nargv, const char *options)
 	 */
 	return (getopt_internal(nargc, nargv, options, NULL, NULL, 0));
 }
-#endif /* REPLACE_GETOPT */
 
 /*
  * getopt_long --
@@ -841,6 +849,8 @@ getopt_long_only(int nargc, char * const *nargv, const char *options,
 	return (getopt_internal(nargc, nargv, options, long_options, idx,
 	    FLAG_PERMUTE|FLAG_LONGONLY));
 }
+#endif /* REPLACE_GETOPT */
+
 /*******************************************************************************
  * This file is part of the argtable3 library.
  *
@@ -4821,7 +4831,6 @@ void arg_print_glossary(FILE *fp, void * *argtable, const char *format)
  *
  * Author: Uli Fouquet
  */
-static
 void arg_print_formatted( FILE *fp,
                           const unsigned lmargin,
                           const unsigned rmargin,
