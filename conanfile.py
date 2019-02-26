@@ -60,16 +60,16 @@ class ArgTable3(ConanFile):
     exports = 'version.txt'
 
     def build(self):
-        if not self.settings.os:
+        if self.settings.os:
             cmake = self.configure_cmake()
             cmake.build()
 
     def package(self):
-        if not self.settings.os:
-            self.copy('*')
-        else:
+        if self.settings.os:
             cmake = self.configure_cmake()
             cmake.install()
+        else:
+            self.copy('*')
 
     def package_info(self):
         if self.settings.os:
