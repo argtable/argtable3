@@ -28,27 +28,36 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-cmake_minimum_required(VERSION 2.8.12)
 
 if(MSVC)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-include_directories(
-  ${PROJECT_SOURCE_DIR}
-)
+add_executable(echo echo.c)
+target_link_libraries(echo argtable3)
 
-set(ARGTABLE3_SRC_FILES
-  "${PROJECT_SOURCE_DIR}/argtable3.c"
-)
+add_executable(ls ls.c)
+target_link_libraries(ls argtable3)
 
-add_executable(echo echo.c ${ARGTABLE3_SRC_FILES})
-add_executable(ls ls.c ${ARGTABLE3_SRC_FILES})
-add_executable(multisyntax multisyntax.c ${ARGTABLE3_SRC_FILES})
-add_executable(mv mv.c ${ARGTABLE3_SRC_FILES})
-add_executable(myprog myprog.c ${ARGTABLE3_SRC_FILES})
-add_executable(myprog_C89 myprog_C89.c ${ARGTABLE3_SRC_FILES})
-add_executable(testargtable3 testargtable3.c ${ARGTABLE3_SRC_FILES})
-add_executable(uname uname.c ${ARGTABLE3_SRC_FILES})
+add_executable(multisyntax multisyntax.c)
+target_link_libraries(multisyntax argtable3)
 
+add_executable(mv mv.c)
+target_link_libraries(mv argtable3)
 
+add_executable(myprog myprog.c)
+target_link_libraries(myprog argtable3)
+
+add_executable(myprog_C89 myprog_C89.c)
+target_link_libraries(myprog_C89 argtable3)
+
+add_executable(testargtable3 testargtable3.c)
+target_link_libraries(testargtable3 argtable3)
+
+add_executable(uname uname.c)
+target_link_libraries(uname argtable3)
+
+install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}" DESTINATION share/argtable3
+    PATTERN CMakeLists.txt* EXCLUDE)
+install(FILES "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt.sample" DESTINATION share/argtable3/examples
+    RENAME CMakeLists.txt)

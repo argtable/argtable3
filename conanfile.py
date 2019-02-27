@@ -27,36 +27,63 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
+import os
 
-cmake_minimum_required(VERSION 3.0.0)
+from conans import ConanFile, CMake, tools
 
-file(STRINGS "version.txt" VERSION)
-project(argtable3 VERSION "${VERSION}")
 
-option(CONAN "Enable Conan dependency manager" ON)
-option(BUILD_SHARED_LIBS "Build shared library when enabled, static otherwise" ON)
-option(argtable3_build_tests "Build argtable3 unit tests." ON)
-option(argtable3_build_examples "Build argtable3 examples." ON)
+class ArgTable3(ConanFile):
+    name = 'argtable3'
+    description = 'A single-file, ANSI C, command-line parsing library that parses GNU-style command-line options.'
+    url = 'https://github.com/argtable/argtable3'
+    version = tools.load('version.txt').strip() + '-2'
+    license = 'BSD 3-Clause'
+    settings = 'os', 'compiler', 'build_type', 'arch'
+    options = {
+        'shared': [True, False],
+        'build_examples': [True, False],
+        'build_tests': [True, False]
+    }
+    default_options = {
+        'shared': True,
+        'build_examples': True,
+        'build_tests': True
+    }
+    generators = 'cmake'
 
-if (CONAN AND EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-  include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-  conan_basic_setup(TARGETS)
-  string(REPLACE ";" ":" LINK_FLAGS "${CONAN_LIB_DIRS}")
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-rpath-link,${LINK_FLAGS}")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath-link,${LINK_FLAGS}")
-endif ()
+    scm = {
+        'type': 'git',
+        'url': 'auto',
+        'revision': 'auto'
+    }
 
-add_subdirectory(src)
+    exports = 'version.txt'
 
-if(argtable3_build_tests)
-  enable_testing()
-  add_subdirectory(tests)
-endif()
+    def build(self):
+        if self.settings.os:
+            cmake = self.configure_cmake()
+            cmake.build()
 
-if(argtable3_build_examples)
-  add_subdirectory(examples)
-endif()
+    def package(self):
+        if self.settings.os:
+            cmake = self.configure_cmake()
+            cmake.install()
+        else:
+            self.copy('*')
 
-install(EXPORT ${PROJECT_NAME}-config DESTINATION lib/cmake/${PROJECT_NAME})
+    def package_info(self):
+        if self.settings.os:
+            self.cpp_info.libs = [self.name]
 
-include(./ArgTable3CPack.cmake)
+    def configure_cmake(self):
+        cmake = CMake(self)
+        cmake.configure(defs={
+            'BUILD_SHARED_LIBS': 'ON' if self.options.shared else 'OFF',
+            'argtable3_build_examples': 'ON' if self.options.build_examples else 'OFF',
+            'argtable3_build_tests': 'ON' if self.options.build_tests else 'OFF'
+        }, build_folder=self.binary_folder)
+        return cmake
+
+    @property
+    def binary_folder(self):
+        return os.path.join(self.build_folder, 'build')

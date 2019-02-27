@@ -39,6 +39,10 @@
     #define ISSPACE isspace
 #endif
 
+#ifdef _WIN32
+#define	REPLACE_GETOPT		/* use this getopt as the system getopt(3) */
+#endif
+
 /*******************************************************************************
  * This file is part of the argtable3 library.
  *
@@ -114,7 +118,7 @@ enum
 
 #define ARG_LOG(x) \
     do { if (ARG_ENABLE_LOG) dbg_printf x; } while (0)
-#endif 
+#endif
 
 extern void dbg_printf(const char *fmt, ...);
 
@@ -165,6 +169,11 @@ void dbg_printf(const char *fmt, ...)
     vfprintf(stderr, fmt, args);
     va_end(args);
 }
+
+
+#ifndef REPLACE_GETOPT
+#include <getopt.h>
+#else
 
 /*	$Id: getopt.h,v 1.1 2009/10/16 19:50:28 rodney Exp rodney $ */
 /*	$OpenBSD: getopt.h,v 1.1 2002/12/03 20:24:29 millert Exp $	*/
@@ -254,7 +263,7 @@ extern   int optopt;
 extern   int optreset;
 extern   char *suboptarg;               /* getsubopt(3) external variable */
 #endif /* _GETOPT_DEFINED */
- 
+
 #ifdef __cplusplus
 }
 #endif
@@ -313,6 +322,7 @@ extern   char *suboptarg;               /* getsubopt(3) external variable */
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#endif /* REPLACE_GETOPT */
 
 #if 0
 #include <err.h>
@@ -320,9 +330,6 @@ extern   char *suboptarg;               /* getsubopt(3) external variable */
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-
-
-#define	REPLACE_GETOPT		/* use this getopt as the system getopt(3) */
 
 #ifdef REPLACE_GETOPT
 int	opterr = 1;		/* if error message should be printed */
@@ -345,8 +352,10 @@ char    *optarg;		/* argument associated with option */
 
 #define	EMSG		""
 
+#ifdef REPLACE_GETOPT
 static int getopt_internal(int, char * const *, const char *,
 			   const struct option *, int *, int);
+#endif
 static int parse_long_options(char * const *, const char *,
 			      const struct option *, int *, int);
 static int gcd(int, int);
@@ -369,7 +378,6 @@ static const char illoptstring[] = "unknown option -- %s";
 
 
 #ifdef _WIN32
-
 /* Windows needs warnx().  We change the definition though:
  *  1. (another) global is defined, opterrmsg, which holds the error message
  *  2. errors are always printed out on stderr w/o the program name
@@ -405,10 +413,9 @@ static void warnx(const char *fmt, ...)
 #pragma warning(suppress: 6053)
 	fprintf(stderr, "%s\n", opterrmsg);
 }
-
-#else
+#else /* __linux__ */
 #include <err.h>
-#endif /*_WIN32*/
+#endif /* _WIN32 */
 
 
 /*
@@ -585,6 +592,7 @@ parse_long_options(char * const *nargv, const char *options,
 		return (long_options[match].val);
 }
 
+#ifdef REPLACE_GETOPT
 /*
  * getopt_internal --
  *	Parse argc/argv argument vector.  Called by user level routines.
@@ -795,7 +803,6 @@ start:
 	return (optchar);
 }
 
-#ifdef REPLACE_GETOPT
 /*
  * getopt --
  *	Parse argc/argv argument vector.
@@ -816,7 +823,6 @@ getopt(int nargc, char * const *nargv, const char *options)
 	 */
 	return (getopt_internal(nargc, nargv, options, NULL, NULL, 0));
 }
-#endif /* REPLACE_GETOPT */
 
 /*
  * getopt_long --
@@ -843,6 +849,8 @@ getopt_long_only(int nargc, char * const *nargv, const char *options,
 	return (getopt_internal(nargc, nargv, options, long_options, idx,
 	    FLAG_PERMUTE|FLAG_LONGONLY));
 }
+#endif /* REPLACE_GETOPT */
+
 /*******************************************************************************
  * This file is part of the argtable3 library.
  *
@@ -1557,7 +1565,7 @@ static int arg_dbl_scanfn(struct arg_dbl *parent, const char *argval)
 static int arg_dbl_checkfn(struct arg_dbl *parent)
 {
     int errorcode = (parent->count < parent->hdr.mincount) ? EMINCOUNT : 0;
-    
+
     ARG_TRACE(("%s:checkfn(%p) returns %d\n", __FILE__, parent, errorcode));
     return errorcode;
 }
@@ -1667,7 +1675,7 @@ struct arg_dbl * arg_dbln(
 
         result->count = 0;
     }
-    
+
     ARG_TRACE(("arg_dbln() returns %p\n", result));
     return result;
 }
@@ -1747,7 +1755,7 @@ static void arg_end_errorfn(
         fprintf(fp, "invalid option \"-%c\"", error);
         break;
     }
-    
+
     fputc('\n', fp);
 }
 
@@ -1943,7 +1951,7 @@ static int arg_file_scanfn(struct arg_file *parent, const char *argval)
 static int arg_file_checkfn(struct arg_file *parent)
 {
     int errorcode = (parent->count < parent->hdr.mincount) ? EMINCOUNT : 0;
-    
+
     ARG_TRACE(("%s:checkfn(%p) returns %d\n", __FILE__, parent, errorcode));
     return errorcode;
 }
@@ -2054,7 +2062,7 @@ struct arg_file * arg_filen(
             result->extension[i] = "";
         }
     }
-    
+
     ARG_TRACE(("arg_filen() returns %p\n", result));
     return result;
 }
@@ -2417,7 +2425,7 @@ struct arg_int * arg_intn(
         result->ival  = (int *)(result + 1);
         result->count = 0;
     }
-    
+
     ARG_TRACE(("arg_intn() returns %p\n", result));
     return result;
 }
@@ -2565,7 +2573,7 @@ struct arg_lit * arg_litn(
         /* init local variables */
         result->count = 0;
     }
-    
+
     ARG_TRACE(("arg_litn() returns %p\n", result));
     return result;
 }
@@ -3701,7 +3709,7 @@ static int arg_str_scanfn(struct arg_str *parent, const char *argval)
 static int arg_str_checkfn(struct arg_str *parent)
 {
     int errorcode = (parent->count < parent->hdr.mincount) ? EMINCOUNT : 0;
-    
+
     ARG_TRACE(("%s:checkfn(%p) returns %d\n", __FILE__, parent, errorcode));
     return errorcode;
 }
@@ -3803,7 +3811,7 @@ struct arg_str * arg_strn(
         for (i = 0; i < maxcount; i++)
             result->sval[i] = "";
     }
-    
+
     ARG_TRACE(("arg_strn() returns %p\n", result));
     return result;
 }
@@ -4344,7 +4352,7 @@ int arg_parse(int argc, char * *argv, void * *argtable)
             argvcopy[i] = argv[i];
 
         argvcopy[argc] = NULL;
-        
+
         /* parse the command line (local copy) for tagged options */
         arg_parse_tagged(argc, argvcopy, table, endtable);
 
@@ -4823,7 +4831,6 @@ void arg_print_glossary(FILE *fp, void * *argtable, const char *format)
  *
  * Author: Uli Fouquet
  */
-static
 void arg_print_formatted( FILE *fp,
                           const unsigned lmargin,
                           const unsigned rmargin,

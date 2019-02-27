@@ -28,8 +28,6 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-cmake_minimum_required(VERSION 2.8.12)
-
 if(MSVC)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
@@ -39,7 +37,6 @@ include_directories(
 )
 
 set(TEST_SRC_FILES
-  "${PROJECT_SOURCE_DIR}/argtable3.c"
   testall.c
   testarglit.c
   testargstr.c
@@ -52,4 +49,5 @@ set(TEST_SRC_FILES
 )
 
 add_executable(testall ${TEST_SRC_FILES})
-
+target_link_libraries(testall argtable3)
+add_test(NAME testall COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} "$<TARGET_FILE:testall>")

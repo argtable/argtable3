@@ -28,35 +28,44 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-cmake_minimum_required(VERSION 3.0.0)
+# DEB and RPM disabled by default, but can be built manually via `cpack -G DEB`
+set(CPACK_GENERATOR
+    TGZ
+    ZIP
+)
 
-file(STRINGS "version.txt" VERSION)
-project(argtable3 VERSION "${VERSION}")
+set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY 0)
+set(CPACK_INSTALL_CMAKE_PROJECTS
+    "${CMAKE_BINARY_DIR}"
+    "${PROJECT_NAME}"
+    ALL
+    .
+)
 
-option(CONAN "Enable Conan dependency manager" ON)
-option(BUILD_SHARED_LIBS "Build shared library when enabled, static otherwise" ON)
-option(argtable3_build_tests "Build argtable3 unit tests." ON)
-option(argtable3_build_examples "Build argtable3 examples." ON)
 
-if (CONAN AND EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-  include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-  conan_basic_setup(TARGETS)
-  string(REPLACE ";" ":" LINK_FLAGS "${CONAN_LIB_DIRS}")
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-rpath-link,${LINK_FLAGS}")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath-link,${LINK_FLAGS}")
+set(CPACK_PACKAGE_VENDOR "Tom G. Huang")
+set(CPACK_PACKAGE_CONTACT "Tom G. Huang <tomghuang@gmail.com>")
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_PACKAGE_VERSION
+    ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
+if (PROJECT_VERSION_TWEAK)
+    set(CPACK_PACKAGE_VERSION ${CPACK_PACKAGE_VERSION}.${PROJECT_VERSION_TWEAK})
 endif ()
+set(CPACK_PACKAGE_RELOCATABLE ON)
 
-add_subdirectory(src)
+# Debian Specific
+set(CPACK_DEBIAN_PACKAGE_SECTION                    devel)
+set(CPACK_DEBIAN_PACKAGE_PRIORITY                   optional)
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS                  ON)
+set(CPACK_DEBIAN_PACKAGE_RELEASE                    1)
+set(CPACK_DEBIAN_FILE_NAME                          DEB-DEFAULT)
+set(CPACK_DEBIAN_PACKAGE_CONTROL_STRICT_PERMISSION  ON)
 
-if(argtable3_build_tests)
-  enable_testing()
-  add_subdirectory(tests)
-endif()
+# RPM Specific
+set(CPACK_RPM_FILE_NAME                         RPM-DEFAULT)
+set(CPACK_RPM_PACKAGE_LICENSE                   "BSD 3-Clause")
+set(CPACK_RPM_RELOCATION_PATHS                  /)
 
-if(argtable3_build_examples)
-  add_subdirectory(examples)
-endif()
-
-install(EXPORT ${PROJECT_NAME}-config DESTINATION lib/cmake/${PROJECT_NAME})
-
-include(./ArgTable3CPack.cmake)
+include(CPack)
