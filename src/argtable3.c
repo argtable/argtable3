@@ -377,7 +377,7 @@ static const char illoptstring[] = "unknown option -- %s";
 
 
 
-#ifdef _WIN32
+#if !defined(__linux__)
 /* Windows needs warnx().  We change the definition though:
  *  1. (another) global is defined, opterrmsg, which holds the error message
  *  2. errors are always printed out on stderr w/o the program name
