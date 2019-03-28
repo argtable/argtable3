@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of the argtable3 library.
  *
- * Copyright (C) 2013-2014 Tom G. Huang
+ * Copyright (C) 2013-2019 Tom G. Huang
  * <tomghuang@gmail.com>
  * All rights reserved.
  *
@@ -33,16 +33,19 @@
 #include "CuTest.h"
 #include "argtable3.h"
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4204)
+#endif
 
-void test_argfile_basic_001(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_001(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "foo.bar", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "foo.bar", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -52,20 +55,18 @@ void test_argfile_basic_001(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "foo.bar");
     CuAssertStrEquals(tc, a->basename[0], "foo.bar");
     CuAssertStrEquals(tc, a->extension[0], ".bar");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_002(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_002(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "/foo.bar", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "/foo.bar", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -79,16 +80,14 @@ void test_argfile_basic_002(CuTest *tc)
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_003(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_003(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "./foo.bar", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "./foo.bar", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -98,20 +97,18 @@ void test_argfile_basic_003(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "./foo.bar");
     CuAssertStrEquals(tc, a->basename[0], "foo.bar");
     CuAssertStrEquals(tc, a->extension[0], ".bar");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_004(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_004(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "././foo.bar", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "././foo.bar", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -121,20 +118,18 @@ void test_argfile_basic_004(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "././foo.bar");
     CuAssertStrEquals(tc, a->basename[0], "foo.bar");
     CuAssertStrEquals(tc, a->extension[0], ".bar");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_005(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_005(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "./././foo.bar", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "./././foo.bar", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -144,20 +139,18 @@ void test_argfile_basic_005(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "./././foo.bar");
     CuAssertStrEquals(tc, a->basename[0], "foo.bar");
     CuAssertStrEquals(tc, a->extension[0], ".bar");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_006(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_006(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "../foo.bar", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "../foo.bar", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -167,20 +160,18 @@ void test_argfile_basic_006(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "../foo.bar");
     CuAssertStrEquals(tc, a->basename[0], "foo.bar");
     CuAssertStrEquals(tc, a->extension[0], ".bar");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_007(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_007(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "../../foo.bar", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "../../foo.bar", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -190,20 +181,18 @@ void test_argfile_basic_007(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "../../foo.bar");
     CuAssertStrEquals(tc, a->basename[0], "foo.bar");
     CuAssertStrEquals(tc, a->extension[0], ".bar");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_008(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_008(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "foo", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "foo", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -213,20 +202,18 @@ void test_argfile_basic_008(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "foo");
     CuAssertStrEquals(tc, a->basename[0], "foo");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_009(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_009(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "/foo", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "/foo", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -236,20 +223,18 @@ void test_argfile_basic_009(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "/foo");
     CuAssertStrEquals(tc, a->basename[0], "foo");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_010(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_010(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "./foo", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "./foo", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -259,20 +244,18 @@ void test_argfile_basic_010(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "./foo");
     CuAssertStrEquals(tc, a->basename[0], "foo");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_011(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_011(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "././foo", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "././foo", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -282,20 +265,18 @@ void test_argfile_basic_011(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "././foo");
     CuAssertStrEquals(tc, a->basename[0], "foo");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_012(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_012(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "./././foo", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "./././foo", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -305,20 +286,18 @@ void test_argfile_basic_012(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "./././foo");
     CuAssertStrEquals(tc, a->basename[0], "foo");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_013(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_013(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "../foo", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "../foo", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -328,20 +307,18 @@ void test_argfile_basic_013(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "../foo");
     CuAssertStrEquals(tc, a->basename[0], "foo");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_014(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_014(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "../../foo", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "../../foo", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -351,20 +328,18 @@ void test_argfile_basic_014(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "../../foo");
     CuAssertStrEquals(tc, a->basename[0], "foo");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_015(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_015(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", ".foo", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", ".foo", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -374,20 +349,18 @@ void test_argfile_basic_015(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], ".foo");
     CuAssertStrEquals(tc, a->basename[0], ".foo");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_016(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_016(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "/.foo", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "/.foo", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -397,20 +370,18 @@ void test_argfile_basic_016(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "/.foo");
     CuAssertStrEquals(tc, a->basename[0], ".foo");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_017(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_017(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "./.foo", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "./.foo", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -420,20 +391,18 @@ void test_argfile_basic_017(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "./.foo");
     CuAssertStrEquals(tc, a->basename[0], ".foo");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_018(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_018(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "../.foo", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "../.foo", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -443,20 +412,18 @@ void test_argfile_basic_018(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "../.foo");
     CuAssertStrEquals(tc, a->basename[0], ".foo");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_019(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_019(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "foo.", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "foo.", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -466,20 +433,18 @@ void test_argfile_basic_019(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "foo.");
     CuAssertStrEquals(tc, a->basename[0], "foo.");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_020(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_020(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "/foo.", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "/foo.", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -489,20 +454,18 @@ void test_argfile_basic_020(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "/foo.");
     CuAssertStrEquals(tc, a->basename[0], "foo.");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_021(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_021(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "./foo.", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "./foo.", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -512,20 +475,18 @@ void test_argfile_basic_021(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "./foo.");
     CuAssertStrEquals(tc, a->basename[0], "foo.");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_022(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_022(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "../foo.", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "../foo.", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -535,20 +496,18 @@ void test_argfile_basic_022(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "../foo.");
     CuAssertStrEquals(tc, a->basename[0], "foo.");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_023(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_023(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "/.foo.", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "/.foo.", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -558,20 +517,18 @@ void test_argfile_basic_023(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "/.foo.");
     CuAssertStrEquals(tc, a->basename[0], ".foo.");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_024(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_024(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "/.foo.c", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "/.foo.c", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -581,20 +538,18 @@ void test_argfile_basic_024(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "/.foo.c");
     CuAssertStrEquals(tc, a->basename[0], ".foo.c");
     CuAssertStrEquals(tc, a->extension[0], ".c");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_025(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_025(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "/.foo..b.c", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "/.foo..b.c", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -604,20 +559,18 @@ void test_argfile_basic_025(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "/.foo..b.c");
     CuAssertStrEquals(tc, a->basename[0], ".foo..b.c");
     CuAssertStrEquals(tc, a->extension[0], ".c");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_026(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_026(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "/", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "/", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -627,20 +580,18 @@ void test_argfile_basic_026(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "/");
     CuAssertStrEquals(tc, a->basename[0], "");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_027(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_027(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", ".", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", ".", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -650,20 +601,18 @@ void test_argfile_basic_027(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], ".");
     CuAssertStrEquals(tc, a->basename[0], "");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_028(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_028(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "..", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "..", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -673,20 +622,18 @@ void test_argfile_basic_028(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "..");
     CuAssertStrEquals(tc, a->basename[0], "");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_029(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_029(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "/.", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "/.", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -696,20 +643,18 @@ void test_argfile_basic_029(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "/.");
     CuAssertStrEquals(tc, a->basename[0], "");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_030(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_030(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "/..", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "/..", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -719,20 +664,18 @@ void test_argfile_basic_030(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "/..");
     CuAssertStrEquals(tc, a->basename[0], "");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_031(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_031(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "./", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "./", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -742,20 +685,18 @@ void test_argfile_basic_031(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "./");
     CuAssertStrEquals(tc, a->basename[0], "");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argfile_basic_032(CuTest *tc)
-{
-    struct arg_file *a   = arg_file1(NULL, NULL, "<file>", "filename to test");
-    struct arg_end *end  = arg_end(20);
+void test_argfile_basic_032(CuTest* tc) {
+    struct arg_file* a = arg_file1(NULL, NULL, "<file>", "filename to test");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, end};
     int nerrors;
-    
-    char *argv[] = {"program", "../", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "../", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
     nerrors = arg_parse(argc, argv, argtable);
@@ -765,13 +706,11 @@ void test_argfile_basic_032(CuTest *tc)
     CuAssertStrEquals(tc, a->filename[0], "../");
     CuAssertStrEquals(tc, a->basename[0], "");
     CuAssertStrEquals(tc, a->extension[0], "");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-CuSuite* get_argfile_testsuite()
-{
+CuSuite* get_argfile_testsuite() {
     CuSuite* suite = CuSuiteNew();
     SUITE_ADD_TEST(suite, test_argfile_basic_001);
     SUITE_ADD_TEST(suite, test_argfile_basic_002);
@@ -807,3 +746,7 @@ CuSuite* get_argfile_testsuite()
     SUITE_ADD_TEST(suite, test_argfile_basic_032);
     return suite;
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif

@@ -59,4 +59,3 @@ endif()
 
 install(EXPORT ${PROJECT_NAME}-config DESTINATION lib/cmake/${PROJECT_NAME})
 
-include(./ArgTable3CPack.cmake)

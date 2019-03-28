@@ -1,8 +1,10 @@
 /*******************************************************************************
+ * arg_rem: Implements the rem command-line option
+ *
  * This file is part of the argtable3 library.
  *
- * Copyright (C) 2013-2019 Tom G. Huang
- * <tomghuang@gmail.com>
+ * Copyright (C) 1998-2001,2003-2011,2013 Stewart Heitmann
+ * <sheitmann@users.sourceforge.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,43 +30,30 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
-#include <stdio.h>
+#include "argtable3.h"
 
-#include "CuTest.h"
+#ifndef ARG_AMALGAMATION
+#include "argtable3_private.h"
+#endif
 
-CuSuite* get_arglit_testsuite();
-CuSuite* get_argstr_testsuite();
-CuSuite* get_argint_testsuite();
-CuSuite* get_argdate_testsuite();
-CuSuite* get_argdbl_testsuite();
-CuSuite* get_argfile_testsuite();
-CuSuite* get_argrex_testsuite();
-CuSuite* get_arghashtable_testsuite();
-CuSuite* get_argdstr_testsuite();
-CuSuite* get_argcmd_testsuite();
+#include <stdlib.h>
 
-void RunAllTests(void) {
-    CuString* output = CuStringNew();
-    CuSuite* suite = CuSuiteNew();
+struct arg_rem* arg_rem(const char* datatype, const char* glossary) {
+    struct arg_rem* result = (struct arg_rem*)xmalloc(sizeof(struct arg_rem));
 
-    CuSuiteAddSuite(suite, get_arglit_testsuite());
-    CuSuiteAddSuite(suite, get_argstr_testsuite());
-    CuSuiteAddSuite(suite, get_argint_testsuite());
-    CuSuiteAddSuite(suite, get_argdate_testsuite());
-    CuSuiteAddSuite(suite, get_argdbl_testsuite());
-    CuSuiteAddSuite(suite, get_argfile_testsuite());
-    CuSuiteAddSuite(suite, get_argrex_testsuite());
-    CuSuiteAddSuite(suite, get_arghashtable_testsuite());
-    CuSuiteAddSuite(suite, get_argdstr_testsuite());
-    CuSuiteAddSuite(suite, get_argcmd_testsuite());
+    result->hdr.flag = 0;
+    result->hdr.shortopts = NULL;
+    result->hdr.longopts = NULL;
+    result->hdr.datatype = datatype;
+    result->hdr.glossary = glossary;
+    result->hdr.mincount = 1;
+    result->hdr.maxcount = 1;
+    result->hdr.parent = result;
+    result->hdr.resetfn = NULL;
+    result->hdr.scanfn = NULL;
+    result->hdr.checkfn = NULL;
+    result->hdr.errorfn = NULL;
 
-    CuSuiteRun(suite);
-    CuSuiteSummary(suite, output);
-    CuSuiteDetails(suite, output);
-    printf("%s\n", output->buffer);
-}
-
-int main(void) {
-    RunAllTests();
-    return 0;
+    ARG_TRACE(("arg_rem() returns %p\n", result));
+    return result;
 }

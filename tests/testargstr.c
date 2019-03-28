@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of the argtable3 library.
  *
- * Copyright (C) 2013-2014 Tom G. Huang
+ * Copyright (C) 2013-2019 Tom G. Huang
  * <tomghuang@gmail.com>
  * All rights reserved.
  *
@@ -33,19 +33,22 @@
 #include "CuTest.h"
 #include "argtable3.h"
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4204)
+#endif
 
-void test_argstr_basic_001(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_001(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "--hello=string1", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "--hello=string1", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -57,23 +60,21 @@ void test_argstr_basic_001(CuTest *tc)
     CuAssertTrue(tc, b->count == 0);
     CuAssertTrue(tc, c->count == 0);
     CuAssertTrue(tc, d->count == 0);
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argstr_basic_002(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_002(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "-cstring1", "-Dstring2", "-dstring3", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "-cstring1", "-Dstring2", "-dstring3", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -93,19 +94,17 @@ void test_argstr_basic_002(CuTest *tc)
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argstr_basic_003(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_003(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "-Cstring1", "--delta=string2", "--delta=string3", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "-Cstring1", "--delta=string2", "--delta=string3", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -121,23 +120,21 @@ void test_argstr_basic_003(CuTest *tc)
     CuAssertTrue(tc, d->count == 2);
     CuAssertStrEquals(tc, d->sval[0], "string2");
     CuAssertStrEquals(tc, d->sval[1], "string3");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argstr_basic_004(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_004(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "--delta=string1", "-cstring2", "-Dstring3", "-bstring4", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "--delta=string1", "-cstring2", "-Dstring3", "-bstring4", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -154,23 +151,21 @@ void test_argstr_basic_004(CuTest *tc)
     CuAssertTrue(tc, d->count == 2);
     CuAssertStrEquals(tc, d->sval[0], "string1");
     CuAssertStrEquals(tc, d->sval[1], "string3");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argstr_basic_005(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_005(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "-Dstring1", "-Bstring2", "--delta=string3", "-Cstring4", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "-Dstring1", "-Bstring2", "--delta=string3", "-Cstring4", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -187,23 +182,21 @@ void test_argstr_basic_005(CuTest *tc)
     CuAssertTrue(tc, d->count == 2);
     CuAssertStrEquals(tc, d->sval[0], "string1");
     CuAssertStrEquals(tc, d->sval[1], "string3");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argstr_basic_006(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_006(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "-Dstring1", "-Bstring2", "--delta=string3", "-Cstring4", "--hello=string5", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "-Dstring1", "-Bstring2", "--delta=string3", "-Cstring4", "--hello=string5", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -221,23 +214,21 @@ void test_argstr_basic_006(CuTest *tc)
     CuAssertTrue(tc, d->count == 2);
     CuAssertStrEquals(tc, d->sval[0], "string1");
     CuAssertStrEquals(tc, d->sval[1], "string3");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argstr_basic_007(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_007(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "-Dstring1", "-Bstring2", "--delta=string3", "-Cstring4", "--world=string5", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "-Dstring1", "-Bstring2", "--delta=string3", "-Cstring4", "--world=string5", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -255,23 +246,21 @@ void test_argstr_basic_007(CuTest *tc)
     CuAssertTrue(tc, d->count == 2);
     CuAssertStrEquals(tc, d->sval[0], "string1");
     CuAssertStrEquals(tc, d->sval[1], "string3");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argstr_basic_008(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_008(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "-cstring1", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "-cstring1", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -283,23 +272,21 @@ void test_argstr_basic_008(CuTest *tc)
     CuAssertTrue(tc, c->count == 1);
     CuAssertStrEquals(tc, c->sval[0], "string1");
     CuAssertTrue(tc, d->count == 0);
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argstr_basic_009(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_009(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "-Dstring1", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "-Dstring1", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -311,23 +298,21 @@ void test_argstr_basic_009(CuTest *tc)
     CuAssertTrue(tc, c->count == 0);
     CuAssertTrue(tc, d->count == 1);
     CuAssertStrEquals(tc, d->sval[0], "string1");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argstr_basic_010(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_010(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "-Cstring1", "-Dstring2", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "-Cstring1", "-Dstring2", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -340,23 +325,21 @@ void test_argstr_basic_010(CuTest *tc)
     CuAssertStrEquals(tc, c->sval[0], "string1");
     CuAssertTrue(tc, d->count == 1);
     CuAssertStrEquals(tc, d->sval[0], "string2");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argstr_basic_011(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_011(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "-Dstring1", "-dstring2", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "-Dstring1", "-dstring2", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -369,23 +352,21 @@ void test_argstr_basic_011(CuTest *tc)
     CuAssertTrue(tc, d->count == 2);
     CuAssertStrEquals(tc, d->sval[0], "string1");
     CuAssertStrEquals(tc, d->sval[1], "string2");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argstr_basic_012(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_012(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "-cs1", "-ds2", "-ds3", "-ds4", "-ds5", "-ds6", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "-cs1", "-ds2", "-ds3", "-ds4", "-ds5", "-ds6", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -401,23 +382,21 @@ void test_argstr_basic_012(CuTest *tc)
     CuAssertStrEquals(tc, d->sval[1], "s3");
     CuAssertStrEquals(tc, d->sval[2], "s4");
     CuAssertStrEquals(tc, d->sval[3], "s5");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argstr_basic_013(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_013(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "-cs1", "-cs2", "-ds3", "-ds4", "-ds5", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "-cs1", "-cs2", "-ds3", "-ds4", "-ds5", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -432,23 +411,21 @@ void test_argstr_basic_013(CuTest *tc)
     CuAssertStrEquals(tc, d->sval[0], "s3");
     CuAssertStrEquals(tc, d->sval[1], "s4");
     CuAssertStrEquals(tc, d->sval[2], "s5");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argstr_basic_014(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_014(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "-Cs1", "-ds2", "-Ds3", "--delta=s4", "-bs5", "-Bs6", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "-Cs1", "-ds2", "-Ds3", "--delta=s4", "-bs5", "-Bs6", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -464,23 +441,21 @@ void test_argstr_basic_014(CuTest *tc)
     CuAssertStrEquals(tc, d->sval[0], "s2");
     CuAssertStrEquals(tc, d->sval[1], "s3");
     CuAssertStrEquals(tc, d->sval[2], "s4");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argstr_basic_015(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_015(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "-Cs1", "-ds2", "-Ds3", "--delta=s4", "--hello=s5", "--world=s6", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "-Cs1", "-ds2", "-Ds3", "--delta=s4", "--hello=s5", "--world=s6", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -496,23 +471,21 @@ void test_argstr_basic_015(CuTest *tc)
     CuAssertStrEquals(tc, d->sval[0], "s2");
     CuAssertStrEquals(tc, d->sval[1], "s3");
     CuAssertStrEquals(tc, d->sval[2], "s4");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argstr_basic_016(CuTest *tc)
-{
-    struct arg_str *a    = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
-    struct arg_str *b    = arg_str0("bB", NULL,          "STRVAL", "either -b or -B or none");
-    struct arg_str *c    = arg_str1("cC", NULL,          "STRVAL", "either -c or -C");
-    struct arg_str *d    = arg_strn("dD", "delta",       "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
-    struct arg_end *end  = arg_end(20);
+void test_argstr_basic_016(CuTest* tc) {
+    struct arg_str* a = arg_str0(NULL, "hello,world", "STRVAL", "either --hello or --world or none");
+    struct arg_str* b = arg_str0("bB", NULL, "STRVAL", "either -b or -B or none");
+    struct arg_str* c = arg_str1("cC", NULL, "STRVAL", "either -c or -C");
+    struct arg_str* d = arg_strn("dD", "delta", "STRVAL", 2, 4, "-d|-D|--delta 2..4 occurences");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, d, end};
     int nerrors;
-    
-    char *argv[] = {"program", "-Cs1", "-ds2", "-Ds3", "--delta=s4", "--hello=s5", "X", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "-Cs1", "-ds2", "-Ds3", "--delta=s4", "--hello=s5", "X", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -528,13 +501,11 @@ void test_argstr_basic_016(CuTest *tc)
     CuAssertStrEquals(tc, d->sval[0], "s2");
     CuAssertStrEquals(tc, d->sval[1], "s3");
     CuAssertStrEquals(tc, d->sval[2], "s4");
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-CuSuite* get_argstr_testsuite()
-{
+CuSuite* get_argstr_testsuite() {
     CuSuite* suite = CuSuiteNew();
     SUITE_ADD_TEST(suite, test_argstr_basic_001);
     SUITE_ADD_TEST(suite, test_argstr_basic_002);
@@ -554,3 +525,7 @@ CuSuite* get_argstr_testsuite()
     SUITE_ADD_TEST(suite, test_argstr_basic_016);
     return suite;
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif

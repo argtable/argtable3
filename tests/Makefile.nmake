@@ -35,8 +35,10 @@ RMDIR = rmdir /s /q
 
 !if !exists(..\argtable3.c)
 ARGTABLE_SRC = ..\src\argtable3.c \
+	..\src\arg_cmd.c \
 	..\src\arg_date.c \
 	..\src\arg_dbl.c \
+	..\src\arg_dstr.c \
 	..\src\arg_end.c \
 	..\src\arg_file.c \
 	..\src\arg_int.c \
@@ -45,6 +47,7 @@ ARGTABLE_SRC = ..\src\argtable3.c \
 	..\src\arg_rex.c \
 	..\src\arg_str.c \
 	..\src\arg_utils.c \
+	..\src\arg_hashtable.c \
 	..\src\getopt_long.c
 ARGTABLE_HEADER = ..\src\argtable3.h
 ARGTABLE_INCLUDE_DIR = ..\src
@@ -61,7 +64,7 @@ testall: testall.c testarglit.c testargstr.c testargint.c testargdate.c \
 	$(ARGTABLE_SRC) $(ARGTABLE_HEADER)
 	
 	if not exist bin\tmp $(MKDIR) bin\tmp
-	$(CC) -I $(ARGTABLE_INCLUDE_DIR) /Fobin\tmp\ /Febin\$@ /nologo \
+	$(CC) /W4 /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /nologo /I $(ARGTABLE_INCLUDE_DIR) /Fobin\tmp\ /Febin\$@ /nologo \
 		CuTest.c \
 		$(ARGTABLE_SRC) \
 		testall.c \
@@ -71,11 +74,13 @@ testall: testall.c testarglit.c testargstr.c testargint.c testargdate.c \
 		testargdate.c \
 		testargdbl.c \
 		testargfile.c \
-		testargrex.c
+		testargrex.c \
+		testarghashtable.c \
+		testargdstr.c \
+		testargcmd.c
 
 runtests:
 	bin\testall
-
 
 cleanall:
 	if exist bin $(RMDIR) bin

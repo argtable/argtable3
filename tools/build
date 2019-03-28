@@ -1,7 +1,9 @@
+#!/bin/bash
+
 ################################################################################
 # This file is part of the argtable3 library.
 #
-# Copyright (C) 2019 Tom G. Huang
+# Copyright (C) 2013-2014 Tom G. Huang
 # <tomghuang@gmail.com>
 # All rights reserved.
 #
@@ -28,44 +30,61 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-# DEB and RPM disabled by default, but can be built manually via `cpack -G DEB`
-set(CPACK_GENERATOR
-    TGZ
-    ZIP
-)
+if [ "$1" = "dist" ]; then
+  cat amalgamation-header.txt > argtable3.c
+  cat ../src/argtable3_private.h \
+      ../src/arg_utils.c \
+      ../src/arg_hashtable.c \
+      ../src/arg_dstr.c \
+      ../src/getopt.h \
+      ../src/getopt_long.c \
+      ../src/arg_date.c \
+      ../src/arg_dbl.c \
+      ../src/arg_end.c \
+      ../src/arg_file.c \
+      ../src/arg_int.c \
+      ../src/arg_lit.c \
+      ../src/arg_rem.c \
+      ../src/arg_rex.c \
+      ../src/arg_str.c \
+      ../src/arg_cmd.c \
+      ../src/argtable3.c \
+      >> argtable3.c
 
-set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY 0)
-set(CPACK_INSTALL_CMAKE_PROJECTS
-    "${CMAKE_BINARY_DIR}"
-    "${PROJECT_NAME}"
-    ALL
-    .
-)
+  sed -i "s/\r$//" argtable3.c
+  mkdir -p ../dist
+  mv argtable3.c ../dist
+  cp ../src/argtable3.h ../dist
+  cp ../LICENSE ../dist
+  cp ../README.md ../dist
+  cp -r ../tests ../dist
+  cp ../src/argtable3_private.h ../dist/tests
+  rm -rf ../dist/tests/bin
+  rm -rf ../dist/tests/build
+  cp -r ../examples ../dist
+  rm -rf ../dist/examples/bin
+  rm -rf ../dist/examples/build
 
-
-set(CPACK_PACKAGE_VENDOR "Tom G. Huang")
-set(CPACK_PACKAGE_CONTACT "Tom G. Huang <tomghuang@gmail.com>")
-set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
-set(CPACK_PACKAGE_VERSION
-    ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
-if (PROJECT_VERSION_TWEAK)
-    set(CPACK_PACKAGE_VERSION ${CPACK_PACKAGE_VERSION}.${PROJECT_VERSION_TWEAK})
-endif ()
-set(CPACK_PACKAGE_RELOCATABLE ON)
-
-# Debian Specific
-set(CPACK_DEBIAN_PACKAGE_SECTION                    devel)
-set(CPACK_DEBIAN_PACKAGE_PRIORITY                   optional)
-set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS                  ON)
-set(CPACK_DEBIAN_PACKAGE_RELEASE                    1)
-set(CPACK_DEBIAN_FILE_NAME                          DEB-DEFAULT)
-set(CPACK_DEBIAN_PACKAGE_CONTROL_STRICT_PERMISSION  ON)
-
-# RPM Specific
-set(CPACK_RPM_FILE_NAME                         RPM-DEFAULT)
-set(CPACK_RPM_PACKAGE_LICENSE                   "BSD 3-Clause")
-set(CPACK_RPM_RELOCATION_PATHS                  /)
-
-include(CPack)
+  exit 0
+elif [ "$1" = "cleanall" ]; then
+  rm -rf ../dist
+  exit 0
+elif [ "$1" = "help" ]; then
+  echo "Argtable Amalgamation Package Build Script"
+  echo ""
+  echo "Copyright (C) 2013-2019 Tom G. Huang"
+  echo "<tomghuang@gmail.com>"
+  echo "All rights reserved."
+  echo ""
+  echo "Usage: build <command>"
+  echo ""
+  echo "Available commands:"
+  echo "  dist         build the amalgamation package"
+  echo "  cleanall     delete all generated folders/files"
+  echo "  help         display usage information"
+  exit 0
+else
+  echo "Unknown command"
+  echo "Type './build help' to get more information."
+  exit 0
+fi

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of the argtable3 library.
  *
- * Copyright (C) 2013-2014 Tom G. Huang
+ * Copyright (C) 2013-2019 Tom G. Huang
  * <tomghuang@gmail.com>
  * All rights reserved.
  *
@@ -47,18 +47,21 @@
 
 */
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4204)
+#endif
 
-void test_argdate_basic_001(CuTest *tc)
-{
-    struct arg_date *a   = arg_date1(NULL, NULL,   "%H:%M",    NULL,       "time 23:59");
-    struct arg_date *b   = arg_date0("b",  NULL,   "%Y-%m-%d", NULL,       "date YYYY-MM-DD");
-    struct arg_date *c   = arg_daten(NULL, "date", "%D",       NULL, 1, 2, "MM/DD/YY");
-    struct arg_end *end  = arg_end(20);
+void test_argdate_basic_001(CuTest* tc) {
+    struct arg_date* a = arg_date1(NULL, NULL, "%H:%M", NULL, "time 23:59");
+    struct arg_date* b = arg_date0("b", NULL, "%Y-%m-%d", NULL, "date YYYY-MM-DD");
+    struct arg_date* c = arg_daten(NULL, "date", "%D", NULL, 1, 2, "MM/DD/YY");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, end};
     int nerrors;
-    
-    char *argv[] = {"program", "23:59", "--date", "12/31/04", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "23:59", "--date", "12/31/04", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -86,22 +89,20 @@ void test_argdate_basic_001(CuTest *tc)
     CuAssertIntEquals(tc, c->tmval->tm_wday, 0);
     CuAssertIntEquals(tc, c->tmval->tm_yday, 0);
     CuAssertIntEquals(tc, c->tmval->tm_isdst, 0);
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argdate_basic_002(CuTest *tc)
-{
-    struct arg_date *a   = arg_date1(NULL, NULL,   "%H:%M",    NULL,       "time 23:59");
-    struct arg_date *b   = arg_date0("b",  NULL,   "%Y-%m-%d", NULL,       "date YYYY-MM-DD");
-    struct arg_date *c   = arg_daten(NULL, "date", "%D",       NULL, 1, 2, "MM/DD/YY");
-    struct arg_end *end  = arg_end(20);
+void test_argdate_basic_002(CuTest* tc) {
+    struct arg_date* a = arg_date1(NULL, NULL, "%H:%M", NULL, "time 23:59");
+    struct arg_date* b = arg_date0("b", NULL, "%Y-%m-%d", NULL, "date YYYY-MM-DD");
+    struct arg_date* c = arg_daten(NULL, "date", "%D", NULL, 1, 2, "MM/DD/YY");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, end};
     int nerrors;
-    
-    char *argv[] = {"program", "--date", "12/31/04", "20:15", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "--date", "12/31/04", "20:15", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -133,18 +134,16 @@ void test_argdate_basic_002(CuTest *tc)
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argdate_basic_003(CuTest *tc)
-{
-    struct arg_date *a   = arg_date1(NULL, NULL,   "%H:%M",    NULL,       "time 23:59");
-    struct arg_date *b   = arg_date0("b",  NULL,   "%Y-%m-%d", NULL,       "date YYYY-MM-DD");
-    struct arg_date *c   = arg_daten(NULL, "date", "%D",       NULL, 1, 2, "MM/DD/YY");
-    struct arg_end *end  = arg_end(20);
+void test_argdate_basic_003(CuTest* tc) {
+    struct arg_date* a = arg_date1(NULL, NULL, "%H:%M", NULL, "time 23:59");
+    struct arg_date* b = arg_date0("b", NULL, "%Y-%m-%d", NULL, "date YYYY-MM-DD");
+    struct arg_date* c = arg_daten(NULL, "date", "%D", NULL, 1, 2, "MM/DD/YY");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, end};
     int nerrors;
-    
-    char *argv[] = {"program", "--date", "12/31/04", "20:15", "--date", "06/07/84", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "--date", "12/31/04", "20:15", "--date", "06/07/84", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -181,22 +180,20 @@ void test_argdate_basic_003(CuTest *tc)
     CuAssertIntEquals(tc, (c->tmval + 1)->tm_wday, 0);
     CuAssertIntEquals(tc, (c->tmval + 1)->tm_yday, 0);
     CuAssertIntEquals(tc, (c->tmval + 1)->tm_isdst, 0);
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argdate_basic_004(CuTest *tc)
-{
-    struct arg_date *a   = arg_date1(NULL, NULL,   "%H:%M",    NULL,       "time 23:59");
-    struct arg_date *b   = arg_date0("b",  NULL,   "%Y-%m-%d", NULL,       "date YYYY-MM-DD");
-    struct arg_date *c   = arg_daten(NULL, "date", "%D",       NULL, 1, 2, "MM/DD/YY");
-    struct arg_end *end  = arg_end(20);
+void test_argdate_basic_004(CuTest* tc) {
+    struct arg_date* a = arg_date1(NULL, NULL, "%H:%M", NULL, "time 23:59");
+    struct arg_date* b = arg_date0("b", NULL, "%Y-%m-%d", NULL, "date YYYY-MM-DD");
+    struct arg_date* c = arg_daten(NULL, "date", "%D", NULL, 1, 2, "MM/DD/YY");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, end};
     int nerrors;
-    
-    char *argv[] = {"program", "--date", "12/31/04", "20:15", "-b", "1982-11-28", "--date", "06/07/84", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "--date", "12/31/04", "20:15", "-b", "1982-11-28", "--date", "06/07/84", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -242,85 +239,39 @@ void test_argdate_basic_004(CuTest *tc)
     CuAssertIntEquals(tc, (c->tmval + 1)->tm_wday, 0);
     CuAssertIntEquals(tc, (c->tmval + 1)->tm_yday, 0);
     CuAssertIntEquals(tc, (c->tmval + 1)->tm_isdst, 0);
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argdate_basic_005(CuTest *tc)
-{
-    struct arg_date *a   = arg_date1(NULL, NULL,   "%H:%M",    NULL,       "time 23:59");
-    struct arg_date *b   = arg_date0("b",  NULL,   "%Y-%m-%d", NULL,       "date YYYY-MM-DD");
-    struct arg_date *c   = arg_daten(NULL, "date", "%D",       NULL, 1, 2, "MM/DD/YY");
-    struct arg_end *end  = arg_end(20);
+void test_argdate_basic_005(CuTest* tc) {
+    struct arg_date* a = arg_date1(NULL, NULL, "%H:%M", NULL, "time 23:59");
+    struct arg_date* b = arg_date0("b", NULL, "%Y-%m-%d", NULL, "date YYYY-MM-DD");
+    struct arg_date* c = arg_daten(NULL, "date", "%D", NULL, 1, 2, "MM/DD/YY");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, end};
     int nerrors;
-    
-    char *argv[] = {"program", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
     nerrors = arg_parse(argc, argv, argtable);
     CuAssertTrue(tc, nerrors == 2);
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argdate_basic_006(CuTest *tc)
-{
-    struct arg_date *a   = arg_date1(NULL, NULL,   "%H:%M",    NULL,       "time 23:59");
-    struct arg_date *b   = arg_date0("b",  NULL,   "%Y-%m-%d", NULL,       "date YYYY-MM-DD");
-    struct arg_date *c   = arg_daten(NULL, "date", "%D",       NULL, 1, 2, "MM/DD/YY");
-    struct arg_end *end  = arg_end(20);
+void test_argdate_basic_006(CuTest* tc) {
+    struct arg_date* a = arg_date1(NULL, NULL, "%H:%M", NULL, "time 23:59");
+    struct arg_date* b = arg_date0("b", NULL, "%Y-%m-%d", NULL, "date YYYY-MM-DD");
+    struct arg_date* c = arg_daten(NULL, "date", "%D", NULL, 1, 2, "MM/DD/YY");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, end};
     int nerrors;
-    
-    char *argv[] = {"program", "25:59", "--date", "12/31/04", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
 
-    CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
-
-    nerrors = arg_parse(argc, argv, argtable);
-    CuAssertTrue(tc, nerrors == 1);
-    
-    arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
-}
-
-
-void test_argdate_basic_007(CuTest *tc)
-{
-    struct arg_date *a   = arg_date1(NULL, NULL,   "%H:%M",    NULL,       "time 23:59");
-    struct arg_date *b   = arg_date0("b",  NULL,   "%Y-%m-%d", NULL,       "date YYYY-MM-DD");
-    struct arg_date *c   = arg_daten(NULL, "date", "%D",       NULL, 1, 2, "MM/DD/YY");
-    struct arg_end *end  = arg_end(20);
-    void* argtable[] = {a, b, c, end};
-    int nerrors;
-    
-    char *argv[] = {"program", "23:59", "--date", "12/32/04", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
-
-    CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
-
-    nerrors = arg_parse(argc, argv, argtable);
-    CuAssertTrue(tc, nerrors == 1);
-    
-    arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
-}
-
-
-void test_argdate_basic_008(CuTest *tc)
-{
-    struct arg_date *a   = arg_date1(NULL, NULL,   "%H:%M",    NULL,       "time 23:59");
-    struct arg_date *b   = arg_date0("b",  NULL,   "%Y-%m-%d", NULL,       "date YYYY-MM-DD");
-    struct arg_date *c   = arg_daten(NULL, "date", "%D",       NULL, 1, 2, "MM/DD/YY");
-    struct arg_end *end  = arg_end(20);
-    void* argtable[] = {a, b, c, end};
-    int nerrors;
-    
-    char *argv[] = {"program", "23:59", "--date", "12/31/04", "22:58", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+    char* argv[] = {"program", "25:59", "--date", "12/31/04", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
@@ -330,51 +281,83 @@ void test_argdate_basic_008(CuTest *tc)
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argdate_basic_009(CuTest *tc)
-{
-    struct arg_date *a   = arg_date1(NULL, NULL,   "%H:%M",    NULL,       "time 23:59");
-    struct arg_date *b   = arg_date0("b",  NULL,   "%Y-%m-%d", NULL,       "date YYYY-MM-DD");
-    struct arg_date *c   = arg_daten(NULL, "date", "%D",       NULL, 1, 2, "MM/DD/YY");
-    struct arg_end *end  = arg_end(20);
+void test_argdate_basic_007(CuTest* tc) {
+    struct arg_date* a = arg_date1(NULL, NULL, "%H:%M", NULL, "time 23:59");
+    struct arg_date* b = arg_date0("b", NULL, "%Y-%m-%d", NULL, "date YYYY-MM-DD");
+    struct arg_date* c = arg_daten(NULL, "date", "%D", NULL, 1, 2, "MM/DD/YY");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, end};
     int nerrors;
-    
-    char *argv[] = {"program", "--date", "12/31/04", "20:15", "--date", "26/07/84", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "23:59", "--date", "12/32/04", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
     nerrors = arg_parse(argc, argv, argtable);
     CuAssertTrue(tc, nerrors == 1);
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-
-void test_argdate_basic_010(CuTest *tc)
-{
-    struct arg_date *a   = arg_date1(NULL, NULL,   "%H:%M",    NULL,       "time 23:59");
-    struct arg_date *b   = arg_date0("b",  NULL,   "%Y-%m-%d", NULL,       "date YYYY-MM-DD");
-    struct arg_date *c   = arg_daten(NULL, "date", "%D",       NULL, 1, 2, "MM/DD/YY");
-    struct arg_end *end  = arg_end(20);
+void test_argdate_basic_008(CuTest* tc) {
+    struct arg_date* a = arg_date1(NULL, NULL, "%H:%M", NULL, "time 23:59");
+    struct arg_date* b = arg_date0("b", NULL, "%Y-%m-%d", NULL, "date YYYY-MM-DD");
+    struct arg_date* c = arg_daten(NULL, "date", "%D", NULL, 1, 2, "MM/DD/YY");
+    struct arg_end* end = arg_end(20);
     void* argtable[] = {a, b, c, end};
     int nerrors;
-    
-    char *argv[] = {"program", "-b", "1982-11-28", "-b", "1976-11-11", "--date", "12/07/84", NULL};
-    int argc = sizeof(argv) / sizeof(char *) - 1;
+
+    char* argv[] = {"program", "23:59", "--date", "12/31/04", "22:58", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
 
     nerrors = arg_parse(argc, argv, argtable);
     CuAssertTrue(tc, nerrors == 1);
-    
+
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
+void test_argdate_basic_009(CuTest* tc) {
+    struct arg_date* a = arg_date1(NULL, NULL, "%H:%M", NULL, "time 23:59");
+    struct arg_date* b = arg_date0("b", NULL, "%Y-%m-%d", NULL, "date YYYY-MM-DD");
+    struct arg_date* c = arg_daten(NULL, "date", "%D", NULL, 1, 2, "MM/DD/YY");
+    struct arg_end* end = arg_end(20);
+    void* argtable[] = {a, b, c, end};
+    int nerrors;
 
-CuSuite* get_argdate_testsuite()
-{
+    char* argv[] = {"program", "--date", "12/31/04", "20:15", "--date", "26/07/84", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
+
+    nerrors = arg_parse(argc, argv, argtable);
+    CuAssertTrue(tc, nerrors == 1);
+
+    arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+}
+
+void test_argdate_basic_010(CuTest* tc) {
+    struct arg_date* a = arg_date1(NULL, NULL, "%H:%M", NULL, "time 23:59");
+    struct arg_date* b = arg_date0("b", NULL, "%Y-%m-%d", NULL, "date YYYY-MM-DD");
+    struct arg_date* c = arg_daten(NULL, "date", "%D", NULL, 1, 2, "MM/DD/YY");
+    struct arg_end* end = arg_end(20);
+    void* argtable[] = {a, b, c, end};
+    int nerrors;
+
+    char* argv[] = {"program", "-b", "1982-11-28", "-b", "1976-11-11", "--date", "12/07/84", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
+
+    nerrors = arg_parse(argc, argv, argtable);
+    CuAssertTrue(tc, nerrors == 1);
+
+    arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+}
+
+CuSuite* get_argdate_testsuite() {
     CuSuite* suite = CuSuiteNew();
     SUITE_ADD_TEST(suite, test_argdate_basic_001);
     SUITE_ADD_TEST(suite, test_argdate_basic_002);
@@ -388,3 +371,7 @@ CuSuite* get_argdate_testsuite()
     SUITE_ADD_TEST(suite, test_argdate_basic_010);
     return suite;
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif

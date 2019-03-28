@@ -28,43 +28,65 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
+#include <string.h>
+#include <time.h>
+
 #include <stdio.h>
 
 #include "CuTest.h"
+#include "argtable3.h"
 
-CuSuite* get_arglit_testsuite();
-CuSuite* get_argstr_testsuite();
-CuSuite* get_argint_testsuite();
-CuSuite* get_argdate_testsuite();
-CuSuite* get_argdbl_testsuite();
-CuSuite* get_argfile_testsuite();
-CuSuite* get_argrex_testsuite();
-CuSuite* get_arghashtable_testsuite();
-CuSuite* get_argdstr_testsuite();
-CuSuite* get_argcmd_testsuite();
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4204)
+#endif
 
-void RunAllTests(void) {
-    CuString* output = CuStringNew();
-    CuSuite* suite = CuSuiteNew();
+int cmd1_proc(int argc, char* argv[], arg_dstr_t res) {
+    if (argc == 0) {
+        arg_dstr_catf(res, "cmd1 fail");
+        return 1;
+    }
 
-    CuSuiteAddSuite(suite, get_arglit_testsuite());
-    CuSuiteAddSuite(suite, get_argstr_testsuite());
-    CuSuiteAddSuite(suite, get_argint_testsuite());
-    CuSuiteAddSuite(suite, get_argdate_testsuite());
-    CuSuiteAddSuite(suite, get_argdbl_testsuite());
-    CuSuiteAddSuite(suite, get_argfile_testsuite());
-    CuSuiteAddSuite(suite, get_argrex_testsuite());
-    CuSuiteAddSuite(suite, get_arghashtable_testsuite());
-    CuSuiteAddSuite(suite, get_argdstr_testsuite());
-    CuSuiteAddSuite(suite, get_argcmd_testsuite());
-
-    CuSuiteRun(suite);
-    CuSuiteSummary(suite, output);
-    CuSuiteDetails(suite, output);
-    printf("%s\n", output->buffer);
-}
-
-int main(void) {
-    RunAllTests();
+    arg_dstr_catf(res, "%d %s", argc, argv[0]);
     return 0;
 }
+
+void test_argcmd_basic_001(CuTest* tc) {
+    arg_cmd_init();
+    CuAssertIntEquals(tc, 0, arg_cmd_count());
+    
+    arg_cmd_register("cmd1", cmd1_proc, "description of cmd1");
+    CuAssertIntEquals(tc, 1, arg_cmd_count());
+
+    char* argv[] = {
+            "cmd1",
+            "-o",
+            "file1",
+    };
+    int argc = 3;
+    CuAssertTrue(tc, strcmp(argv[0], "cmd1") == 0);
+    CuAssertTrue(tc, strcmp(argv[1], "-o") == 0);
+    CuAssertTrue(tc, strcmp(argv[2], "file1") == 0);
+
+    arg_dstr_t res = arg_dstr_create();
+    int err = arg_cmd_dispatch("cmd1", argc, argv, res);
+    CuAssertIntEquals(tc, 0, err);
+    CuAssertTrue(tc, strcmp(arg_dstr_cstr(res), "3 cmd1") == 0);
+
+    arg_dstr_reset(res);
+    err = arg_cmd_dispatch("cmd1", 0, NULL, res);
+    CuAssertIntEquals(tc, 1, err);
+    CuAssertTrue(tc, strcmp(arg_dstr_cstr(res), "cmd1 fail") == 0);
+
+    arg_cmd_uninit();
+}
+
+CuSuite* get_argcmd_testsuite() {
+    CuSuite* suite = CuSuiteNew();
+    SUITE_ADD_TEST(suite, test_argcmd_basic_001);
+    return suite;
+}
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif

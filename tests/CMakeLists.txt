@@ -1,7 +1,7 @@
 ################################################################################
 # This file is part of the argtable3 library.
 #
-# Copyright (C) 2016-2017 Tom G. Huang
+# Copyright (C) 2016-2019 Tom G. Huang
 # <tomghuang@gmail.com>
 # All rights reserved.
 #
@@ -28,9 +28,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-if(MSVC)
-  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-endif()
+cmake_minimum_required(VERSION 2.8.0)
+project(tests)
 
 include_directories(
   ${PROJECT_SOURCE_DIR}
@@ -45,9 +44,27 @@ set(TEST_SRC_FILES
   testargdbl.c
   testargfile.c
   testargrex.c
+  testarghashtable.c
+  testargdstr.c
+  testargcmd.c
   CuTest.c
+  ../src/arg_cmd.c
+  ../src/arg_date.c
+  ../src/arg_dbl.c
+  ../src/arg_dstr.c
+  ../src/arg_end.c
+  ../src/arg_file.c
+  ../src/arg_hashtable.c
+  ../src/arg_int.c
+  ../src/arg_lit.c
+  ../src/arg_rem.c
+  ../src/arg_rex.c
+  ../src/arg_str.c
+  ../src/arg_utils.c
+  ../src/argtable3.c
+  ../src/getopt_long.c
 )
 
 add_executable(testall ${TEST_SRC_FILES})
-target_link_libraries(testall argtable3)
+target_include_directories(testall PRIVATE ../src)
 add_test(NAME testall COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} "$<TARGET_FILE:testall>")

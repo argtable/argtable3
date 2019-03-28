@@ -35,8 +35,10 @@ RMDIR = rm -rf
 
 ifeq ($(wildcard ../argtable3.c),)
     ARGTABLE_SRC = ../src/argtable3.c \
+		../src/arg_cmd.c \
 		../src/arg_date.c \
 		../src/arg_dbl.c \
+		../src/arg_dstr.c \
 		../src/arg_end.c \
 		../src/arg_file.c \
 		../src/arg_int.c \
@@ -45,6 +47,7 @@ ifeq ($(wildcard ../argtable3.c),)
 		../src/arg_rex.c \
 		../src/arg_str.c \
 		../src/arg_utils.c \
+		../src/arg_hashtable.c \
 		../src/getopt_long.c
     ARGTABLE_HEADER = ../src/argtable3.h
 	ARGTABLE_INCLUDE_DIR = ../src
@@ -62,7 +65,7 @@ testall: testall.c testarglit.c testargstr.c testargint.c testargdate.c \
 	$(ARGTABLE_SRC) $(ARGTABLE_HEADER)
 	
 	$(MKDIR) bin
-	$(CC) CuTest.c $(ARGTABLE_SRC) -I $(ARGTABLE_INCLUDE_DIR) -o bin/$@ \
+	$(CC) -Wall -Wextra -Werror CuTest.c $(ARGTABLE_SRC) -I $(ARGTABLE_INCLUDE_DIR) -lm -o bin/$@ \
 		testall.c \
 		testarglit.c \
 		testargstr.c \
@@ -70,7 +73,10 @@ testall: testall.c testarglit.c testargstr.c testargint.c testargdate.c \
 		testargdate.c \
 		testargdbl.c \
 		testargfile.c \
-		testargrex.c
+		testargrex.c \
+		testarghashtable.c \
+		testargdstr.c \
+		testargcmd.c
 
 runtests:
 	bin/testall
