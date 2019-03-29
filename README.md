@@ -13,6 +13,16 @@ implement for a robust CLI program.
 Quick Start
 -----------
 
+> We no longer provide the amalgamation source code (`argtable3.c` and `argtable3.h`)
+> in the source code repository. You can get the amalgamation distribution either
+> from the release page (`argtable-3.x.x-amalgamation.zip`), or generate the
+> distribution yourself by using the generator under the `tools` directory:
+> 
+> 1. Navigate to the `tools` directory.
+> 2. Run `./build dist`, which will generate the distribution under the `<ROOT>/dist`
+>    directory.
+
+
 Argtable3 is a single-file ANSI-C library. All you have to do is adding
 `argtable3.c` to your projects, and including `argtable3.h` in your source code.
 
