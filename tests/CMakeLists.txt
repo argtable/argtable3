@@ -28,13 +28,6 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-cmake_minimum_required(VERSION 2.8.0)
-project(tests)
-
-include_directories(
-  ${PROJECT_SOURCE_DIR}
-)
-
 set(TEST_SRC_FILES
   testall.c
   testarglit.c
@@ -48,23 +41,13 @@ set(TEST_SRC_FILES
   testargdstr.c
   testargcmd.c
   CuTest.c
-  ../src/arg_cmd.c
-  ../src/arg_date.c
-  ../src/arg_dbl.c
-  ../src/arg_dstr.c
-  ../src/arg_end.c
-  ../src/arg_file.c
-  ../src/arg_hashtable.c
-  ../src/arg_int.c
-  ../src/arg_lit.c
-  ../src/arg_rem.c
-  ../src/arg_rex.c
-  ../src/arg_str.c
-  ../src/arg_utils.c
-  ../src/argtable3.c
-  ../src/getopt_long.c
+  ${ARGTABLE3_SRC_FILES}
 )
 
 add_executable(testall ${TEST_SRC_FILES})
-target_include_directories(testall PRIVATE ../src)
-add_test(NAME testall COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} "$<TARGET_FILE:testall>")
+target_include_directories(testall PRIVATE ${CMAKE_SOURCE_DIR}/src)
+if(UNIX)
+  target_link_libraries(testall m)
+endif()
+
+add_test(NAME testall COMMAND "$<TARGET_FILE:testall>")

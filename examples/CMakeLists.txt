@@ -1,7 +1,7 @@
 ################################################################################
 # This file is part of the argtable3 library.
 #
-# Copyright (C) 2016-2017 Tom G. Huang
+# Copyright (C) 2016-2019 Tom G. Huang
 # <tomghuang@gmail.com>
 # All rights reserved.
 #
@@ -28,36 +28,50 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-
-if(MSVC)
-  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+add_executable(echo echo.c ${ARGTABLE3_SRC_FILES})
+target_include_directories(echo PRIVATE ${CMAKE_SOURCE_DIR}/src)
+if(UNIX)
+  target_link_libraries(echo m)
 endif()
 
-add_executable(echo echo.c)
-target_link_libraries(echo argtable3)
+add_executable(ls ls.c ${ARGTABLE3_SRC_FILES})
+target_include_directories(ls PRIVATE ${CMAKE_SOURCE_DIR}/src)
+if(UNIX)
+  target_link_libraries(ls m)
+endif()
 
-add_executable(ls ls.c)
-target_link_libraries(ls argtable3)
+add_executable(multisyntax multisyntax.c ${ARGTABLE3_SRC_FILES})
+target_include_directories(multisyntax PRIVATE ${CMAKE_SOURCE_DIR}/src)
+if(UNIX)
+  target_link_libraries(multisyntax m)
+endif()
 
-add_executable(multisyntax multisyntax.c)
-target_link_libraries(multisyntax argtable3)
+add_executable(mv mv.c ${ARGTABLE3_SRC_FILES})
+target_include_directories(mv PRIVATE ${CMAKE_SOURCE_DIR}/src)
+if(UNIX)
+  target_link_libraries(mv m)
+endif()
 
-add_executable(mv mv.c)
-target_link_libraries(mv argtable3)
+add_executable(myprog myprog.c ${ARGTABLE3_SRC_FILES})
+target_include_directories(myprog PRIVATE ${CMAKE_SOURCE_DIR}/src)
+if(UNIX)
+  target_link_libraries(myprog m)
+endif()
 
-add_executable(myprog myprog.c)
-target_link_libraries(myprog argtable3)
+add_executable(myprog_C89 myprog_C89.c ${ARGTABLE3_SRC_FILES})
+target_include_directories(myprog_C89 PRIVATE ${CMAKE_SOURCE_DIR}/src)
+if(UNIX)
+  target_link_libraries(myprog_C89 m)
+endif()
 
-add_executable(myprog_C89 myprog_C89.c)
-target_link_libraries(myprog_C89 argtable3)
+add_executable(testargtable3 testargtable3.c ${ARGTABLE3_SRC_FILES})
+target_include_directories(testargtable3 PRIVATE ${CMAKE_SOURCE_DIR}/src)
+if(UNIX)
+  target_link_libraries(testargtable3 m)
+endif()
 
-add_executable(testargtable3 testargtable3.c)
-target_link_libraries(testargtable3 argtable3)
-
-add_executable(uname uname.c)
-target_link_libraries(uname argtable3)
-
-install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}" DESTINATION share/argtable3
-    PATTERN CMakeLists.txt* EXCLUDE)
-install(FILES "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt.sample" DESTINATION share/argtable3/examples
-    RENAME CMakeLists.txt)
+add_executable(uname uname.c ${ARGTABLE3_SRC_FILES})
+target_include_directories(uname PRIVATE ${CMAKE_SOURCE_DIR}/src)
+if(UNIX)
+  target_link_libraries(uname m)
+endif()
