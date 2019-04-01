@@ -37,6 +37,12 @@
 #include "getopt.h"
 #endif
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
+#endif
+
 #include <assert.h>
 #include <ctype.h>
 #include <limits.h>
@@ -1052,3 +1058,11 @@ void arg_freetable(void** argtable, size_t n) {
         table[tabindex] = NULL;
     };
 }
+
+#ifdef _WIN32
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
+    return TRUE;
+    UNREFERENCED_PARAMETER(hinstDLL);
+    UNREFERENCED_PARAMETER(lpvReserved);
+}
+#endif
