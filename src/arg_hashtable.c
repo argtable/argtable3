@@ -41,7 +41,7 @@
 
 /*
  * This hash table module is adapted from the C hash table implementation by
- *  Christopher Clark. Here is the copyright notice from the library:
+ * Christopher Clark. Here is the copyright notice from the library:
  *
  * Copyright (c) 2002, Christopher Clark
  * All rights reserved.
