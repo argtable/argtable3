@@ -28,13 +28,31 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-add_library(argtable3 SHARED ${ARGTABLE3_SRC_FILES})
-target_include_directories(argtable3 PRIVATE ${CMAKE_SOURCE_DIR}/src)
+if(WIN32)
+  set(COMPANY_NAME "The Argtable3 Project")
+  set(FILE_DESC "ANSI C command-line parsing library")
+  set(INTERNAL_NAME "${PROJECT_NAME}")
+  set(LEGAL_COPYRIGHT "Copyright (C) 1998-2001,2003-2011,2013 Stewart Heitmann. All rights reserved.")
+  set(ORIGINAL_FILE_NAME "${PROJECT_NAME}")
+  set(PRODUCT_NAME "${PROJECT_NAME}")
+  configure_file(
+    "${PROJECT_SOURCE_DIR}/src/version.rc.in"
+    "${PROJECT_BINARY_DIR}/src/version.rc"
+  )
+  add_library(argtable3 SHARED ${ARGTABLE3_SRC_FILES} "${PROJECT_BINARY_DIR}/src/version.rc")
+else()
+  add_library(argtable3 SHARED ${ARGTABLE3_SRC_FILES})
+endif()
+target_include_directories(argtable3 PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
 add_library(argtable3_static STATIC ${ARGTABLE3_SRC_FILES})
-target_include_directories(argtable3 PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(argtable3 PRIVATE ${PROJECT_SOURCE_DIR}/src)
+
+set_target_properties(argtable3 argtable3_static PROPERTIES
+  VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
+  SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
 
 install(TARGETS argtable3 EXPORT ${ARGTABLE3_PACKAGE_NAME}Config DESTINATION ${ARGTABLE3_INSTALL_LIBDIR})
 install(TARGETS argtable3_static EXPORT ${ARGTABLE3_PACKAGE_NAME}Config ARCHIVE DESTINATION ${ARGTABLE3_INSTALL_LIBDIR})
-install(FILES "${CMAKE_CURRENT_LIST_DIR}/argtable3.h" DESTINATION ${ARGTABLE3_INSTALL_INCLUDEDIR})
+install(FILES "${PROJECT_SOURCE_DIR}/src/argtable3.h" DESTINATION ${ARGTABLE3_INSTALL_INCLUDEDIR})
 install(EXPORT ${ARGTABLE3_PACKAGE_NAME}Config DESTINATION ${ARGTABLE3_INSTALL_CMAKEDIR})

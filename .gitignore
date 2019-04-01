@@ -3,10 +3,7 @@
 
 build/
 dist/
-examples/bin/
-examples/build/
-tests/bin/
-tests/build/
+.tags/
 
 # Ignore JetBrains and Eclipse IDE metadata and default build directories
 .vscode/
