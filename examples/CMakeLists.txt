@@ -28,50 +28,25 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-add_executable(echo echo.c ${ARGTABLE3_SRC_FILES})
-target_include_directories(echo PRIVATE ${CMAKE_SOURCE_DIR}/src)
-if(UNIX)
-  target_link_libraries(echo m)
+
+# Get all the .c files in the examples directory
+file(GLOB EXAMPLES_SOURCES RELATIVE ${CMAKE_SOURCE_DIR}/examples *.c)
+
+if(NOT ARGTABLE3_BUILD_STATIC_EXAMPLES)
+  add_definitions(-Dargtable3_IMPORTS)
 endif()
 
-add_executable(ls ls.c ${ARGTABLE3_SRC_FILES})
-target_include_directories(ls PRIVATE ${CMAKE_SOURCE_DIR}/src)
 if(UNIX)
-  target_link_libraries(ls m)
+  set(ARGTABLE3_EXTRA_LIBS m)
 endif()
 
-add_executable(multisyntax multisyntax.c ${ARGTABLE3_SRC_FILES})
-target_include_directories(multisyntax PRIVATE ${CMAKE_SOURCE_DIR}/src)
-if(UNIX)
-  target_link_libraries(multisyntax m)
-endif()
-
-add_executable(mv mv.c ${ARGTABLE3_SRC_FILES})
-target_include_directories(mv PRIVATE ${CMAKE_SOURCE_DIR}/src)
-if(UNIX)
-  target_link_libraries(mv m)
-endif()
-
-add_executable(myprog myprog.c ${ARGTABLE3_SRC_FILES})
-target_include_directories(myprog PRIVATE ${CMAKE_SOURCE_DIR}/src)
-if(UNIX)
-  target_link_libraries(myprog m)
-endif()
-
-add_executable(myprog_C89 myprog_C89.c ${ARGTABLE3_SRC_FILES})
-target_include_directories(myprog_C89 PRIVATE ${CMAKE_SOURCE_DIR}/src)
-if(UNIX)
-  target_link_libraries(myprog_C89 m)
-endif()
-
-add_executable(testargtable3 testargtable3.c ${ARGTABLE3_SRC_FILES})
-target_include_directories(testargtable3 PRIVATE ${CMAKE_SOURCE_DIR}/src)
-if(UNIX)
-  target_link_libraries(testargtable3 m)
-endif()
-
-add_executable(uname uname.c ${ARGTABLE3_SRC_FILES})
-target_include_directories(uname PRIVATE ${CMAKE_SOURCE_DIR}/src)
-if(UNIX)
-  target_link_libraries(uname m)
-endif()
+foreach(examples_src ${EXAMPLES_SOURCES})
+  string(REPLACE ".c" "" examplename ${examples_src})
+  add_executable(${examplename} ${CMAKE_SOURCE_DIR}/examples/${examples_src})
+  target_include_directories(${examplename} PRIVATE ${CMAKE_SOURCE_DIR}/src)
+  if(ARGTABLE3_BUILD_STATIC_EXAMPLES)
+    target_link_libraries(${examplename} argtable3_static ${ARGTABLE3_EXTRA_LIBS})
+  else()
+    target_link_libraries(${examplename} argtable3 ${ARGTABLE3_EXTRA_LIBS})
+  endif()
+endforeach()

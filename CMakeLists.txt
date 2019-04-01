@@ -39,6 +39,7 @@ project(${ARGTABLE3_PROJECT_NAME} VERSION "${ARGTABLE3_VERSION}")
 option(ARGTABLE3_ENABLE_CONAN "Enable Conan dependency manager" OFF)
 option(ARGTABLE3_ENABLE_TESTS "Enable unit tests" ON)
 option(ARGTABLE3_USE_AMALGAMATION "Use the amalgamation distribution" OFF)
+option(ARGTABLE3_BUILD_STATIC_EXAMPLES "Build examples with the static argtable3 library" OFF)
 
 if(ARGTABLE3_ENABLE_CONAN AND EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
