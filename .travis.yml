@@ -1,8 +1,8 @@
 env:
   global:
-    - CONAN_USERNAME: "argtable"
-    - CONAN_LOGIN_USERNAME: "argtable"
-    - CONAN_CHANNEL: "stable"
+    - CONAN_USERNAME: "tomghuang"
+    - CONAN_LOGIN_USERNAME: "tomghuang"
+    - CONAN_CHANNEL: "testing"
     - CONAN_UPLOAD: "UPLOAD_URL"
 
 linux: &linux
@@ -13,24 +13,21 @@ linux: &linux
   python: "3.6"
   services:
     - docker
+
 osx: &osx
   os: osx
   language: generic
+
 matrix:
   include:
-
     - <<: *linux
       env: CONAN_GCC_VERSIONS=4.9 CONAN_DOCKER_IMAGE=conanio/gcc49
-
     - <<: *linux
       env: CONAN_GCC_VERSIONS=5 CONAN_DOCKER_IMAGE=conanio/gcc5
-
     - <<: *linux
       env: CONAN_GCC_VERSIONS=6 CONAN_DOCKER_IMAGE=conanio/gcc6
-
     - <<: *linux
       env: CONAN_GCC_VERSIONS=7 CONAN_DOCKER_IMAGE=conanio/gcc7
-
     - <<: *linux
       env: CONAN_GCC_VERSIONS=8 CONAN_DOCKER_IMAGE=conanio/gcc8
 
