@@ -15,4 +15,4 @@ class NewProjectTestConan(ConanFile):
 
     def test(self):
         with tools.environment_append(RunEnvironment(self).vars):
-            self.run('ctest --output-on-failure')
+            self.run('ctest -C Debug --output-on-failure')

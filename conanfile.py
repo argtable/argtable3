@@ -27,37 +27,28 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
+
 import os
+import os.path
 
 from conans import ConanFile, CMake, tools
 
-
-class ArgTable3(ConanFile):
+class Argtable3(ConanFile):
     name = 'argtable3'
     description = 'A single-file, ANSI C, command-line parsing library that parses GNU-style command-line options.'
     url = 'https://github.com/argtable/argtable3'
-    version = tools.load('version.txt').strip() + '-3'
+    version = tools.load('version.tag').strip() if os.path.isfile('version.tag') else "v0.0.0"
     license = 'BSD 3-Clause'
     settings = 'os', 'compiler', 'build_type', 'arch'
-    options = {
-        'shared': [True, False],
-        'build_examples': [True, False],
-        'build_tests': [True, False]
-    }
-    default_options = {
-        'shared': True,
-        'build_examples': True,
-        'build_tests': True
-    }
+    options = {'shared': [True, False]}
+    default_options = {'shared': True}
     generators = 'cmake'
-
     scm = {
         'type': 'git',
         'url': 'auto',
         'revision': 'auto'
     }
-
-    exports = 'version.txt'
+    exports = 'version.tag'
 
     def build(self):
         if self.settings.os:
@@ -77,11 +68,7 @@ class ArgTable3(ConanFile):
 
     def configure_cmake(self):
         cmake = CMake(self)
-        cmake.configure(defs={
-            'BUILD_SHARED_LIBS': 'ON' if self.options.shared else 'OFF',
-            'argtable3_build_examples': 'ON' if self.options.build_examples else 'OFF',
-            'argtable3_build_tests': 'ON' if self.options.build_tests else 'OFF'
-        }, build_folder=self.binary_folder)
+        cmake.configure(defs={}, build_folder=self.binary_folder)
         return cmake
 
     @property

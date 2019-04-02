@@ -1,4 +1,4 @@
-#include "argtable3.h"
+#include <argtable3.h>
 
 /* global arg_xxx structs */
 struct arg_lit *a, *b, *c, *verb, *help, *version;
@@ -18,12 +18,12 @@ int main(int argc, char *argv[])
         scal    = arg_int0(NULL, "scalar", "<n>", "foo value"),
         verb    = arg_lit0("v", "verbose", "verbose output"),
         o       = arg_file0("o", NULL, "myfile", "output file"),
-        file    = arg_filen(NULL, NULL, "<file>", 1, 100, "input files"),
+        file    = arg_filen(NULL, NULL, "<file>", 0, 100, "input files"),
         end     = arg_end(20),
     };
 
     int exitcode = 0;
-    char progname[] = "testargtable2.exe";
+    char progname[] = "testargtable3.exe";
 
     int nerrors;
     nerrors = arg_parse(argc,argv,argtable);
