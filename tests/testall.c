@@ -39,9 +39,12 @@ CuSuite* get_argdate_testsuite();
 CuSuite* get_argdbl_testsuite();
 CuSuite* get_argfile_testsuite();
 CuSuite* get_argrex_testsuite();
-CuSuite* get_arghashtable_testsuite();
 CuSuite* get_argdstr_testsuite();
 CuSuite* get_argcmd_testsuite();
+
+#ifndef ARGTABLE3_TEST_PUBLIC_ONLY
+CuSuite* get_arghashtable_testsuite();
+#endif
 
 void RunAllTests(void) {
     CuString* output = CuStringNew();
@@ -54,9 +57,11 @@ void RunAllTests(void) {
     CuSuiteAddSuite(suite, get_argdbl_testsuite());
     CuSuiteAddSuite(suite, get_argfile_testsuite());
     CuSuiteAddSuite(suite, get_argrex_testsuite());
-    CuSuiteAddSuite(suite, get_arghashtable_testsuite());
     CuSuiteAddSuite(suite, get_argdstr_testsuite());
     CuSuiteAddSuite(suite, get_argcmd_testsuite());
+#ifndef ARGTABLE3_TEST_PUBLIC_ONLY
+    CuSuiteAddSuite(suite, get_arghashtable_testsuite());
+#endif
 
     CuSuiteRun(suite);
     CuSuiteSummary(suite, output);

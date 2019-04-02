@@ -28,7 +28,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-set(TEST_SRC_FILES
+set(TEST_PUBLIC_SRC_FILES
   testall.c
   testarglit.c
   testargstr.c
@@ -37,17 +37,53 @@ set(TEST_SRC_FILES
   testargdbl.c
   testargfile.c
   testargrex.c
-  testarghashtable.c
   testargdstr.c
   testargcmd.c
   CuTest.c
-  ${ARGTABLE3_SRC_FILES}
 )
 
-add_executable(testall ${TEST_SRC_FILES})
-target_include_directories(testall PRIVATE ${CMAKE_SOURCE_DIR}/src)
+set(TEST_SRC_FILES
+  ${TEST_PUBLIC_SRC_FILES}
+  testarghashtable.c
+)
+
 if(UNIX)
-  target_link_libraries(testall m)
+  set(ARGTABLE3_EXTRA_LIBS m)
 endif()
 
-add_test(NAME testall COMMAND "$<TARGET_FILE:testall>")
+add_executable(test_shared ${TEST_PUBLIC_SRC_FILES})
+target_compile_definitions(test_shared PRIVATE -DARGTABLE3_TEST_PUBLIC_ONLY)
+target_include_directories(test_shared PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(test_shared argtable3 ${ARGTABLE3_EXTRA_LIBS})
+add_custom_command(TARGET test_shared POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+  "$<TARGET_FILE:argtable3>"
+  "$<TARGET_FILE_DIR:test_shared>"
+)
+
+add_executable(test_static ${TEST_SRC_FILES})
+target_compile_definitions(test_static PRIVATE -DARGTABLE3_TEST_PUBLIC_ONLY)
+target_include_directories(test_static PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(test_static argtable3_static ${ARGTABLE3_EXTRA_LIBS})
+
+add_executable(test_src ${TEST_SRC_FILES} ${ARGTABLE3_SRC_FILES})
+target_include_directories(test_src PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(test_src ${ARGTABLE3_EXTRA_LIBS})
+
+add_custom_command(OUTPUT ${ARGTABLE3_AMALGAMATION_SRC_FILE}
+  COMMAND "${PROJECT_SOURCE_DIR}/tools/build" dist
+  WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tools"
+)
+
+add_executable(test_amalgamation ${TEST_SRC_FILES} ${ARGTABLE3_AMALGAMATION_SRC_FILE})
+target_include_directories(test_amalgamation PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(test_amalgamation ${ARGTABLE3_EXTRA_LIBS})
+add_custom_command(TARGET test_amalgamation PRE_BUILD
+  COMMAND "${PROJECT_SOURCE_DIR}/tools/build" dist
+  WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tools"
+)
+
+add_test(NAME test_shared COMMAND "$<TARGET_FILE:test_shared>")
+add_test(NAME test_static COMMAND "$<TARGET_FILE:test_static>")
+add_test(NAME test_src COMMAND "$<TARGET_FILE:test_src>")
+add_test(NAME test_amalgamation COMMAND "$<TARGET_FILE:test_amalgamation>")

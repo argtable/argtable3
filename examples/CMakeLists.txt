@@ -28,9 +28,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-
-# Get all the .c files in the examples directory
-file(GLOB EXAMPLES_SOURCES RELATIVE ${CMAKE_SOURCE_DIR}/examples *.c)
+file(GLOB EXAMPLES_SOURCES RELATIVE ${PROJECT_SOURCE_DIR}/examples *.c)
 
 if(NOT ARGTABLE3_BUILD_STATIC_EXAMPLES)
   add_definitions(-Dargtable3_IMPORTS)
@@ -42,8 +40,8 @@ endif()
 
 foreach(examples_src ${EXAMPLES_SOURCES})
   string(REPLACE ".c" "" examplename ${examples_src})
-  add_executable(${examplename} ${CMAKE_SOURCE_DIR}/examples/${examples_src})
-  target_include_directories(${examplename} PRIVATE ${CMAKE_SOURCE_DIR}/src)
+  add_executable(${examplename} ${PROJECT_SOURCE_DIR}/examples/${examples_src})
+  target_include_directories(${examplename} PRIVATE ${PROJECT_SOURCE_DIR}/src)
   if(ARGTABLE3_BUILD_STATIC_EXAMPLES)
     target_link_libraries(${examplename} argtable3_static ${ARGTABLE3_EXTRA_LIBS})
   else()

@@ -37,7 +37,6 @@ project(${ARGTABLE3_PROJECT_NAME})
 
 option(ARGTABLE3_ENABLE_CONAN "Enable Conan dependency manager" OFF)
 option(ARGTABLE3_ENABLE_TESTS "Enable unit tests" ON)
-option(ARGTABLE3_USE_AMALGAMATION "Use the amalgamation distribution" OFF)
 option(ARGTABLE3_BUILD_STATIC_EXAMPLES "Build examples with the static argtable3 library" OFF)
 
 get_filename_component(VERSION_TAG_PATH "version.tag" ABSOLUTE)
@@ -58,7 +57,6 @@ set(PROJECT_VERSION_TWEAK 0)
 set(ARGTABLE3_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK})
 set(ARGTABLE3_FULL_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_BUILD})
 
-
 if(ARGTABLE3_ENABLE_CONAN AND EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   conan_basic_setup(TARGETS)
@@ -71,36 +69,24 @@ if(ARGTABLE3_ENABLE_TESTS)
   enable_testing()
 endif()
 
-if(ARGTABLE3_USE_AMALGAMATION)
-  if(NOT EXISTS "${CMAKE_SOURCE_DIR}/dist/argtable3.c")
-    execute_process(
-      COMMAND "${CMAKE_SOURCE_DIR}/tools/build" dist
-      WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/tools"
-      )
-  endif()
-  
-  set(ARGTABLE3_SRC_FILES
-    ${CMAKE_SOURCE_DIR}/dist/argtable3.c
-  )
-else()
-  set(ARGTABLE3_SRC_FILES
-    ${CMAKE_SOURCE_DIR}/src/arg_cmd.c
-    ${CMAKE_SOURCE_DIR}/src/arg_date.c
-    ${CMAKE_SOURCE_DIR}/src/arg_dbl.c
-    ${CMAKE_SOURCE_DIR}/src/arg_dstr.c
-    ${CMAKE_SOURCE_DIR}/src/arg_end.c
-    ${CMAKE_SOURCE_DIR}/src/arg_file.c
-    ${CMAKE_SOURCE_DIR}/src/arg_hashtable.c
-    ${CMAKE_SOURCE_DIR}/src/arg_int.c
-    ${CMAKE_SOURCE_DIR}/src/arg_lit.c
-    ${CMAKE_SOURCE_DIR}/src/arg_rem.c
-    ${CMAKE_SOURCE_DIR}/src/arg_rex.c
-    ${CMAKE_SOURCE_DIR}/src/arg_str.c
-    ${CMAKE_SOURCE_DIR}/src/arg_utils.c
-    ${CMAKE_SOURCE_DIR}/src/argtable3.c
-    ${CMAKE_SOURCE_DIR}/src/getopt_long.c
-  )
-endif()
+set(ARGTABLE3_AMALGAMATION_SRC_FILE ${PROJECT_SOURCE_DIR}/dist/argtable3.c)
+set(ARGTABLE3_SRC_FILES
+  ${PROJECT_SOURCE_DIR}/src/arg_cmd.c
+  ${PROJECT_SOURCE_DIR}/src/arg_date.c
+  ${PROJECT_SOURCE_DIR}/src/arg_dbl.c
+  ${PROJECT_SOURCE_DIR}/src/arg_dstr.c
+  ${PROJECT_SOURCE_DIR}/src/arg_end.c
+  ${PROJECT_SOURCE_DIR}/src/arg_file.c
+  ${PROJECT_SOURCE_DIR}/src/arg_hashtable.c
+  ${PROJECT_SOURCE_DIR}/src/arg_int.c
+  ${PROJECT_SOURCE_DIR}/src/arg_lit.c
+  ${PROJECT_SOURCE_DIR}/src/arg_rem.c
+  ${PROJECT_SOURCE_DIR}/src/arg_rex.c
+  ${PROJECT_SOURCE_DIR}/src/arg_str.c
+  ${PROJECT_SOURCE_DIR}/src/arg_utils.c
+  ${PROJECT_SOURCE_DIR}/src/argtable3.c
+  ${PROJECT_SOURCE_DIR}/src/getopt_long.c
+)
 
 # Platform specific settings for installation
 if(UNIX)
