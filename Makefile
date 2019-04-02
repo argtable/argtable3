@@ -40,9 +40,7 @@ MKINDEX  = makeindex
 PRINTF   = printf
 GIT      = git
 
-RELEASE_DIR = output
-TMP_DIR     = output/tmp
-BIN_DIR     = bin
+BUILD_DIR   = build
 ARCHIVE_DIR = .archive
 TAGS_DIR    = .tags
 
@@ -53,26 +51,20 @@ MAKEFILE_DIR := $(abspath $(dir $(MAKEFILE_PATH)))
 .PHONY: help
 help:
 	@printf "Usage: make <target> [options]\n"
-	@printf "  make co TAG=<TAG_NAME>      : checkout build from the local repository\n"
+	@printf "  make co TAG=<TAG_NAME>      : checkout the specified tag\n"
 	@printf "  make archive TAG=<TAG_NAME> : create src archive in the .archive directory\n"
-	@printf "  make tag TAG=<TAG_NAME>     : tag main branch\n"
-	@printf "  make taglist                : list all tags\n"
+	@printf "  make tag TAG=<TAG_NAME>     : tag the master branch\n"
+	@printf "  make taglist                : list all available tags\n"
 	@printf "  make cleanall               : clean the distribution package and temp files\n"
 	@printf "  make help                   : display this message\n"
 	@printf "  make githead                : show the first 7-digit of the HEAD commit SHA-1\n"
 	@printf "\n"
-	@printf "Change to the mainline or a specific tag directory, and type 'make' or 'make help'\n"
-	@printf "to get a list of available targets. You can build the latest version in the mainline\n"
-	@printf "directory, and build a specific version in the tag directory. Here are the mainline\n"
-	@printf "and tag directories and their corresponding output directories:\n"
-	@printf "  Mainline        : $(MAKEFILE_DIR)/main\n"
-	@printf "  Mainline output : $(MAKEFILE_DIR)/main/build/bin/<CONFIG>\n"
-	@printf "  Tag             : $(MAKEFILE_DIR)/<TAG_NAME>\n"
-	@printf "  Tag output      : $(MAKEFILE_DIR)/<TAG_NAME>/build/bin/<CONFIG>\n"
-	@printf "\n"
-	@printf "Examples for <TAG_NAME> (use 'make taglist' to get a complete list):\n"
+	@printf "The <TAG_NAME> format is: <MAJOR>.<MINOR>.<PATCH>.<BUILD>. The <BUILD> field is the\n"
+	@printf "first 7-digit of the HEAD commit SHA-1, which you can get by running 'make githead'.\n"
+	@printf "Here are some <TAG_NAME> examples (use 'make taglist' to get all available tags):\n"
 	@printf "  v0.0.1.189221c\n"
 	@printf "  v1.1.0.bbf3b42\n"
+	@printf "  v2.0.0.3b42778\n"
 
 
 .PHONY: co
@@ -90,7 +82,7 @@ co:
 .PHONY: archive
 archive:
 	@$(MKDIR) $(ARCHIVE_DIR)
-	@$(GIT) archive -o $(ARCHIVE_DIR)/sb_$(TAG).zip $(TAG)
+	@$(GIT) archive -o $(ARCHIVE_DIR)/argtable_$(TAG).zip $(TAG)
 
 
 .PHONY: tag
@@ -100,14 +92,14 @@ tag:
 
 .PHONY: taglist
 taglist:
-	@$(PRINTF) "Available TAGs:\n"
+	@$(PRINTF) "Available tags:\n"
 	@$(GIT) tag -l
 
 
 .PHONY: cleanall
 cleanall:
 	@$(PRINTF) "Clean the distribution package and temp files...\n"
-	@$(RM) $(RELEASE_DIR)
+	@$(RM) $(BUILD_DIR)
 
 
 .PHONY: githead

@@ -3,6 +3,7 @@
 
 build/
 dist/
+.archive/
 .tags/
 
 # Ignore JetBrains and Eclipse IDE metadata and default build directories

@@ -26,44 +26,54 @@ Quick Start
 Argtable3 is a single-file ANSI-C library. All you have to do is adding
 `argtable3.c` to your projects, and including `argtable3.h` in your source code.
 
-If you have modified Argtable3 and want to quickly verify whether the
-modifications break any existing code or not, you can run the following commands
-in the project root directory to build both examples and unit tests and run unit
-tests:
+To build the library, examples, and unit tests, use CMake to generate out-of-source build:
 
-* If you use GCC (Linux, MinGW, Cygwin), type:
+* If you use GCC (Linux, MinGW, Cygwin), run:
 
   ```
+  $ mkdir build
+  $ cd build
+  $ cmake ..
   $ make
+  $ make test
   ```
 
   To cleanup, type:
   
   ```
-  make cleanall
+  $ make clean
   ```
 
-* If you use Microsoft Visual C++ compiler, type:
+* If you use Microsoft Visual C++ compiler, run:
 
   ```
-  $ nmake /f Makefile.nmake
+  $ mkdir build
+  $ cd build
+  $ cmake -G "Visual Studio 15 2017 Win64" ..
   ```
 
-  To cleanup, type:
-  
+  Now you can use Visual Studio 2017 to open the generated solution. To cleanup,
+  just remove the `build` directory.
+
+
+To build a tagged version, go to the project root directory, and use the
+`Makefile` in the project root folder to check out the specified version:
+
   ```
-  nmake /f Makefile.nmake cleanall
+  $ make taglist
+  Available TAGs:
+  v3.1.1.432a160
+  $ make co TAG=v3.1.1.432a160
+  $ cd .tags/v3.1.1.432a160
+  $ mkdir build
+  $ cd build
+  $ cmake ..
+  $ make
+  $ make test
   ```
 
-If you want to use CMake to generate Visual Studio 2017 x64 solution file, type:
-
-```
-$ mkdir build
-$ cd build
-$ cmake -G "Visual Studio 15 2017 Win64" ..
-```
-  
-To cleanup, just remove the `build` directory.
+You will find the shared library (or Windows DLL), static library, and the
+amalgamation distribution under the build directory.
 
 
 Documentation and Examples
@@ -72,35 +82,6 @@ Documentation and Examples
 To learn how to use the Argtable3 API, you can see the documentation on the web
 site, or examples in the `examples` folder.
 
-To build the examples, open the console window of your favorite development
-environments, go to the `examples` folder, and use the included Makefiles to build
-the examples.
-
-* If you use GCC (Linux, MinGW, Cygwin), type:
-
-  ```
-  $ make
-  ```
-
-  To cleanup, type:
-  
-  ```
-  make cleanall
-  ```
-
-
-* If you use Microsoft Visual C++ compiler, type:
-
-  ```
-  $ nmake /f Makefile.nmake
-  ```
-
-  To cleanup, type:
-  
-  ```
-  nmake /f Makefile.nmake cleanall
-  ```
-  
 
 Unit Tests
 ----------
@@ -110,35 +91,6 @@ anyway you want. However, before committing your code to your own repository or
 the Argtable3 official repository, please make sure your changes can pass the
 unit tests included in the distribution.
 
-To build and run the unit tests, open the console window of your favorite
-development environments, go to the `tests` folder, and use the included Makefiles
-to build and run the unit tests.
-
-* If you use GCC (Linux, MinGW, Cygwin), type:
-
-  ```
-  $ make
-  ```
-
-  To cleanup, type:
-  
-  ```
-  make cleanall
-  ```
-
-
-* If you use Microsoft Visual C++ compiler, type:
-
-  ```
-  $ nmake /f Makefile.nmake
-  ```
-
-  To cleanup, type:
-  
-  ```
-  nmake /f Makefile.nmake cleanall
-  ```
-  
 
 Authors
 -------
