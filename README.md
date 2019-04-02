@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/argtable/argtable3.svg?branch=master)](https://travis-ci.org/argtable/argtable3)
+
 
 Introduction of Argtable3
 =========================
