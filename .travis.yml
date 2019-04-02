@@ -32,6 +32,7 @@ matrix:
       env: CONAN_GCC_VERSIONS=8 CONAN_DOCKER_IMAGE=conanio/gcc8
 
 install:
+  - chmod +x tools/build
   - chmod +x .travis/install.sh
   - ./.travis/install.sh
 
