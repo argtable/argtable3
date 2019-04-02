@@ -35,13 +35,17 @@ project(test_conanpkg)
 include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
 conan_basic_setup()
 
+if(UNIX)
+  set(ARGTABLE3_EXTRA_LIBS m)
+endif()
+
 enable_testing()
 
 if (CONAN_SETTINGS_OS)
   set(Argtable3_DIR ${CONAN_LIB_DIRS_ARGTABLE3}/cmake)
   find_package(Argtable3 REQUIRED)
   add_executable(${PROJECT_NAME} testargtable3.c)
-  target_link_libraries(${PROJECT_NAME} PUBLIC argtable3)
+  target_link_libraries(${PROJECT_NAME} PUBLIC argtable3 ${ARGTABLE3_EXTRA_LIBS})
   add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "$<TARGET_FILE:argtable3>"
