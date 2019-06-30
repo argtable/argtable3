@@ -102,6 +102,7 @@ struct arg_str* arg_str1(const char* shortopts, const char* longopts, const char
 struct arg_str* arg_strn(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary) {
     size_t nbytes;
     struct arg_str* result;
+    int i;
 
     /* should not allow this stupid error */
     /* we should return an error code warning this logic error */
@@ -112,8 +113,6 @@ struct arg_str* arg_strn(const char* shortopts, const char* longopts, const char
              + maxcount * sizeof(char*); /* storage for sval[maxcount] array */
 
     result = (struct arg_str*)xmalloc(nbytes);
-
-    int i;
 
     /* init the arg_hdr struct */
     result->hdr.flag = ARG_HASVALUE;

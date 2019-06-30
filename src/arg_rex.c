@@ -157,12 +157,14 @@ static int arg_rex_scanfn(struct arg_rex* parent, const char* argval) {
 
 static int arg_rex_checkfn(struct arg_rex* parent) {
     int errorcode = (parent->count < parent->hdr.mincount) ? ARG_ERR_MINCOUNT : 0;
-    // struct privhdr *priv = (struct privhdr*)parent->hdr.priv;
+#if 0
+    struct privhdr *priv = (struct privhdr*)parent->hdr.priv;
 
     /* free the regex "program" we constructed in resetfn */
-    // regfree(&(priv->regex));
+    regfree(&(priv->regex));
 
     /*printf("%s:checkfn(%p) returns %d\n",__FILE__,parent,errorcode);*/
+#endif
     return errorcode;
 }
 
@@ -192,9 +194,11 @@ static void arg_rex_errorfn(struct arg_rex* parent, arg_dstr_t ds, int errorcode
             break;
 
         default: {
-            // char errbuff[256];
-            // regerror(errorcode, NULL, errbuff, sizeof(errbuff));
-            // printf("%s\n", errbuff);
+        #if 0
+            char errbuff[256];
+            regerror(errorcode, NULL, errbuff, sizeof(errbuff));
+            printf("%s\n", errbuff);
+        #endif
         } break;
     }
 }
@@ -308,14 +312,14 @@ static const TRexChar* g_nnames[] = {_SC("NONE"),    _SC("OP_GREEDY"), _SC("OP_O
                                      _SC("OP_CHAR"), _SC("OP_EOL"),    _SC("OP_BOL"),    _SC("OP_WB")};
 
 #endif
-#define OP_GREEDY (MAX_CHAR + 1)  // * + ? {n}
+#define OP_GREEDY (MAX_CHAR + 1)  /*  * + ? {n} */
 #define OP_OR (MAX_CHAR + 2)
-#define OP_EXPR (MAX_CHAR + 3)       // parentesis ()
-#define OP_NOCAPEXPR (MAX_CHAR + 4)  // parentesis (?:)
+#define OP_EXPR (MAX_CHAR + 3)       /* parentesis () */
+#define OP_NOCAPEXPR (MAX_CHAR + 4)  /* parentesis (?:) */
 #define OP_DOT (MAX_CHAR + 5)
 #define OP_CLASS (MAX_CHAR + 6)
 #define OP_CCLASS (MAX_CHAR + 7)
-#define OP_NCLASS (MAX_CHAR + 8)  // negates class the [^
+#define OP_NCLASS (MAX_CHAR + 8)  /* negates class the [^ */
 #define OP_RANGE (MAX_CHAR + 9)
 #define OP_CHAR (MAX_CHAR + 10)
 #define OP_EOL (MAX_CHAR + 11)
@@ -742,7 +746,7 @@ static const TRexChar* trex_matchnode(TRex* exp, TRexNode* node, const TRexChar*
     TRexNodeType type = node->type;
     switch (type) {
         case OP_GREEDY: {
-            // TRexNode *greedystop = (node->next != -1) ? &exp->_nodes[node->next] : NULL;
+            /* TRexNode *greedystop = (node->next != -1) ? &exp->_nodes[node->next] : NULL; */
             TRexNode* greedystop = NULL;
             int p0 = (node->right >> 16) & 0x0000FFFF, p1 = node->right & 0x0000FFFF, nmaches = 0;
             const TRexChar *s = str, *good = str;
@@ -760,8 +764,8 @@ static const TRexChar* trex_matchnode(TRex* exp, TRexNode* node, const TRexChar*
                 nmaches++;
                 good = s;
                 if (greedystop) {
-                    // checks that 0 matches satisfy the expression(if so skips)
-                    // if not would always stop(for instance if is a '?')
+                    /* checks that 0 matches satisfy the expression(if so skips) */
+                    /* if not would always stop(for instance if is a '?') */
                     if (greedystop->type != OP_GREEDY || (greedystop->type == OP_GREEDY && ((greedystop->right >> 16) & 0x0000FFFF) != 0)) {
                         TRexNode* gnext = NULL;
                         if (greedystop->next != -1) {
@@ -771,7 +775,7 @@ static const TRexChar* trex_matchnode(TRex* exp, TRexNode* node, const TRexChar*
                         }
                         stop = trex_matchnode(exp, greedystop, s, gnext);
                         if (stop) {
-                            // if satisfied stop it
+                            /* if satisfied stop it */
                             if (p0 == p1 && p0 == nmaches)
                                 break;
                             else if (nmaches >= p0 && p1 == 0xFFFF)

@@ -28,7 +28,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 2.8)
 
 set(ARGTABLE3_PROJECT_NAME "argtable3")
 set(ARGTABLE3_PACKAGE_NAME "Argtable3")
