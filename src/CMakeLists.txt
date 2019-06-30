@@ -28,12 +28,9 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-set(CMAKE_C_FLAGS                   "${CMAKE_C_FLAGS} -std=c89 -Wpedantic -Werror")
+set(CMAKE_C_FLAGS                   "${CMAKE_C_FLAGS} -std=c89 -Wpedantic")
 set(CMAKE_C_FLAGS                   "${CMAKE_C_FLAGS} -Wall")
 set(CMAKE_C_FLAGS                   "${CMAKE_C_FLAGS} -Wextra")
-# Honestly, I don't know how to fix arg_int.c without too many code changes. Perhaps someone can fix `strtol0X`?
-# In the meanwhile, this flag will ignore reporting errors in that function.
-set(CMAKE_C_FLAGS                   "${CMAKE_C_FLAGS} -Wno-discarded-qualifiers")
 
 add_definitions(-D_XOPEN_SOURCE=700)
 
