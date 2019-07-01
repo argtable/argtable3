@@ -95,8 +95,8 @@ typedef struct arg_hashtable {
     unsigned int entrycount;
     unsigned int loadlimit;
     unsigned int primeindex;
-    unsigned int (*hashfn)(void* k);
-    int (*eqfn)(void* k1, void* k2);
+    unsigned int (*hashfn)(const void* k);
+    int (*eqfn)(const void* k1, const void* k2);
 } arg_hashtable_t;
 
 /**
@@ -107,7 +107,7 @@ typedef struct arg_hashtable {
  * @param   eqfn      function for determining key equality
  * @return            newly created hash table or NULL on failure
  */
-arg_hashtable_t* arg_hashtable_create(unsigned int minsize, unsigned int (*hashfn)(void*), int (*eqfn)(void*, void*));
+arg_hashtable_t* arg_hashtable_create(unsigned int minsize, unsigned int (*hashfn)(const void*), int (*eqfn)(const void*, const void*));
 
 /**
  * @brief This function will cause the table to expand if the insertion would take
@@ -136,7 +136,7 @@ void arg_hashtable_insert(arg_hashtable_t* h, void* k, void* v);
  * @param   k   the key to search for  - does not claim ownership
  * @return      the value associated with the key, or NULL if none found
  */
-void* arg_hashtable_search(arg_hashtable_t* h, void* k);
+void* arg_hashtable_search(arg_hashtable_t* h, const void* k);
 
 #define ARG_DEFINE_HASHTABLE_SEARCH(fnname, keytype, valuetype) \
     valuetype* fnname(arg_hashtable_t* h, keytype* k) { return (valuetype*)(arg_hashtable_search(h, k)); }
@@ -147,7 +147,7 @@ void* arg_hashtable_search(arg_hashtable_t* h, void* k);
  * @param   h   the hash table to remove the item from
  * @param   k   the key to search for  - does not claim ownership
  */
-void arg_hashtable_remove(arg_hashtable_t* h, void* k);
+void arg_hashtable_remove(arg_hashtable_t* h, const void* k);
 
 #define ARG_DEFINE_HASHTABLE_REMOVE(fnname, keytype, valuetype) \
     valuetype* fnname(arg_hashtable_t* h, keytype* k) { return (valuetype*)(arg_hashtable_remove(h, k)); }

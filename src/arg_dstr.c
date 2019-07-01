@@ -172,7 +172,7 @@ char* arg_dstr_cstr(arg_dstr_t ds) /* Interpreter whose result to return. */
     return ds->data;
 }
 
-void arg_dstr_cat(arg_dstr_t ds, char* str) {
+void arg_dstr_cat(arg_dstr_t ds, const char* str) {
     setup_append_buf(ds, (int)strlen(str) + 1);
     strncat(ds->data, str, strlen(str));
 }

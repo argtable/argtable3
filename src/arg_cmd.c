@@ -51,8 +51,10 @@ static char* s_mod_ver_tag = NULL;
 static char* s_mod_ver = NULL;
 
 void arg_set_module_name(const char* name) {
+    size_t slen;
+
     xfree(s_module_name);
-    size_t slen = strlen(name);
+    slen = strlen(name);
     s_module_name = (char*)xmalloc(slen + 1);
     memset(s_module_name, 0, slen + 1);
 
@@ -64,12 +66,15 @@ void arg_set_module_name(const char* name) {
 }
 
 void arg_set_module_version(int major, int minor, int patch, const char* tag) {
+    size_t slen_tag, slen_ds;
+    arg_dstr_t ds;
+
     s_mod_ver_major = major;
     s_mod_ver_minor = minor;
     s_mod_ver_patch = patch;
 
     xfree(s_mod_ver_tag);
-    size_t slen_tag = strlen(tag);
+    slen_tag = strlen(tag);
     s_mod_ver_tag = (char*)xmalloc(slen_tag + 1);
     memset(s_mod_ver_tag, 0, slen_tag + 1);
 
@@ -79,14 +84,14 @@ void arg_set_module_version(int major, int minor, int patch, const char* tag) {
     strncpy(s_mod_ver_tag, tag, slen_tag);
 #endif
 
-    arg_dstr_t ds = arg_dstr_create();
+    ds = arg_dstr_create();
     arg_dstr_catf(ds, "%d.", s_mod_ver_major);
     arg_dstr_catf(ds, "%d.", s_mod_ver_minor);
     arg_dstr_catf(ds, "%d.", s_mod_ver_patch);
     arg_dstr_cat(ds, s_mod_ver_tag);
 
     xfree(s_mod_ver);
-    size_t slen_ds = strlen(arg_dstr_cstr(ds));
+    slen_ds = strlen(arg_dstr_cstr(ds));
     s_mod_ver = (char*)xmalloc(slen_ds + 1);
     memset(s_mod_ver, 0, slen_ds + 1);
 
@@ -99,8 +104,8 @@ void arg_set_module_version(int major, int minor, int patch, const char* tag) {
     arg_dstr_destroy(ds);
 }
 
-static unsigned int hash_key(void* key) {
-    char* str = (char*)key;
+static unsigned int hash_key(const void* key) {
+    const char* str = (const char*)key;
     int c;
     unsigned int hash = 5381;
 
@@ -110,7 +115,7 @@ static unsigned int hash_key(void* key) {
     return hash;
 }
 
-static int equal_keys(void* key1, void* key2) {
+static int equal_keys(const void* key1, const void* key2) {
     char* k1 = (char*)key1;
     char* k2 = (char*)key2;
     return (0 == strcmp(k1, k2));
@@ -125,15 +130,19 @@ void arg_cmd_uninit(void) {
 }
 
 void arg_cmd_register(const char* name, arg_cmdfn* proc, const char* description) {
+    arg_cmd_info_t* cmd_info;
+    size_t slen_name;
+    void* k;
+
     assert(strlen(name) < ARG_CMD_NAME_LEN);
     assert(strlen(description) < ARG_CMD_DESCRIPTION_LEN);
 
     /* Check if the command already exists. */
     /* If the command exists, replace the existing command. */
     /* If the command doesn't exist, insert the command. */
-    arg_cmd_info_t* cmd_info = (arg_cmd_info_t*)arg_hashtable_search(s_hashtable, (void*)name);
+    cmd_info = (arg_cmd_info_t*)arg_hashtable_search(s_hashtable, name);
     if (cmd_info) {
-        arg_hashtable_remove(s_hashtable, (void*)name);
+        arg_hashtable_remove(s_hashtable, name);
         cmd_info = NULL;
     }
 
@@ -150,8 +159,8 @@ void arg_cmd_register(const char* name, arg_cmdfn* proc, const char* description
 
     cmd_info->proc = proc;
 
-    size_t slen_name = strlen(name);
-    void* k = xmalloc(slen_name + 1);
+    slen_name = strlen(name);
+    k = xmalloc(slen_name + 1);
     memset(k, 0, slen_name + 1);
 
 #if (defined(__STDC_LIB_EXT1__) && defined(__STDC_WANT_LIB_EXT1__)) || (defined(__STDC_SECURE_LIB__) && defined(__STDC_WANT_SECURE_LIB__))
@@ -164,7 +173,7 @@ void arg_cmd_register(const char* name, arg_cmdfn* proc, const char* description
 }
 
 void arg_cmd_unregister(const char* name) {
-    arg_hashtable_remove(s_hashtable, (void*)name);
+    arg_hashtable_remove(s_hashtable, name);
 }
 
 int arg_cmd_dispatch(const char* name, int argc, char* argv[], arg_dstr_t res) {
@@ -177,7 +186,7 @@ int arg_cmd_dispatch(const char* name, int argc, char* argv[], arg_dstr_t res) {
 }
 
 arg_cmd_info_t* arg_cmd_info(const char* name) {
-    return (arg_cmd_info_t*)arg_hashtable_search(s_hashtable, (void*)name);
+    return (arg_cmd_info_t*)arg_hashtable_search(s_hashtable, name);
 }
 
 unsigned int arg_cmd_count(void) {
@@ -200,10 +209,6 @@ arg_cmd_info_t* arg_cmd_itr_value(arg_cmd_itr_t itr) {
     return (arg_cmd_info_t*)arg_hashtable_itr_value((arg_hashtable_itr_t*)itr);
 }
 
-void arg_cmd_itr_remove(arg_cmd_itr_t itr) {
-    arg_hashtable_itr_remove((arg_hashtable_itr_t*)itr);
-}
-
 void arg_cmd_itr_destroy(arg_cmd_itr_t itr) {
     arg_hashtable_itr_destroy((arg_hashtable_itr_t*)itr);
 }
@@ -212,14 +217,14 @@ int arg_cmd_itr_search(arg_cmd_itr_t itr, void* k) {
     return arg_hashtable_itr_search((arg_hashtable_itr_t*)itr, s_hashtable, k);
 }
 
-static const char* module_name() {
+static const char* module_name(void) {
     if (s_module_name == NULL || strlen(s_module_name) == 0)
         return "<name>";
 
     return s_module_name;
 }
 
-static const char* module_version() {
+static const char* module_version(void) {
     if (s_mod_ver == NULL || strlen(s_mod_ver) == 0)
         return "0.0.0.0";
 
@@ -255,15 +260,16 @@ void arg_make_syntax_err_msg(arg_dstr_t ds, void** argtable, struct arg_end* end
 }
 
 int arg_make_syntax_err_help_msg(arg_dstr_t ds, char* name, int help, int nerrors, void** argtable, struct arg_end* end, int* exitcode) {
-    // help handling
-    // note: '-h|--help' takes precedence over error reporting
+    /* help handling
+     * note: '-h|--help' takes precedence over error reporting
+     */
     if (help > 0) {
         arg_make_help_msg(ds, name, argtable);
         *exitcode = EXIT_SUCCESS;
         return 1;
     }
 
-    // syntax error handling
+    /* syntax error handling */
     if (nerrors > 0) {
         arg_make_syntax_err_msg(ds, argtable, end);
         *exitcode = EXIT_FAILURE;

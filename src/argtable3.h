@@ -237,12 +237,12 @@ ARG_EXTERN void arg_print_glossary_gnu_ds(arg_dstr_t ds, void** argtable);
 ARG_EXTERN void arg_print_errors_ds(arg_dstr_t ds, struct arg_end* end, const char* progname);
 ARG_EXTERN void arg_freetable(void** argtable, size_t n);
 
-ARG_EXTERN arg_dstr_t arg_dstr_create();
+ARG_EXTERN arg_dstr_t arg_dstr_create(void);
 ARG_EXTERN void arg_dstr_destroy(arg_dstr_t ds);
 ARG_EXTERN void arg_dstr_reset(arg_dstr_t ds);
 ARG_EXTERN void arg_dstr_free(arg_dstr_t ds);
 ARG_EXTERN void arg_dstr_set(arg_dstr_t ds, char* str, arg_dstr_freefn* free_proc);
-ARG_EXTERN void arg_dstr_cat(arg_dstr_t ds, char* str);
+ARG_EXTERN void arg_dstr_cat(arg_dstr_t ds, const char* str);
 ARG_EXTERN void arg_dstr_catf(arg_dstr_t ds, const char* fmt, ...);
 ARG_EXTERN char* arg_dstr_cstr(arg_dstr_t ds);
 

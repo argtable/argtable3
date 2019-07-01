@@ -53,11 +53,11 @@ void dbg_printf(const char* fmt, ...) {
 
 static void panic(const char* fmt, ...) {
     va_list args;
+    char* s;
+
     va_start(args, fmt);
     vfprintf(stderr, fmt, args);
     va_end(args);
-
-    char* s;
 
 #if defined(_MSC_VER)
 #pragma warning(push)

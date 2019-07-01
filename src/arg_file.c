@@ -164,6 +164,7 @@ struct arg_file* arg_file1(const char* shortopts, const char* longopts, const ch
 struct arg_file* arg_filen(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary) {
     size_t nbytes;
     struct arg_file* result;
+    int i;
 
     /* foolproof things by ensuring maxcount is not less than mincount */
     maxcount = (maxcount < mincount) ? mincount : maxcount;
@@ -174,8 +175,6 @@ struct arg_file* arg_filen(const char* shortopts, const char* longopts, const ch
              + sizeof(char*) * maxcount; /* storage for extension[maxcount] array */
 
     result = (struct arg_file*)xmalloc(nbytes);
-
-    int i;
 
     /* init the arg_hdr struct */
     result->hdr.flag = ARG_HASVALUE;

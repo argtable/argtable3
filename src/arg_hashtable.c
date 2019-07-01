@@ -86,7 +86,7 @@ static const unsigned int primes[] = {53,       97,       193,      389,       7
 const unsigned int prime_table_length = sizeof(primes) / sizeof(primes[0]);
 const float max_load_factor = (float)0.65;
 
-static unsigned int enhanced_hash(arg_hashtable_t* h, void* k) {
+static unsigned int enhanced_hash(arg_hashtable_t* h, const void* k) {
     /*
      * Aim to protect against poor hash functions by adding logic here.
      * The logic is taken from Java 1.4 hash table source.
@@ -101,9 +101,9 @@ static unsigned int enhanced_hash(arg_hashtable_t* h, void* k) {
 
 static unsigned int index_for(unsigned int tablelength, unsigned int hashvalue) {
     return (hashvalue % tablelength);
-};
+}
 
-arg_hashtable_t* arg_hashtable_create(unsigned int minsize, unsigned int (*hashfn)(void*), int (*eqfn)(void*, void*)) {
+arg_hashtable_t* arg_hashtable_create(unsigned int minsize, unsigned int (*hashfn)(const void*), int (*eqfn)(const void*, const void*)) {
     arg_hashtable_t* h;
     unsigned int pindex;
     unsigned int size = primes[0];
@@ -198,7 +198,7 @@ void arg_hashtable_insert(arg_hashtable_t* h, void* k, void* v) {
     h->entrycount++;
 }
 
-void* arg_hashtable_search(arg_hashtable_t* h, void* k) {
+void* arg_hashtable_search(arg_hashtable_t* h, const void* k) {
     struct arg_hashtable_entry* e;
     unsigned int hashvalue;
     unsigned int index;
@@ -215,7 +215,7 @@ void* arg_hashtable_search(arg_hashtable_t* h, void* k) {
     return NULL;
 }
 
-void arg_hashtable_remove(arg_hashtable_t* h, void* k) {
+void arg_hashtable_remove(arg_hashtable_t* h, const void* k) {
     /*
      * TODO: consider compacting the table when the load factor drops enough,
      *       or provide a 'compact' method.

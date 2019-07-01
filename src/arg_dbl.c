@@ -117,6 +117,8 @@ struct arg_dbl* arg_dbl1(const char* shortopts, const char* longopts, const char
 struct arg_dbl* arg_dbln(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary) {
     size_t nbytes;
     struct arg_dbl* result;
+    size_t addr;
+    size_t rem;
 
     /* foolproof things by ensuring maxcount is not less than mincount */
     maxcount = (maxcount < mincount) ? mincount : maxcount;
@@ -125,9 +127,6 @@ struct arg_dbl* arg_dbln(const char* shortopts, const char* longopts, const char
              + (maxcount + 1) * sizeof(double); /* storage for dval[maxcount] array plus one extra for padding to memory boundary */
 
     result = (struct arg_dbl*)xmalloc(nbytes);
-
-    size_t addr;
-    size_t rem;
 
     /* init the arg_hdr struct */
     result->hdr.flag = ARG_HASVALUE;

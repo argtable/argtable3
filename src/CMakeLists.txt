@@ -28,6 +28,12 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
+set(CMAKE_C_FLAGS                   "${CMAKE_C_FLAGS} -std=c89 -Wpedantic")
+set(CMAKE_C_FLAGS                   "${CMAKE_C_FLAGS} -Wall")
+set(CMAKE_C_FLAGS                   "${CMAKE_C_FLAGS} -Wextra")
+
+add_definitions(-D_XOPEN_SOURCE=700)
+
 if(WIN32)
   set(COMPANY_NAME "The Argtable3 Project")
   set(FILE_DESC "ANSI C command-line parsing library")

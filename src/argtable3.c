@@ -107,6 +107,8 @@ static struct longoptions* alloc_longoptions(struct arg_hdr** table) {
     int noptions = 1;
     size_t longoptlen = 0;
     int tabindex;
+    int option_index = 0;
+    char* store;
 
     /*
      * Determine the total number of option structs required
@@ -133,9 +135,6 @@ static struct longoptions* alloc_longoptions(struct arg_hdr** table) {
     /* (struct longoptions) + (struct options)[noptions] + char[longoptlen] */
     nbytes = sizeof(struct longoptions) + sizeof(struct option) * noptions + longoptlen;
     result = (struct longoptions*)xmalloc(nbytes);
-
-    int option_index = 0;
-    char* store;
 
     result->getoptval = 0;
     result->noptions = noptions;
@@ -183,6 +182,7 @@ static char* alloc_shortoptions(struct arg_hdr** table) {
     char* result;
     size_t len = 2;
     int tabindex;
+    char* res;
 
     /* determine the total number of option chars required */
     for (tabindex = 0; !(table[tabindex]->flag & ARG_TERMINATOR); tabindex++) {
@@ -192,7 +192,7 @@ static char* alloc_shortoptions(struct arg_hdr** table) {
 
     result = xmalloc(len);
 
-    char* res = result;
+    res = result;
 
     /* add a leading ':' so getopt return codes distinguish    */
     /* unrecognised option and options missing argument values */
@@ -417,6 +417,7 @@ int arg_parse(int argc, char** argv, void** argtable) {
     struct arg_end* endtable;
     int endindex;
     char** argvcopy = NULL;
+    int i;
 
     /*printf("arg_parse(%d,%p,%p)\n",argc,argv,argtable);*/
 
@@ -439,8 +440,6 @@ int arg_parse(int argc, char** argv, void** argtable) {
     }
 
     argvcopy = (char**)xmalloc(sizeof(char*) * (argc + 1));
-
-    int i;
 
     /*
         Fill in the local copy of argv[]. We need a local copy
@@ -881,12 +880,12 @@ void arg_print_glossary(FILE* fp, void** argtable, const char* format) {
  * Author: Uli Fouquet
  */
 static void arg_print_formatted_ds(arg_dstr_t ds, const unsigned lmargin, const unsigned rmargin, const char* text) {
-    assert(strlen(text) < UINT_MAX);
-
     const unsigned int textlen = (unsigned int)strlen(text);
     unsigned int line_start = 0;
     unsigned int line_end = textlen + 1;
     const unsigned int colwidth = (rmargin - lmargin) + 1;
+
+    assert(strlen(text) < UINT_MAX);
 
     /* Someone doesn't like us... */
     if (line_end < line_start) {
