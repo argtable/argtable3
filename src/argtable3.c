@@ -917,7 +917,7 @@ static void arg_print_formatted_ds(arg_dstr_t ds, const unsigned lmargin, const 
         /* Output line of text */
         while (line_start < line_end) {
             char c = *(text + line_start);
-            arg_dstr_cat(ds, &c);
+            arg_dstr_catc(ds, c);
             line_start++;
         }
         arg_dstr_cat(ds, "\n");

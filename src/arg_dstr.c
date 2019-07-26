@@ -177,6 +177,11 @@ void arg_dstr_cat(arg_dstr_t ds, const char* str) {
     strncat(ds->data, str, strlen(str));
 }
 
+void arg_dstr_catc(arg_dstr_t ds, char c) {
+    setup_append_buf(ds, 2);
+    strncat(ds->data, &c, 1);
+}
+
 /*
  * The logic of the `arg_dstr_catf` function is adapted from the `bformat`
  * function in The Better String Library by Paul Hsieh. Here is the copyright
