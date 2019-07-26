@@ -882,7 +882,7 @@ void arg_print_glossary(FILE* fp, void** argtable, const char* format) {
 static void arg_print_formatted_ds(arg_dstr_t ds, const unsigned lmargin, const unsigned rmargin, const char* text) {
     const unsigned int textlen = (unsigned int)strlen(text);
     unsigned int line_start = 0;
-    unsigned int line_end = textlen + 1;
+    unsigned int line_end = textlen;
     const unsigned int colwidth = (rmargin - lmargin) + 1;
 
     assert(strlen(text) < UINT_MAX);
@@ -892,7 +892,7 @@ static void arg_print_formatted_ds(arg_dstr_t ds, const unsigned lmargin, const 
         arg_dstr_catf(ds, "%s\n", text);
     }
 
-    while (line_end - 1 > line_start) {
+    while (line_end > line_start) {
         /* Eat leading white spaces. This is essential because while
            wrapping lines, there will often be a whitespace at beginning
            of line */
@@ -900,19 +900,23 @@ static void arg_print_formatted_ds(arg_dstr_t ds, const unsigned lmargin, const 
             line_start++;
         }
 
-        if ((line_end - line_start) > colwidth) {
-            line_end = line_start + colwidth;
-        }
-
         /* Find last whitespace, that fits into line */
-        while ((line_end > line_start) && (line_end - line_start > colwidth) && !isspace(*(text + line_end))) {
-            line_end--;
-        }
+        if (line_end - line_start > colwidth)
+        {
+            line_end = line_start + colwidth;
 
-        /* Do not print trailing whitespace. If this text
-           has got only one line, line_end now points to the
-           last char due to initialization. */
-        line_end--;
+            while ((line_end > line_start) && !isspace(*(text + line_end))) {
+                line_end--;
+            }
+
+            /* Consume trailing spaces */
+            while ((line_end > line_start) && isspace(*(text + line_end))) {
+                line_end--;
+            }
+
+            /* Restore the last non-space character */
+            line_end++;
+        }
 
         /* Output line of text */
         while (line_start < line_end) {
@@ -923,7 +927,7 @@ static void arg_print_formatted_ds(arg_dstr_t ds, const unsigned lmargin, const 
         arg_dstr_cat(ds, "\n");
 
         /* Initialize another line */
-        if (line_end + 1 < textlen) {
+        if (line_end < textlen) {
             unsigned i;
 
             for (i = 0; i < lmargin; i++) {
@@ -932,10 +936,6 @@ static void arg_print_formatted_ds(arg_dstr_t ds, const unsigned lmargin, const 
 
             line_end = textlen;
         }
-
-        /* If we have to print another line, get also the last char. */
-        line_end++;
-
     } /* lines of text */
 }
 
