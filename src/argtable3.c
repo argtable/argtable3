@@ -901,8 +901,7 @@ static void arg_print_formatted_ds(arg_dstr_t ds, const unsigned lmargin, const 
         }
 
         /* Find last whitespace, that fits into line */
-        if (line_end - line_start > colwidth)
-        {
+        if (line_end - line_start > colwidth) {
             line_end = line_start + colwidth;
 
             while ((line_end > line_start) && !isspace(*(text + line_end))) {
