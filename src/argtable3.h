@@ -243,6 +243,7 @@ ARG_EXTERN void arg_dstr_reset(arg_dstr_t ds);
 ARG_EXTERN void arg_dstr_free(arg_dstr_t ds);
 ARG_EXTERN void arg_dstr_set(arg_dstr_t ds, char* str, arg_dstr_freefn* free_proc);
 ARG_EXTERN void arg_dstr_cat(arg_dstr_t ds, const char* str);
+ARG_EXTERN void arg_dstr_catc(arg_dstr_t ds, char c);
 ARG_EXTERN void arg_dstr_catf(arg_dstr_t ds, const char* fmt, ...);
 ARG_EXTERN char* arg_dstr_cstr(arg_dstr_t ds);
 
