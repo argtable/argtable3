@@ -65,10 +65,6 @@ if(ARGTABLE3_ENABLE_CONAN AND EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath-link,${LINK_FLAGS}")
 endif()
 
-if(ARGTABLE3_ENABLE_TESTS)
-  enable_testing()
-endif()
-
 set(ARGTABLE3_AMALGAMATION_SRC_FILE ${PROJECT_SOURCE_DIR}/dist/argtable3.c)
 set(ARGTABLE3_SRC_FILES
   ${PROJECT_SOURCE_DIR}/src/arg_cmd.c
@@ -88,18 +84,11 @@ set(ARGTABLE3_SRC_FILES
   ${PROJECT_SOURCE_DIR}/src/getopt_long.c
 )
 
-# Platform specific settings for installation
-if(UNIX)
-  include(GNUInstallDirs)
-  set(ARGTABLE3_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
-  set(ARGTABLE3_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
-  set(ARGTABLE3_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/cmake/argtable3)
-elseif(WIN32)
-  set(ARGTABLE3_INSTALL_LIBDIR "lib")
-  set(ARGTABLE3_INSTALL_INCLUDEDIR "include")
-  set(ARGTABLE3_INSTALL_CMAKEDIR "cmake")
-endif(UNIX)
-
 add_subdirectory(src)
-add_subdirectory(tests)
+
+if(ARGTABLE3_ENABLE_TESTS)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
+
 add_subdirectory(examples)
