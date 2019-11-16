@@ -89,7 +89,7 @@ set(ARGTABLE3_SRC_FILES
 )
 
 # Platform specific settings for installation
-if(UNIX)
+if(UNIX OR MSYS OR MINGW)
   include(GNUInstallDirs)
   set(ARGTABLE3_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
   set(ARGTABLE3_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
@@ -98,7 +98,7 @@ elseif(WIN32)
   set(ARGTABLE3_INSTALL_LIBDIR "lib")
   set(ARGTABLE3_INSTALL_INCLUDEDIR "include")
   set(ARGTABLE3_INSTALL_CMAKEDIR "cmake")
-endif(UNIX)
+endif()
 
 add_subdirectory(src)
 add_subdirectory(tests)

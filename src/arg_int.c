@@ -55,7 +55,7 @@ static void arg_int_resetfn(struct arg_int* parent) {
 /* eg: to parse oct str="+0o12324", specify X='O' and base=8.       */
 /* eg: to parse bin str="-0B01010", specify X='B' and base=2.       */
 /* Failure of conversion is indicated by result where *endptr==str. */
-static long int strtol0X(const char* str, char** endptr, char X, int base) {
+static long int strtol0X(const char* str, const char** endptr, char X, int base) {
     long int val;          /* stores result */
     int s = 1;             /* sign is +1 or -1 */
     const char* ptr = str; /* ptr to current position in str */
@@ -149,7 +149,7 @@ static int arg_int_scanfn(struct arg_int* parent, const char* argval) {
         parent->count++;
     } else {
         long int val;
-        char* end;
+        const char* end;
 
         /* attempt to extract hex integer (eg: +0x123) from argval into val conversion */
         val = strtol0X(argval, &end, 'X', 16);

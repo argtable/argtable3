@@ -28,9 +28,18 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-set(CMAKE_C_FLAGS                   "${CMAKE_C_FLAGS} -std=c89 -Wpedantic")
-set(CMAKE_C_FLAGS                   "${CMAKE_C_FLAGS} -Wall")
-set(CMAKE_C_FLAGS                   "${CMAKE_C_FLAGS} -Wextra")
+if(WIN32)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Wall")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4820")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4710")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4255")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd5045")
+else()
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c89")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wpedantic")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wextra")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+endif()
 
 add_definitions(-D_XOPEN_SOURCE=700)
 

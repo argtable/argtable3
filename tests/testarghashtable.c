@@ -42,7 +42,7 @@
 #pragma warning(disable : 4996)
 #endif
 
-static unsigned int hash_key(void* key) {
+static unsigned int hash_key(const void* key) {
     char* str = (char*)key;
     int c;
     unsigned int hash = 5381;
@@ -53,7 +53,7 @@ static unsigned int hash_key(void* key) {
     return hash;
 }
 
-static int equal_keys(void* key1, void* key2) {
+static int equal_keys(const void* key1, const void* key2) {
     char* k1 = (char*)key1;
     char* k2 = (char*)key2;
     return (0 == strcmp(k1, k2));

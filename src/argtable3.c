@@ -1061,6 +1061,7 @@ void arg_freetable(void** argtable, size_t n) {
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
     return TRUE;
     UNREFERENCED_PARAMETER(hinstDLL);
+    UNREFERENCED_PARAMETER(fdwReason);
     UNREFERENCED_PARAMETER(lpvReserved);
 }
 #endif
