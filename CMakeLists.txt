@@ -65,10 +65,6 @@ if(ARGTABLE3_ENABLE_CONAN AND EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath-link,${LINK_FLAGS}")
 endif()
 
-if(ARGTABLE3_ENABLE_TESTS)
-  enable_testing()
-endif()
-
 set(ARGTABLE3_AMALGAMATION_SRC_FILE ${PROJECT_SOURCE_DIR}/dist/argtable3.c)
 set(ARGTABLE3_SRC_FILES
   ${PROJECT_SOURCE_DIR}/src/arg_cmd.c
@@ -105,5 +101,9 @@ elseif(WIN32)
 endif()
 
 add_subdirectory(src)
-add_subdirectory(tests)
 add_subdirectory(examples)
+
+if(ARGTABLE3_ENABLE_TESTS)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
