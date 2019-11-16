@@ -89,6 +89,10 @@ set(ARGTABLE3_SRC_FILES
 )
 
 # Platform specific settings for installation
+if(APPLE)
+  set(CMAKE_MACOSX_RPATH ON)
+endif()
+
 if(UNIX OR MSYS OR MINGW)
   include(GNUInstallDirs)
   set(ARGTABLE3_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
