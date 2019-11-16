@@ -39,8 +39,12 @@
 #include <stdlib.h>
 
 static void arg_str_resetfn(struct arg_str* parent) {
+    int i;
     ARG_TRACE(("%s:resetfn(%p)\n", __FILE__, parent));
     parent->count = 0;
+    for (i = 0; i < parent->count; i++) {
+        parent->sval[i] = "";
+    }
 }
 
 static int arg_str_scanfn(struct arg_str* parent, const char* argval) {
