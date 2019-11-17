@@ -32,20 +32,25 @@ Argtable3 is a single-file ANSI-C library. All you have to do is adding
 To build the library, examples, and unit tests, use CMake to generate
 out-of-source build:
 
-* If you use GCC (Linux, MinGW, Cygwin), run:
+* If you use GCC (Linux, MacOSX, MinGW, Cygwin), run:
 
   ```
   $ mkdir build
   $ cd build
-  $ cmake ..
+  $ cmake -DCMAKE_BUILD_TYPE=Debug ..
   $ make
   $ make test
   ```
 
-  To cleanup, type:
+  Makefile-based generators in CMake only support one configuration at a time,
+  so you need to specify `CMAKE_BUILD_TYPE` to `Debug`, `Release`, `MinSizeRel`,
+  or `RelWithDebInfo`. To build multiple configurations, you need to create a
+  build directory for each configuraiton.
+  
+  To cleanup, run `make clean` or remove the build directory:
   
   ```
-  $ make clean
+  $ rm -rf build
   ```
 
 * If you use Microsoft Visual C++ compiler, run:
@@ -97,19 +102,27 @@ anyway you want. However, before committing your code to your own repository or
 the Argtable3 official repository, please make sure your changes won't cause any
 compiler warning and can pass the unit tests included in the distribution.
 
-To build and test each default configuration (Debug, Release, MinSizeRel,
-RelWithDebInfo), you can run CMake and CTest on all supported platforms:
+To build and test each configuration (`Debug`, `Release`, `MinSizeRel`,
+`RelWithDebInfo`), you can run CMake and CTest on all supported platforms:
 
 ```
-$ mkdir build
-$ cd build
-$ cmake ..
+$ mkdir build_debug && cd build_debug
+$ cmake -DCMAKE_BUILD_TYPE=Debug ..
 $ cmake --build . --config Debug
 $ ctest -C Debug
+
+$ cd .. && mkdir build_release && cd build_release
+$ cmake -DCMAKE_BUILD_TYPE=Release ..
 $ cmake --build . --config Release
 $ ctest -C Release
+
+$ cd .. && mkdir build_minsizerel && cd build_minsizerel
+$ cmake -DCMAKE_BUILD_TYPE=MinSizeRel ..
 $ cmake --build . --config MinSizeRel
 $ ctest -C MinSizeRel
+
+$ cd .. && mkdir build_relwithdebinfo && cd build_relwithdebinfo
+$ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
 $ cmake --build . --config RelWithDebInfo
 $ ctest -C RelWithDebInfo
 ```
