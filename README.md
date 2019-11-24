@@ -159,12 +159,12 @@ To understand which unit tests are broken, you need to run the failed test
 programs (based on CuTest) directly:
 
 ```
-$ ./test_shared
+$ ./tests/test_shared
 .......................................................................................
 ...................................................................F.............
 
 There was 1 failure:
-1) test_argdstr_basic_001: D:\Projects\argtable3\tests\testargdstr.c:51: assert failed
+1) test_argdstr_basic_001: ~/Projects/argtable3/tests/testargdstr.c:51: assert failed
 
 !!!FAILURES!!!
 Runs: 168 Passes: 167 Fails: 1
