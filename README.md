@@ -127,6 +127,49 @@ $ cmake --build . --config RelWithDebInfo
 $ ctest -C RelWithDebInfo
 ```
 
+If you see the following screenshot, you know that some unit tests are broken:
+
+```
+$ make test
+Running tests...
+Test project ~/Projects/argtable3/build-gcc-release
+    Start 1: test_shared
+1/4 Test #1: test_shared ......................***Failed    0.07 sec
+    Start 2: test_static
+2/4 Test #2: test_static ......................***Failed    0.13 sec
+    Start 3: test_src
+3/4 Test #3: test_src .........................***Failed    0.13 sec
+    Start 4: test_amalgamation
+4/4 Test #4: test_amalgamation ................***Failed    0.14 sec
+
+0% tests passed, 4 tests failed out of 4
+
+Total Test time (real) =   0.48 sec
+
+The following tests FAILED:
+          1 - test_shared (Failed)
+          2 - test_static (Failed)
+          3 - test_src (Failed)
+          4 - test_amalgamation (Failed)
+Errors while running CTest
+make: *** [Makefile:97: test] Error 8
+```
+
+To understand which unit tests are broken, you need to run the failed test
+programs (based on CuTest) directly:
+
+```
+$ ./test_shared
+.......................................................................................
+...................................................................F.............
+
+There was 1 failure:
+1) test_argdstr_basic_001: D:\Projects\argtable3\tests\testargdstr.c:51: assert failed
+
+!!!FAILURES!!!
+Runs: 168 Passes: 167 Fails: 1
+```
+
 
 Authors
 -------
