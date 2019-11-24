@@ -28,7 +28,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 set(ARGTABLE3_PROJECT_NAME "argtable3")
 set(ARGTABLE3_PACKAGE_NAME "Argtable3")
@@ -87,17 +87,6 @@ set(ARGTABLE3_SRC_FILES
 # Platform specific settings for installation
 if(APPLE)
   set(CMAKE_MACOSX_RPATH ON)
-endif()
-
-if(UNIX OR MSYS OR MINGW)
-  include(GNUInstallDirs)
-  set(ARGTABLE3_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
-  set(ARGTABLE3_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
-  set(ARGTABLE3_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/cmake/argtable3)
-elseif(WIN32)
-  set(ARGTABLE3_INSTALL_LIBDIR "lib")
-  set(ARGTABLE3_INSTALL_INCLUDEDIR "include")
-  set(ARGTABLE3_INSTALL_CMAKEDIR "cmake")
 endif()
 
 add_subdirectory(src)
