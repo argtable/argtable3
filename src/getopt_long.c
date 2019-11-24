@@ -105,7 +105,8 @@ static const char illoptstring[] = "unknown option -- %s";
 
 #ifdef _WIN32
 
-/* Windows needs warnx().  We change the definition though:
+/* 
+ * Windows needs warnx().  We change the definition though:
  *  1. (another) global is defined, opterrmsg, which holds the error message
  *  2. errors are always printed out on stderr w/o the program name
  * Note that opterrmsg always gets set no matter what opterr is set to.  The
@@ -124,8 +125,10 @@ static void warnx(const char* fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
 
-    // Make sure opterrmsg is always zero-terminated despite the _vsnprintf()
-    // implementation specifics and manually suppress the warning.
+    /* 
+     * Make sure opterrmsg is always zero-terminated despite the _vsnprintf()
+     * implementation specifics and manually suppress the warning.
+     */
     memset(opterrmsg, 0, sizeof(opterrmsg));
     if (fmt != NULL)
 #if (defined(__STDC_LIB_EXT1__) && defined(__STDC_WANT_LIB_EXT1__)) || (defined(__STDC_SECURE_LIB__) && defined(__STDC_WANT_SECURE_LIB__))
@@ -136,7 +139,9 @@ static void warnx(const char* fmt, ...) {
 
     va_end(ap);
 
+#ifdef _MSC_VER
 #pragma warning(suppress : 6053)
+#endif
     fprintf(stderr, "%s\n", opterrmsg);
 }
 

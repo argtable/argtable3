@@ -28,7 +28,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 set(ARGTABLE3_PROJECT_NAME "argtable3")
 set(ARGTABLE3_PACKAGE_NAME "Argtable3")
@@ -84,11 +84,15 @@ set(ARGTABLE3_SRC_FILES
   ${PROJECT_SOURCE_DIR}/src/getopt_long.c
 )
 
+# Platform specific settings for installation
+if(APPLE)
+  set(CMAKE_MACOSX_RPATH ON)
+endif()
+
 add_subdirectory(src)
+add_subdirectory(examples)
 
 if(ARGTABLE3_ENABLE_TESTS)
   enable_testing()
   add_subdirectory(tests)
 endif()
-
-add_subdirectory(examples)

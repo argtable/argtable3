@@ -1,10 +1,11 @@
 # except for .gitignore
 !.gitignore
 
-build/
+build*/
 dist/
 .archive/
 .tags/
+.misc/
 
 # Ignore JetBrains and Eclipse IDE metadata and default build directories
 .vscode/

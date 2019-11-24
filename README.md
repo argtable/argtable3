@@ -4,21 +4,22 @@
 Introduction of Argtable3
 =========================
 
-**Argtable3** is an open source ANSI C library that parses GNU-style command-line
-options. It simplifies command-line parsing by defining a declarative-style API
-that you can use to specify what your command-line syntax looks like. Argtable3
-will automatically generate consistent error handling logic and textual
-descriptions of the command line syntax, which are essential but tedious to
-implement for a robust CLI program.
+**Argtable3** is an open source ANSI C library that parses GNU-style
+command-line options. It simplifies command-line parsing by defining a
+declarative-style API that you can use to specify what your command-line syntax
+looks like. Argtable3 will automatically generate consistent error handling
+logic and textual descriptions of the command line syntax, which are essential
+but tedious to implement for a robust CLI program.
 
 
 Quick Start
 -----------
 
-> We no longer provide the amalgamation source code (`argtable3.c` and `argtable3.h`)
-> in the source code repository. You can get the amalgamation distribution either
-> from the release page (`argtable-3.x.x-amalgamation.zip`), or generate the
-> distribution yourself by using the generator under the `tools` directory:
+> We no longer provide the amalgamation source code (`argtable3.c` and
+> `argtable3.h`) in the source code repository. You can get the amalgamation
+> distribution either from the release page (`argtable-3.x.x-amalgamation.zip`),
+> or generate the distribution yourself by using the generator under the `tools`
+> directory:
 > 
 > 1. Navigate to the `tools` directory.
 > 2. Run `./build dist`, which will generate the distribution under the `<ROOT>/dist`
@@ -28,22 +29,28 @@ Quick Start
 Argtable3 is a single-file ANSI-C library. All you have to do is adding
 `argtable3.c` to your projects, and including `argtable3.h` in your source code.
 
-To build the library, examples, and unit tests, use CMake to generate out-of-source build:
+To build the library, examples, and unit tests, use CMake to generate
+out-of-source build:
 
-* If you use GCC (Linux, MinGW, Cygwin), run:
+* If you use GCC (Linux, MacOSX, MinGW, Cygwin), run:
 
   ```
   $ mkdir build
   $ cd build
-  $ cmake ..
+  $ cmake -DCMAKE_BUILD_TYPE=Debug ..
   $ make
   $ make test
   ```
 
-  To cleanup, type:
+  Makefile-based generators in CMake only support one configuration at a time,
+  so you need to specify `CMAKE_BUILD_TYPE` to `Debug`, `Release`, `MinSizeRel`,
+  or `RelWithDebInfo`. To build multiple configurations, you need to create a
+  build directory for each configuraiton.
+  
+  To cleanup, run `make clean` or remove the build directory:
   
   ```
-  $ make clean
+  $ rm -rf build
   ```
 
 * If you use Microsoft Visual C++ compiler, run:
@@ -52,10 +59,12 @@ To build the library, examples, and unit tests, use CMake to generate out-of-sou
   $ mkdir build
   $ cd build
   $ cmake -G "Visual Studio 15 2017 Win64" ..
+  $ cmake --build . --config Debug
+  $ ctest -C Debug
   ```
 
-  Now you can use Visual Studio 2017 to open the generated solution. To cleanup,
-  just remove the `build` directory.
+  You can also use Visual Studio 2017 IDE to open the generated solution. To
+  cleanup, just remove the `build` directory.
 
 
 To build a tagged version, go to the project root directory, and use the
@@ -90,8 +99,33 @@ Unit Tests
 
 Argtable3 is a BSD-licensed open source library, so you can modify the library
 anyway you want. However, before committing your code to your own repository or
-the Argtable3 official repository, please make sure your changes can pass the
-unit tests included in the distribution.
+the Argtable3 official repository, please make sure your changes won't cause any
+compiler warning and can pass the unit tests included in the distribution.
+
+To build and test each configuration (`Debug`, `Release`, `MinSizeRel`,
+`RelWithDebInfo`), you can run CMake and CTest on all supported platforms:
+
+```
+$ mkdir build_debug && cd build_debug
+$ cmake -DCMAKE_BUILD_TYPE=Debug ..
+$ cmake --build . --config Debug
+$ ctest -C Debug
+
+$ cd .. && mkdir build_release && cd build_release
+$ cmake -DCMAKE_BUILD_TYPE=Release ..
+$ cmake --build . --config Release
+$ ctest -C Release
+
+$ cd .. && mkdir build_minsizerel && cd build_minsizerel
+$ cmake -DCMAKE_BUILD_TYPE=MinSizeRel ..
+$ cmake --build . --config MinSizeRel
+$ ctest -C MinSizeRel
+
+$ cd .. && mkdir build_relwithdebinfo && cd build_relwithdebinfo
+$ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+$ cmake --build . --config RelWithDebInfo
+$ ctest -C RelWithDebInfo
+```
 
 
 Authors

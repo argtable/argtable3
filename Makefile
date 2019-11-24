@@ -59,7 +59,7 @@ help:
 	@printf "  make help                   : display this message\n"
 	@printf "  make githead                : show the first 7-digit of the HEAD commit SHA-1\n"
 	@printf "\n"
-	@printf "The <TAG_NAME> format is: <MAJOR>.<MINOR>.<PATCH>.<BUILD>. The <BUILD> field is the\n"
+	@printf "The <TAG_NAME> format is: v<MAJOR>.<MINOR>.<PATCH>.<BUILD>. The <BUILD> field is the\n"
 	@printf "first 7-digit of the HEAD commit SHA-1, which you can get by running 'make githead'.\n"
 	@printf "Here are some <TAG_NAME> examples (use 'make taglist' to get all available tags):\n"
 	@printf "  v0.0.1.189221c\n"
