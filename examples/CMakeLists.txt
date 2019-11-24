@@ -30,10 +30,6 @@
 
 file(GLOB EXAMPLES_SOURCES RELATIVE ${PROJECT_SOURCE_DIR}/examples *.c)
 
-if(NOT ARGTABLE3_BUILD_STATIC_EXAMPLES)
-  add_definitions(-Dargtable3_IMPORTS)
-endif()
-
 if(UNIX)
   set(ARGTABLE3_EXTRA_LIBS m)
 endif()
