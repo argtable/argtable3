@@ -61,7 +61,7 @@ void arg_set_module_name(const char* name) {
 #if (defined(__STDC_LIB_EXT1__) && defined(__STDC_WANT_LIB_EXT1__)) || (defined(__STDC_SECURE_LIB__) && defined(__STDC_WANT_SECURE_LIB__))
     strncpy_s(s_module_name, slen + 1, name, slen);
 #else
-    strncpy(s_module_name, name, slen);
+    memcpy(s_module_name, name, slen);
 #endif
 }
 
@@ -81,7 +81,7 @@ void arg_set_module_version(int major, int minor, int patch, const char* tag) {
 #if (defined(__STDC_LIB_EXT1__) && defined(__STDC_WANT_LIB_EXT1__)) || (defined(__STDC_SECURE_LIB__) && defined(__STDC_WANT_SECURE_LIB__))
     strncpy_s(s_mod_ver_tag, slen_tag + 1, tag, slen_tag);
 #else
-    strncpy(s_mod_ver_tag, tag, slen_tag);
+    memcpy(s_mod_ver_tag, tag, slen_tag);
 #endif
 
     ds = arg_dstr_create();
@@ -98,7 +98,7 @@ void arg_set_module_version(int major, int minor, int patch, const char* tag) {
 #if (defined(__STDC_LIB_EXT1__) && defined(__STDC_WANT_LIB_EXT1__)) || (defined(__STDC_SECURE_LIB__) && defined(__STDC_WANT_SECURE_LIB__))
     strncpy_s(s_mod_ver, slen_ds + 1, arg_dstr_cstr(ds), slen_ds);
 #else
-    strncpy(s_mod_ver, arg_dstr_cstr(ds), slen_ds);
+    memcpy(s_mod_ver, arg_dstr_cstr(ds), slen_ds);
 #endif
 
     arg_dstr_destroy(ds);
@@ -153,8 +153,8 @@ void arg_cmd_register(const char* name, arg_cmdfn* proc, const char* description
     strncpy_s(cmd_info->name, ARG_CMD_NAME_LEN, name, strlen(name));
     strncpy_s(cmd_info->description, ARG_CMD_DESCRIPTION_LEN, description, strlen(description));
 #else
-    strncpy(cmd_info->name, name, strlen(name));
-    strncpy(cmd_info->description, description, strlen(description));
+    memcpy(cmd_info->name, name, strlen(name));
+    memcpy(cmd_info->description, description, strlen(description));
 #endif
 
     cmd_info->proc = proc;
@@ -166,7 +166,7 @@ void arg_cmd_register(const char* name, arg_cmdfn* proc, const char* description
 #if (defined(__STDC_LIB_EXT1__) && defined(__STDC_WANT_LIB_EXT1__)) || (defined(__STDC_SECURE_LIB__) && defined(__STDC_WANT_SECURE_LIB__))
     strncpy_s((char*)k, slen_name + 1, name, slen_name);
 #else
-    strncpy((char*)k, name, slen_name);
+    memcpy((char*)k, name, slen_name);
 #endif
 
     arg_hashtable_insert(s_hashtable, k, cmd_info);

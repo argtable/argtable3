@@ -174,12 +174,12 @@ char* arg_dstr_cstr(arg_dstr_t ds) /* Interpreter whose result to return. */
 
 void arg_dstr_cat(arg_dstr_t ds, const char* str) {
     setup_append_buf(ds, (int)strlen(str) + 1);
-    strncat(ds->data, str, strlen(str));
+    memcpy(ds->data + strlen(ds->data), str, strlen(str));
 }
 
 void arg_dstr_catc(arg_dstr_t ds, char c) {
     setup_append_buf(ds, 2);
-    strncat(ds->data, &c, 1);
+    memcpy(ds->data + strlen(ds->data), &c, 1);
 }
 
 /*
@@ -296,6 +296,7 @@ static void setup_append_buf(arg_dstr_t ds, int new_space) {
             total_space *= 2;
         }
         newbuf = (char*)xmalloc((unsigned)total_space);
+        memset(newbuf, 0, total_space);
         strcpy(newbuf, ds->data);
         if (ds->append_data != NULL) {
             xfree(ds->append_data);
