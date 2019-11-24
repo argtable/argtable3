@@ -46,7 +46,7 @@ CuSuite* get_argcmd_testsuite();
 CuSuite* get_arghashtable_testsuite();
 #endif
 
-void RunAllTests(void) {
+int RunAllTests(void) {
     CuString* output = CuStringNew();
     CuSuite* suite = CuSuiteNew();
 
@@ -67,9 +67,10 @@ void RunAllTests(void) {
     CuSuiteSummary(suite, output);
     CuSuiteDetails(suite, output);
     printf("%s\n", output->buffer);
+
+    return suite->failCount;
 }
 
 int main(void) {
-    RunAllTests();
-    return 0;
+    return RunAllTests();
 }
