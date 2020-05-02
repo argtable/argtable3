@@ -16,3 +16,5 @@ dist/
 Release/
 Debug/
 cmake-build-*/
+docs/_build/
+docs/xml/
