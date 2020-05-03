@@ -20,7 +20,7 @@ Quick Start
 > distribution either from the release page (`argtable-3.x.x-amalgamation.zip`),
 > or generate the distribution yourself by using the generator under the `tools`
 > directory:
-> 
+>
 > 1. Navigate to the `tools` directory.
 > 2. Run `./build dist`, which will generate the distribution under the `<ROOT>/dist`
 >    directory.
@@ -46,9 +46,9 @@ out-of-source build:
   so you need to specify `CMAKE_BUILD_TYPE` to `Debug`, `Release`, `MinSizeRel`,
   or `RelWithDebInfo`. To build multiple configurations, you need to create a
   build directory for each configuraiton.
-  
+
   To cleanup, run `make clean` or remove the build directory:
-  
+
   ```
   $ rm -rf build
   ```
@@ -87,11 +87,38 @@ You will find the shared library (or Windows DLL), static library, and the
 amalgamation distribution under the build directory.
 
 
-Documentation and Examples
---------------------------
+Documentation
+-------------
 
 To learn how to use the Argtable3 API, you can see the documentation on the web
-site, or examples in the `examples` folder.
+site, study examples in the `examples` directory, or even check the unit tests
+in the `tests` directory.
+
+To build a local copy of the documentation, you need to install the following
+tools:
+
+* [Sphinx](https://www.sphinx-doc.org): A documentation generator based on the
+  reStructuredText markup format.
+* [Read the Docs Sphinx Theme](https://sphinx-rtd-theme.readthedocs.io): A
+  Sphinx theme designed to look modern and be mobile-friendly.
+* [Breathe](https://breathe.readthedocs.io): A bridge between the Sphinx and
+  Doxygen documentation systems.
+* [Doxygen](http://www.doxygen.nl/): A documentation generator for C/C++
+  sources.
+
+Go to the `docs` directory and run the `doxygen` command to generate Doxygen XML
+output, which will be saved in the `docs/xml` directory:
+
+```
+$ doxygen
+```
+
+Run the `make` batch script and you will see the documentation in the
+`docs/_build/html` directory.
+
+```
+$ make html
+```
 
 
 Unit Tests
@@ -187,7 +214,7 @@ The project homepage of argtable 2.x is http://argtable.sourceforge.net/
 Here is a list of contributors who have helped to improve argtable:
 
 - **Nina Clemson**: Editing the original argtable-1.0 documentation.
-- **Livio Bertacco**: For bug fixes and the argtable-2.x Visual C++ Makefiles.                              
+- **Livio Bertacco**: For bug fixes and the argtable-2.x Visual C++ Makefiles.
 - **Justin Dearing**: For bug fixes and Windows DLL support, plus code support for the Open Watcom compiler and help with the Mac OS X configuration.
 - **Asa Packer**: Contributing bug fixes and upgrades to the Visual C++ Makefiles.
 - **Danilo Cicerone**: For the Italian translation of "Introduction to Argtable-2x" on http://www.digitazero.org.
@@ -206,41 +233,3 @@ Here is a list of contributors who have helped to improve argtable:
 - **Alexander Lindert**: For extensions to the parser to support hex, octal and binary integer formats as well as KB/MB/GB suffixes.
 - **Rob Zaborowski**: Providing build configuration files for CMake.
 - **Moczik Gabor**: For bug fixes relating to the parsing of filepaths and filename extensions.
-
-Argtable 2.x uses `getopt` from GNU, which is LGPL licensed. In order to switch to BSD, we replaced GNU `getopt` with NetBSD `getopt`. We really appreciate this high quality library that lays the foundation of Argtable 3.x and here is its copyright notice:
-
-```
-Copyright (c) 2000 The NetBSD Foundation, Inc.
-All rights reserved.
-
-This code is derived from software contributed to The NetBSD Foundation
-by Dieter Baron and Thomas Klausner.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-1. Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-3. All advertising materials mentioning features or use of this software
-   must display the following acknowledgement:
-       This product includes software developed by the NetBSD
-       Foundation, Inc. and its contributors.
-4. Neither the name of The NetBSD Foundation nor the names of its
-   contributors may be used to endorse or promote products derived
-   from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE NETBSD FOUNDATION, INC. AND CONTRIBUTORS
-``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
-TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR CONTRIBUTORS
-BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
-```
