@@ -78,6 +78,7 @@ void test_argcmd_basic_001(CuTest* tc) {
     CuAssertIntEquals(tc, 1, err);
     CuAssertTrue(tc, strcmp(arg_dstr_cstr(res), "cmd1 fail") == 0);
 
+    arg_dstr_destroy(res);
     arg_cmd_uninit();
 }
 

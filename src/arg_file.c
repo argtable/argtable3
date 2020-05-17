@@ -92,7 +92,7 @@ static const char* arg_extension(const char* basename) {
         result = basename + strlen(basename);
 
     /* special case: empty extensions (eg "foo.","foo..") are not considered as true extensions */
-    if (basename && result && result[1] == '\0')
+    if (basename && result && strlen(result) == 1)
         result = basename + strlen(basename);
 
     return result;
