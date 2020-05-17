@@ -67,8 +67,12 @@ int RunAllTests(void) {
     CuSuiteSummary(suite, output);
     CuSuiteDetails(suite, output);
     printf("%s\n", output->buffer);
+    CuStringDelete(output);
 
-    return suite->failCount;
+    int failCount = suite->failCount;
+    CuSuiteDelete(suite);
+
+    return failCount;
 }
 
 int main(void) {
