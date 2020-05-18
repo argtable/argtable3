@@ -198,6 +198,68 @@ Runs: 168 Passes: 167 Fails: 1
 ```
 
 
+Memory Issue Detection with ASan and Valgrind
+---------------------------------------------
+
+In order to prevent common memory issues in C, such as memory leak and buffer
+overflow, we should use [ASan
+(AddressSanitizer)](https://en.wikipedia.org/wiki/AddressSanitizer) and
+[Valgrind](https://en.wikipedia.org/wiki/Valgrind) to detect as many
+memory-related problems as possible before committing our code.
+
+To use ASan, we need to add `-fsanitize=address` to the `CFLAGS` variable when
+we run `cmake` to build the Debug version. Then use the
+`CTEST_OUTPUT_ON_FAILURE` variable to output ASan error messages when we run
+unit tests:
+
+```
+$ mkdir build
+$ cd build
+$ CFLAGS="-fsanitize=address" cmake -DCMAKE_BUILD_TYPE=Debug ..
+$ make
+$ CTEST_OUTPUT_ON_FAILURE=1 make test
+Running tests...
+Test project /home/tomghuang/Projects/argtable3/build
+    Start 1: test_shared
+1/4 Test #1: test_shared ......................   Passed    3.45 sec
+    Start 2: test_static
+2/4 Test #2: test_static ......................   Passed    3.31 sec
+    Start 3: test_src
+3/4 Test #3: test_src .........................   Passed    3.06 sec
+    Start 4: test_amalgamation
+4/4 Test #4: test_amalgamation ................   Passed    3.29 sec
+
+100% tests passed, 0 tests failed out of 4
+
+Total Test time (real) =  13.12 sec
+```
+
+To use Valgrind, just use `valgrind` to run the unit test programs:
+
+```
+$ valgrind ./tests/test_src
+==23290== Memcheck, a memory error detector
+==23290== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==23290== Using Valgrind-3.11.0 and LibVEX; rerun with -h for copyright info
+==23290== Command: ./test_src
+==23290==
+......................................................................................
+..................................................................................
+
+OK (168 tests)
+
+==23290==
+==23290== HEAP SUMMARY:
+==23290==     in use at exit: 0 bytes in 0 blocks
+==23290==   total heap usage: 102,085 allocs, 102,085 frees, 5,589,475 bytes allocated
+==23290==
+==23290== All heap blocks were freed -- no leaks are possible
+==23290==
+==23290== For counts of detected and suppressed errors, rerun with: -v
+==23290== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+```
+
+
 Authors
 -------
 
