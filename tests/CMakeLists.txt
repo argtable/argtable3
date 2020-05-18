@@ -28,6 +28,10 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
+if(ARGTABLE3_ENABLE_ARG_REX_DEBUG)
+  add_compile_definitions(ARG_REX_DEBUG)
+endif()
+
 set(TEST_PUBLIC_SRC_FILES
   testall.c
   testarglit.c

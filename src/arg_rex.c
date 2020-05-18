@@ -304,7 +304,7 @@ struct arg_rex* arg_rexn(const char* shortopts,
 #define _SC(x) (x)
 #endif
 
-#ifdef _DEBUG
+#ifdef ARG_REX_DEBUG
 #include <stdio.h>
 
 static const TRexChar* g_nnames[] = {_SC("NONE"),    _SC("OP_GREEDY"), _SC("OP_OR"),     _SC("OP_EXPR"),   _SC("OP_NOCAPEXPR"),
@@ -912,12 +912,10 @@ TRex* trex_compile(const TRexChar* pattern, const TRexChar** error, int flags) {
         exp->_nodes[exp->_first].left = res;
         if (*exp->_p != '\0')
             trex_error(exp, _SC("unexpected character"));
-#ifdef _DEBUG
+#ifdef ARG_REX_DEBUG
         {
             int nsize, i;
-            TRexNode* t;
             nsize = exp->_nsize;
-            t = &exp->_nodes[0];
             scprintf(_SC("\n"));
             for (i = 0; i < nsize; i++) {
                 if (exp->_nodes[i].type > MAX_CHAR)
