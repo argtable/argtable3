@@ -208,9 +208,11 @@ overflow, we should use [ASan
 memory-related problems as possible before committing our code.
 
 To use ASan, we need to add `-fsanitize=address` to the `CFLAGS` variable when
-we run `cmake` to build the Debug version. Then use the
-`CTEST_OUTPUT_ON_FAILURE` variable to output ASan error messages when we run
-unit tests:
+we run `cmake` to build the **Debug** version. We should use the Debug version
+because CMake will add `-g` to `CFLAGS` and prevent optimizing the code, so we
+can see accurate file names and line numbers in ASan error messages. After
+building the code, set the `CTEST_OUTPUT_ON_FAILURE` variable to `1` to output
+error messages when we run unit tests:
 
 ```
 $ mkdir build
