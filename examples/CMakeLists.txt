@@ -29,7 +29,7 @@
 ################################################################################
 
 if(ARGTABLE3_ENABLE_ARG_REX_DEBUG)
-  add_compile_definitions(ARG_REX_DEBUG)
+  add_definitions(-DARG_REX_DEBUG)
 endif()
 
 file(GLOB EXAMPLES_SOURCES RELATIVE ${PROJECT_SOURCE_DIR}/examples *.c)

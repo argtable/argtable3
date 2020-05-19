@@ -44,10 +44,10 @@ else(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 if(ARGTABLE3_ENABLE_ARG_REX_DEBUG)
-  add_compile_definitions(ARG_REX_DEBUG)
+  add_definitions(-DARG_REX_DEBUG)
 endif()
 
-add_compile_definitions(_XOPEN_SOURCE=700)
+add_definitions(-D_XOPEN_SOURCE=700)
 
 if(WIN32)
   set(COMPANY_NAME "The Argtable3 Project")
