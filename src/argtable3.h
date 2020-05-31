@@ -179,10 +179,6 @@ ARG_EXTERN struct arg_lit* arg_lit0(const char* shortopts, const char* longopts,
 ARG_EXTERN struct arg_lit* arg_lit1(const char* shortopts, const char* longopts, const char* glossary);
 ARG_EXTERN struct arg_lit* arg_litn(const char* shortopts, const char* longopts, int mincount, int maxcount, const char* glossary);
 
-ARG_EXTERN struct arg_key* arg_key0(const char* keyword, int flags, const char* glossary);
-ARG_EXTERN struct arg_key* arg_key1(const char* keyword, int flags, const char* glossary);
-ARG_EXTERN struct arg_key* arg_keyn(const char* keyword, int flags, int mincount, int maxcount, const char* glossary);
-
 ARG_EXTERN struct arg_int* arg_int0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_int* arg_int1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_int* arg_intn(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary);
