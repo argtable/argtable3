@@ -38,7 +38,7 @@ project(${ARGTABLE3_PROJECT_NAME})
 option(ARGTABLE3_ENABLE_CONAN "Enable Conan dependency manager" OFF)
 option(ARGTABLE3_ENABLE_TESTS "Enable unit tests" ON)
 option(ARGTABLE3_ENABLE_ARG_REX_DEBUG "Enable arg_rex debug output" OFF)
-option(ARGTABLE3_BUILD_STATIC_EXAMPLES "Build examples with the static argtable3 library" OFF)
+option(ARGTABLE3_BUILD_STATIC_EXAMPLES "Build examples with the static argtable3 library" ON)
 
 get_filename_component(VERSION_TAG_PATH "version.tag" ABSOLUTE)
 if(EXISTS ${VERSION_TAG_PATH})
