@@ -39,6 +39,7 @@ option(ARGTABLE3_ENABLE_CONAN "Enable Conan dependency manager" OFF)
 option(ARGTABLE3_ENABLE_TESTS "Enable unit tests" ON)
 option(ARGTABLE3_ENABLE_ARG_REX_DEBUG "Enable arg_rex debug output" OFF)
 option(ARGTABLE3_BUILD_STATIC_EXAMPLES "Build examples with the static argtable3 library" ON)
+option(ARGTABLE3_REPLACE_GETOPT "Replace getopt in the system C library" ON)
 
 get_filename_component(VERSION_TAG_PATH "version.tag" ABSOLUTE)
 if(EXISTS ${VERSION_TAG_PATH})
@@ -82,7 +83,7 @@ set(ARGTABLE3_SRC_FILES
   ${PROJECT_SOURCE_DIR}/src/arg_str.c
   ${PROJECT_SOURCE_DIR}/src/arg_utils.c
   ${PROJECT_SOURCE_DIR}/src/argtable3.c
-  ${PROJECT_SOURCE_DIR}/src/getopt_long.c
+  ${PROJECT_SOURCE_DIR}/src/arg_getopt_long.c
 )
 
 # Platform specific settings for installation

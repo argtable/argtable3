@@ -47,6 +47,11 @@ if(ARGTABLE3_ENABLE_ARG_REX_DEBUG)
   add_definitions(-DARG_REX_DEBUG)
 endif()
 
+if(NOT ARGTABLE3_REPLACE_GETOPT)
+  add_definitions(-DARG_REPLACE_GETOPT=0)
+  add_definitions(-DREPLACE_GETOPT)
+endif()
+
 add_definitions(-D_XOPEN_SOURCE=700)
 
 if(WIN32)
@@ -68,7 +73,7 @@ endif()
 target_include_directories(argtable3 PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
 add_library(argtable3_static STATIC ${ARGTABLE3_SRC_FILES})
-target_include_directories(argtable3 PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(argtable3_static PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
 set_target_properties(argtable3 argtable3_static PROPERTIES
   VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}

@@ -47,7 +47,7 @@ extern "C" {
 
 #ifndef ARG_REPLACE_GETOPT
 #define ARG_REPLACE_GETOPT 1 /* use the embedded getopt as the system getopt(3) */
-#endif                       /* ARG_REPLACE_GETOPT */
+#endif /* ARG_REPLACE_GETOPT */
 
 /* bit masks for arg_hdr.flag */
 enum { ARG_TERMINATOR = 0x1, ARG_HASVALUE = 0x2, ARG_HASOPTVALUE = 0x4 };

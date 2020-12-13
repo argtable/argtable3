@@ -32,6 +32,11 @@ if(ARGTABLE3_ENABLE_ARG_REX_DEBUG)
   add_definitions(-DARG_REX_DEBUG)
 endif()
 
+if(NOT ARGTABLE3_REPLACE_GETOPT)
+  add_definitions(-DARG_REPLACE_GETOPT=0)
+  add_definitions(-DREPLACE_GETOPT)
+endif()
+
 file(GLOB EXAMPLES_SOURCES RELATIVE ${PROJECT_SOURCE_DIR}/examples *.c)
 
 if(UNIX)

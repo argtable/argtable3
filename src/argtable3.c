@@ -34,7 +34,15 @@
 
 #ifndef ARG_AMALGAMATION
 #include "argtable3_private.h"
-#include "getopt.h"
+#if ARG_REPLACE_GETOPT == 1
+#include "arg_getopt.h"
+#else
+#include <getopt.h>
+#endif
+#else
+#if ARG_REPLACE_GETOPT == 0
+#include <getopt.h>
+#endif
 #endif
 
 #ifdef _WIN32

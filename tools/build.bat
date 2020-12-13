@@ -72,8 +72,8 @@ cat -B ^
     ..\src\arg_utils.c ^
     ..\src\arg_hashtable.c ^
     ..\src\arg_dstr.c ^
-    ..\src\getopt.h ^
-    ..\src\getopt_long.c ^
+    ..\src\arg_getopt.h ^
+    ..\src\arg_getopt_long.c ^
     ..\src\arg_date.c ^
     ..\src\arg_dbl.c ^
     ..\src\arg_end.c ^
