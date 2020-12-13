@@ -30,7 +30,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-if [ "$1" = "dist" ]; then
+dist () {
   cat amalgamation-header.txt > argtable3.c
   cat ../src/argtable3_private.h \
       ../src/arg_utils.c \
@@ -51,7 +51,6 @@ if [ "$1" = "dist" ]; then
       ../src/argtable3.c \
       >> argtable3.c
 
-  sed -i "s/\r$//" argtable3.c
   mkdir -p ../dist
   mv argtable3.c ../dist
   cp ../src/argtable3.h ../dist
@@ -64,10 +63,36 @@ if [ "$1" = "dist" ]; then
   cp -r ../examples ../dist
   rm -rf ../dist/examples/bin
   rm -rf ../dist/examples/build
+  find ../dist -name '*' | xargs dos2unix
+}
 
+get_ver () {
+  local argtable_ver
+  if [ -f "../version.tag" ]; then
+    argtable_ver=$(<../version.tag)
+  else
+    argtable_ver="master"
+  fi
+  echo "$argtable_ver"
+}
+
+if [ "$1" = "dist" ]; then
+  dist
   exit 0
 elif [ "$1" = "cleanall" ]; then
   rm -rf ../dist
+  exit 0
+elif [ "$1" = "tar" ]; then
+  dist
+  ver=$(get_ver)
+  find ../dist -name '*' | xargs dos2unix
+  tar -cvzf argtable-$ver-amalgamation.tar.gz ../dist
+  exit 0
+elif [ "$1" = "zip" ]; then
+  dist
+  ver=$(get_ver)
+  find ../dist -name '*' | xargs unix2dos
+  zip -r argtable-$ver-amalgamation.zip ../dist
   exit 0
 elif [ "$1" = "help" ]; then
   echo "Argtable Amalgamation Package Build Script"

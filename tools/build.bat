@@ -39,6 +39,10 @@ if "%BUILD_CMD%"=="dist" (
     goto dist
 ) else if "%BUILD_CMD%"=="cleanall" (
     goto build_cleanall
+) else if "%BUILD_CMD%"=="tar" (
+    goto build_tar
+) else if "%BUILD_CMD%"=="zip" (
+    goto build_zip
 ) else if "%BUILD_CMD%"=="help" (
     goto usage
 ) else (
@@ -87,7 +91,6 @@ cat -B ^
     ..\src\argtable3.c ^
     >> argtable3.c
 
-sed -i "s/$/\r/" argtable3.c
 if not exist ..\dist mkdir ..\dist
 move argtable3.c ..\dist
 copy ..\src\argtable3.h ..\dist
@@ -96,6 +99,32 @@ copy ..\README.md ..\dist
 xcopy ..\tests ..\dist\tests\ /H /K /Y
 copy ..\src\argtable3_private.h ..\dist\tests
 xcopy ..\examples ..\dist\examples\ /H /K /Y
+for /R ..\dist %%G in (*) do unix2dos "%%G"
+goto :EOF
+
+
+:get_ver
+if exist ..\version.tag (
+set /p ARGTABLE_VER=<..\version.tag
+) else (
+set ARGTABLE_VER=master
+)
+goto :EOF
+
+
+:build_tar
+call:dist
+call:get_ver
+for /R ..\dist %%G in (*) do dos2unix "%%G"
+tar -cvzf argtable-%ARGTABLE_VER%-amalgamation.tar.gz ..\dist
+goto :EOF
+
+
+:build_zip
+call:dist
+call:get_ver
+for /R ..\dist %%G in (*) do unix2dos "%%G"
+zip -r argtable-%ARGTABLE_VER%-amalgamation.zip ..\dist
 goto :EOF
 
 
