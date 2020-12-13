@@ -37,6 +37,10 @@ if(NOT ARGTABLE3_REPLACE_GETOPT)
   add_definitions(-DREPLACE_GETOPT)
 endif()
 
+if(ARGTABLE3_LONG_ONLY)
+  add_definitions(-DARG_LONG_ONLY)
+endif()
+
 file(GLOB EXAMPLES_SOURCES RELATIVE ${PROJECT_SOURCE_DIR}/examples *.c)
 
 if(UNIX)

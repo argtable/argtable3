@@ -37,6 +37,10 @@ if(NOT ARGTABLE3_REPLACE_GETOPT)
   add_definitions(-DREPLACE_GETOPT)
 endif()
 
+if(ARGTABLE3_LONG_ONLY)
+  add_definitions(-DARG_LONG_ONLY)
+endif()
+
 set(TEST_PUBLIC_SRC_FILES
   testall.c
   testarglit.c

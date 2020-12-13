@@ -251,7 +251,11 @@ static void arg_parse_tagged(int argc, char** argv, struct arg_hdr** table, stru
     opterr = 0;
 
     /* fetch and process args using getopt_long */
+#ifdef ARG_LONG_ONLY
+    while ((copt = getopt_long_only(argc, argv, shortoptions, longoptions->options, NULL)) != -1) {
+#else
     while ((copt = getopt_long(argc, argv, shortoptions, longoptions->options, NULL)) != -1) {
+#endif
         /*
            printf("optarg='%s'\n",optarg);
            printf("optind=%d\n",optind);

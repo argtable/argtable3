@@ -52,6 +52,10 @@ if(NOT ARGTABLE3_REPLACE_GETOPT)
   add_definitions(-DREPLACE_GETOPT)
 endif()
 
+if(ARGTABLE3_LONG_ONLY)
+  add_definitions(-DARG_LONG_ONLY)
+endif()
+
 add_definitions(-D_XOPEN_SOURCE=700)
 
 if(WIN32)

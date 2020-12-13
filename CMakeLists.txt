@@ -40,6 +40,7 @@ option(ARGTABLE3_ENABLE_TESTS "Enable unit tests" ON)
 option(ARGTABLE3_ENABLE_ARG_REX_DEBUG "Enable arg_rex debug output" OFF)
 option(ARGTABLE3_BUILD_STATIC_EXAMPLES "Build examples with the static argtable3 library" ON)
 option(ARGTABLE3_REPLACE_GETOPT "Replace getopt in the system C library" ON)
+option(ARGTABLE3_LONG_ONLY "Use getopt_long_only instead of getopt_long" OFF)
 
 get_filename_component(VERSION_TAG_PATH "version.tag" ABSOLUTE)
 if(EXISTS ${VERSION_TAG_PATH})
