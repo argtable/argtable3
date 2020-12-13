@@ -96,7 +96,11 @@ typedef struct {
     int len;
 } TRexMatch;
 
+#ifdef __GNUC__
+TREX_API TRex* trex_compile(const TRexChar* pattern, const TRexChar** error, int flags) __attribute__((optimize(0)));
+#else
 TREX_API TRex* trex_compile(const TRexChar* pattern, const TRexChar** error, int flags);
+#endif
 TREX_API void trex_free(TRex* exp);
 TREX_API TRexBool trex_match(TRex* exp, const TRexChar* text);
 TREX_API TRexBool trex_search(TRex* exp, const TRexChar* text, const TRexChar** out_begin, const TRexChar** out_end);
