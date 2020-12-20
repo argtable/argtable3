@@ -92,7 +92,7 @@ typedef int(arg_comparefn)(const void* k1, const void* k2);
  * if desired, but the original intention is for them to be set by the
  * constructor and left unaltered.
  */
-struct arg_hdr {
+typedef struct arg_hdr {
     char flag;             /* Modifier flags: ARG_TERMINATOR, ARG_HASVALUE. */
     const char* shortopts; /* String defining the short options */
     const char* longopts;  /* String defiing the long options */
@@ -106,64 +106,64 @@ struct arg_hdr {
     arg_checkfn* checkfn;  /* Pointer to parent arg_xxx check function */
     arg_errorfn* errorfn;  /* Pointer to parent arg_xxx error function */
     void* priv;            /* Pointer to private header data for use by arg_xxx functions */
-};
+} arg_hdr_t;
 
-struct arg_rem {
+typedef struct arg_rem {
     struct arg_hdr hdr; /* The mandatory argtable header struct */
-};
+} arg_rem_t;
 
-struct arg_lit {
+typedef struct arg_lit {
     struct arg_hdr hdr; /* The mandatory argtable header struct */
     int count;          /* Number of matching command line args */
-};
+} arg_lit_t;
 
-struct arg_int {
+typedef struct arg_int {
     struct arg_hdr hdr; /* The mandatory argtable header struct */
     int count;          /* Number of matching command line args */
     int* ival;          /* Array of parsed argument values */
-};
+} arg_int_t;
 
-struct arg_dbl {
+typedef struct arg_dbl {
     struct arg_hdr hdr; /* The mandatory argtable header struct */
     int count;          /* Number of matching command line args */
     double* dval;       /* Array of parsed argument values */
-};
+} arg_dbl_t;
 
-struct arg_str {
+typedef struct arg_str {
     struct arg_hdr hdr; /* The mandatory argtable header struct */
     int count;          /* Number of matching command line args */
     const char** sval;  /* Array of parsed argument values */
-};
+} arg_str_t;
 
-struct arg_rex {
+typedef struct arg_rex {
     struct arg_hdr hdr; /* The mandatory argtable header struct */
     int count;          /* Number of matching command line args */
     const char** sval;  /* Array of parsed argument values */
-};
+} arg_rex_t;
 
-struct arg_file {
+typedef struct arg_file {
     struct arg_hdr hdr;     /* The mandatory argtable header struct */
     int count;              /* Number of matching command line args*/
     const char** filename;  /* Array of parsed filenames  (eg: /home/foo.bar) */
     const char** basename;  /* Array of parsed basenames  (eg: foo.bar) */
     const char** extension; /* Array of parsed extensions (eg: .bar) */
-};
+} arg_file_t;
 
-struct arg_date {
+typedef struct arg_date {
     struct arg_hdr hdr; /* The mandatory argtable header struct */
     const char* format; /* strptime format string used to parse the date */
     int count;          /* Number of matching command line args */
     struct tm* tmval;   /* Array of parsed time values */
-};
+} arg_date_t;
 
 enum { ARG_ELIMIT = 1, ARG_EMALLOC, ARG_ENOMATCH, ARG_ELONGOPT, ARG_EMISSARG };
-struct arg_end {
+typedef struct arg_end {
     struct arg_hdr hdr;  /* The mandatory argtable header struct */
     int count;           /* Number of errors encountered */
     int* error;          /* Array of error codes */
     void** parent;       /* Array of pointers to offending arg_xxx struct */
     const char** argval; /* Array of pointers to offending argv[] string */
-};
+} arg_end_t;
 
 typedef struct arg_cmd_info {
     char name[ARG_CMD_NAME_LEN];
