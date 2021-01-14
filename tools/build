@@ -63,7 +63,6 @@ dist () {
   cp -r ../examples ../dist
   rm -rf ../dist/examples/bin
   rm -rf ../dist/examples/build
-  find ../dist -name '*' | xargs dos2unix
 }
 
 get_ver () {
