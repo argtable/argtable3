@@ -85,13 +85,15 @@ elif [ "$1" = "cleanall" ]; then
 elif [ "$1" = "tar" ]; then
   dist
   ver=$(get_ver)
-  tar -cvzf argtable-$ver-amalgamation.tar.gz ../dist
+  tar -cvzf argtable-$ver-amalgamation.tar.gz -C .. dist
   exit 0
 elif [ "$1" = "zip" ]; then
   dist
   ver=$(get_ver)
   find ../dist -name '*' | xargs unix2dos
-  zip -r argtable-$ver-amalgamation.zip ../dist
+  pushd ..
+  zip -r tools/argtable-$ver-amalgamation.zip dist
+  popd
   exit 0
 elif [ "$1" = "help" ]; then
   echo "Argtable Amalgamation Package Build Script"

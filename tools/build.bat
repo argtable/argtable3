@@ -118,14 +118,16 @@ goto :EOF
 call:dist
 call:get_ver
 for /R ..\dist %%G in (*) do dos2unix "%%G"
-tar -cvzf argtable-%ARGTABLE_VER%-amalgamation.tar.gz ..\dist
+tar -cvzf argtable-%ARGTABLE_VER%-amalgamation.tar.gz -C .. dist
 goto :EOF
 
 
 :build_zip
 call:dist
 call:get_ver
-zip -r argtable-%ARGTABLE_VER%-amalgamation.zip ..\dist
+pushd ..
+zip -r tools\argtable-%ARGTABLE_VER%-amalgamation.zip dist
+popd
 goto :EOF
 
 
