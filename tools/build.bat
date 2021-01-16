@@ -62,9 +62,11 @@ echo.
 echo Usage: build ^<command^>
 echo.
 echo Available commands:
-echo   dist         build the amalgamation package
-echo   cleanall     delete all generated folders/files
-echo   help         display usage information
+echo   dist      build the amalgamation package
+echo   tar       build the amalgamation package in UNIX archive format
+echo   zip       build the amalgamation package in Windows archive format
+echo   cleanall  delete all generated folders/files
+echo   help      display usage information
 goto :EOF
 
 
@@ -99,6 +101,7 @@ copy ..\README.md ..\dist
 xcopy ..\tests ..\dist\tests\ /H /K /Y
 copy ..\src\argtable3_private.h ..\dist\tests
 xcopy ..\examples ..\dist\examples\ /H /K /Y
+for /R ..\dist %%G in (*) do unix2dos "%%G"
 goto :EOF
 
 
@@ -122,7 +125,6 @@ goto :EOF
 :build_zip
 call:dist
 call:get_ver
-for /R ..\dist %%G in (*) do unix2dos "%%G"
 zip -r argtable-%ARGTABLE_VER%-amalgamation.zip ..\dist
 goto :EOF
 

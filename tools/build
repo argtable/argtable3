@@ -63,6 +63,7 @@ dist () {
   cp -r ../examples ../dist
   rm -rf ../dist/examples/bin
   rm -rf ../dist/examples/build
+  find ../dist -name '*' | xargs dos2unix
 }
 
 get_ver () {
@@ -84,7 +85,6 @@ elif [ "$1" = "cleanall" ]; then
 elif [ "$1" = "tar" ]; then
   dist
   ver=$(get_ver)
-  find ../dist -name '*' | xargs dos2unix
   tar -cvzf argtable-$ver-amalgamation.tar.gz ../dist
   exit 0
 elif [ "$1" = "zip" ]; then
@@ -103,9 +103,11 @@ elif [ "$1" = "help" ]; then
   echo "Usage: build <command>"
   echo ""
   echo "Available commands:"
-  echo "  dist         build the amalgamation package"
-  echo "  cleanall     delete all generated folders/files"
-  echo "  help         display usage information"
+  echo "  dist      build the amalgamation package"
+  echo "  tar       build the amalgamation package in UNIX archive format"
+  echo "  zip       build the amalgamation package in Windows archive format"
+  echo "  cleanall  delete all generated folders/files"
+  echo "  help      display usage information"
   exit 0
 else
   echo "Unknown command"
