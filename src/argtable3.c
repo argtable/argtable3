@@ -572,8 +572,7 @@ static void arg_cat_option(char* dest, size_t ndest, const char* shortopts, cons
     }
 }
 
-static void
-arg_cat_optionv(char* dest, size_t ndest, const char* shortopts, const char* longopts, const char* datatype, int optvalue, const char* separator) {
+static void arg_cat_optionv(char* dest, size_t ndest, const char* shortopts, const char* longopts, const char* datatype, int optvalue, const char* separator) {
     separator = separator ? separator : "";
 
     if (shortopts) {
@@ -643,7 +642,7 @@ void arg_print_option_ds(arg_dstr_t ds, const char* shortopts, const char* longo
     suffix = suffix ? suffix : "";
 
     /* there is no way of passing the proper optvalue for optional argument values here, so we must ignore it */
-    arg_cat_optionv(syntax, sizeof(syntax)-1, shortopts, longopts, datatype, 0, "|");
+    arg_cat_optionv(syntax, sizeof(syntax) - 1, shortopts, longopts, datatype, 0, "|");
 
     arg_dstr_cat(ds, syntax);
     arg_dstr_cat(ds, (char*)suffix);
@@ -730,7 +729,7 @@ void arg_print_syntax_ds(arg_dstr_t ds, void** argtable, const char* suffix) {
         shortopts = table[tabindex]->shortopts;
         longopts = table[tabindex]->longopts;
         datatype = table[tabindex]->datatype;
-        arg_cat_option(syntax, sizeof(syntax)-1, shortopts, longopts, datatype, table[tabindex]->flag & ARG_HASOPTVALUE);
+        arg_cat_option(syntax, sizeof(syntax) - 1, shortopts, longopts, datatype, table[tabindex]->flag & ARG_HASOPTVALUE);
 
         if (strlen(syntax) > 0) {
             /* print mandatory instances of this option */
@@ -789,7 +788,7 @@ void arg_print_syntaxv_ds(arg_dstr_t ds, void** argtable, const char* suffix) {
         shortopts = table[tabindex]->shortopts;
         longopts = table[tabindex]->longopts;
         datatype = table[tabindex]->datatype;
-        arg_cat_optionv(syntax, sizeof(syntax)-1, shortopts, longopts, datatype, table[tabindex]->flag & ARG_HASOPTVALUE, "|");
+        arg_cat_optionv(syntax, sizeof(syntax) - 1, shortopts, longopts, datatype, table[tabindex]->flag & ARG_HASOPTVALUE, "|");
 
         /* print mandatory options */
         for (i = 0; i < table[tabindex]->mincount; i++) {
@@ -846,7 +845,7 @@ void arg_print_glossary_ds(arg_dstr_t ds, void** argtable, const char* format) {
             const char* longopts = table[tabindex]->longopts;
             const char* datatype = table[tabindex]->datatype;
             const char* glossary = table[tabindex]->glossary;
-            arg_cat_optionv(syntax, sizeof(syntax)-1, shortopts, longopts, datatype, table[tabindex]->flag & ARG_HASOPTVALUE, ", ");
+            arg_cat_optionv(syntax, sizeof(syntax) - 1, shortopts, longopts, datatype, table[tabindex]->flag & ARG_HASOPTVALUE, ", ");
             arg_dstr_catf(ds, format, syntax, glossary);
         }
     }
@@ -977,7 +976,7 @@ void arg_print_glossary_gnu_ds(arg_dstr_t ds, void** argtable) {
                 *(syntax + 4) = '\0';
             }
 
-            arg_cat_optionv(syntax, sizeof(syntax)-1, shortopts, longopts, datatype, table[tabindex]->flag & ARG_HASOPTVALUE, ", ");
+            arg_cat_optionv(syntax, sizeof(syntax) - 1, shortopts, longopts, datatype, table[tabindex]->flag & ARG_HASOPTVALUE, ", ");
 
             /* If syntax fits not into column, print glossary in new line... */
             if (strlen(syntax) > 25) {
