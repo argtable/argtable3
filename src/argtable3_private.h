@@ -150,7 +150,7 @@ void* arg_hashtable_search(arg_hashtable_t* h, const void* k);
 void arg_hashtable_remove(arg_hashtable_t* h, const void* k);
 
 #define ARG_DEFINE_HASHTABLE_REMOVE(fnname, keytype, valuetype) \
-    valuetype* fnname(arg_hashtable_t* h, keytype* k) { return (valuetype*)(arg_hashtable_remove(h, k)); }
+    void fnname(arg_hashtable_t* h, keytype* k) { arg_hashtable_remove(h, k); }
 
 /**
  * @brief Return the number of keys in the hash table.

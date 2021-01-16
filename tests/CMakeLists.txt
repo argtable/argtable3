@@ -34,7 +34,6 @@ endif()
 
 if(NOT ARGTABLE3_REPLACE_GETOPT)
   add_definitions(-DARG_REPLACE_GETOPT=0)
-  add_definitions(-DREPLACE_GETOPT)
 endif()
 
 if(ARGTABLE3_LONG_ONLY)

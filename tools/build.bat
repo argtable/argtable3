@@ -99,7 +99,6 @@ copy ..\README.md ..\dist
 xcopy ..\tests ..\dist\tests\ /H /K /Y
 copy ..\src\argtable3_private.h ..\dist\tests
 xcopy ..\examples ..\dist\examples\ /H /K /Y
-for /R ..\dist %%G in (*) do unix2dos "%%G"
 goto :EOF
 
 
