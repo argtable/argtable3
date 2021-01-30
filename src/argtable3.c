@@ -907,7 +907,7 @@ static void arg_print_formatted_ds(arg_dstr_t ds, const unsigned lmargin, const 
         /* Eat leading white spaces. This is essential because while
            wrapping lines, there will often be a whitespace at beginning
            of line */
-        while (isspace(*(text + line_start))) {
+        while (isspace((int)(*(text + line_start)))) {
             line_start++;
         }
 
@@ -915,12 +915,12 @@ static void arg_print_formatted_ds(arg_dstr_t ds, const unsigned lmargin, const 
         if (line_end - line_start > colwidth) {
             line_end = line_start + colwidth;
 
-            while ((line_end > line_start) && !isspace(*(text + line_end))) {
+            while ((line_end > line_start) && !isspace((int)(*(text + line_end)))) {
                 line_end--;
             }
 
             /* Consume trailing spaces */
-            while ((line_end > line_start) && isspace(*(text + line_end))) {
+            while ((line_end > line_start) && isspace((int)(*(text + line_end)))) {
                 line_end--;
             }
 

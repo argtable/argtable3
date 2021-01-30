@@ -262,7 +262,7 @@ char* arg_strptime(const char* buf, const char* fmt, struct tm* tm) {
 
         /* Eat up white-space. */
         if (isspace(c)) {
-            while (isspace(*bp))
+            while (isspace((int)(*bp)))
                 bp++;
 
             fmt++;
@@ -534,7 +534,7 @@ char* arg_strptime(const char* buf, const char* fmt, struct tm* tm) {
             case 'n': /* Any kind of white-space. */
             case 't':
                 LEGAL_ALT(0);
-                while (isspace(*bp))
+                while (isspace((int)(*bp)))
                     bp++;
                 break;
 

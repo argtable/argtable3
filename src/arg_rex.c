@@ -417,7 +417,7 @@ static TRexChar trex_escapechar(TRex* exp) {
             default:
                 return (*exp->_p++);
         }
-    } else if (!scisprint(*exp->_p))
+    } else if (!scisprint((int)(*exp->_p)))
         trex_error(exp, _SC("letter expected"));
     return (*exp->_p++);
 }
@@ -482,7 +482,7 @@ static int trex_charnode(TRex* exp, TRexBool isclass) {
                 exp->_p++;
                 return trex_newnode(exp, t);
         }
-    } else if (!scisprint(*exp->_p)) {
+    } else if (!scisprint((int)(*exp->_p))) {
         trex_error(exp, _SC("letter expected"));
     }
     t = *exp->_p;
@@ -544,7 +544,7 @@ static int trex_parsenumber(TRex* exp) {
     int ret = *exp->_p - '0';
     int positions = 10;
     exp->_p++;
-    while (isdigit(*exp->_p)) {
+    while (isdigit((int)(*exp->_p))) {
         ret = ret * 10 + (*exp->_p++ - '0');
         if (positions == 1000000000)
             trex_error(exp, _SC("overflow in numeric constant"));
@@ -613,7 +613,7 @@ static int trex_element(TRex* exp) {
                 break;
             case '{':
                 exp->_p++;
-                if (!isdigit(*exp->_p))
+                if (!isdigit((int)(*exp->_p)))
                     trex_error(exp, _SC("number expected"));
                 p0 = (unsigned short)trex_parsenumber(exp);
                 /*******************************/
@@ -625,7 +625,7 @@ static int trex_element(TRex* exp) {
                     case ',':
                         exp->_p++;
                         p1 = 0xFFFF;
-                        if (isdigit(*exp->_p)) {
+                        if (isdigit((int)(*exp->_p))) {
                             p1 = (unsigned short)trex_parsenumber(exp);
                         }
                         trex_expect(exp, '}');
@@ -853,8 +853,8 @@ static const TRexChar* trex_matchnode(TRex* exp, TRexNode* node, const TRexChar*
             return cur;
         }
         case OP_WB:
-            if ((str == exp->_bol && !isspace(*str)) || (str == exp->_eol && !isspace(*(str - 1))) || (!isspace(*str) && isspace(*(str + 1))) ||
-                (isspace(*str) && !isspace(*(str + 1)))) {
+            if ((str == exp->_bol && !isspace((int)(*str))) || (str == exp->_eol && !isspace((int)(*(str - 1)))) || (!isspace((int)(*str)) && isspace((int)(*(str + 1)))) ||
+                (isspace((int)(*str)) && !isspace((int)(*(str + 1))))) {
                 return (node->left == 'b') ? str : NULL;
             }
             return (node->left == 'b') ? NULL : str;

@@ -61,7 +61,7 @@ static long int strtol0X(const char* str, const char** endptr, char X, int base)
     const char* ptr = str; /* ptr to current position in str */
 
     /* skip leading whitespace */
-    while (isspace(*ptr))
+    while (isspace((int)(*ptr)))
         ptr++;
     /* printf("1) %s\n",ptr); */
 
@@ -129,7 +129,7 @@ static int detectsuffix(const char* str, const char* suffix) {
         return 0; /* failed to consume entire suffix */
 
     /* skip any remaining whitespace in str */
-    while (isspace(*str))
+    while (isspace((int)(*str)))
         str++;
 
     /* return 1 (success) if we have reached end of str else return 0 (fail) */
