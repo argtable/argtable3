@@ -81,11 +81,10 @@ typedef void(arg_panicfn)(const char* fmt, ...);
  * They can be a problem for the platforms like NuttX, where
  * the namespace is flat for everything including apps and libraries.
  */
-
-#define	xmalloc	    argtable3_xmalloc
-#define	xcalloc	    argtable3_xcalloc
-#define	xrealloc	argtable3_xrealloc
-#define	xfree	    argtable3_xfree
+#define	xmalloc argtable3_xmalloc
+#define	xcalloc argtable3_xcalloc
+#define	xrealloc argtable3_xrealloc
+#define	xfree argtable3_xfree
 
 extern void dbg_printf(const char* fmt, ...);
 extern void arg_set_panic(arg_panicfn* proc);
