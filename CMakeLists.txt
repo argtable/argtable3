@@ -33,7 +33,7 @@ cmake_minimum_required(VERSION 3.0)
 set(ARGTABLE3_PROJECT_NAME "argtable3")
 set(ARGTABLE3_PACKAGE_NAME "Argtable3")
 
-project(${ARGTABLE3_PROJECT_NAME})
+project(${ARGTABLE3_PROJECT_NAME} "C")
 
 option(ARGTABLE3_ENABLE_CONAN "Enable Conan dependency manager" OFF)
 option(ARGTABLE3_ENABLE_TESTS "Enable unit tests" ON)
