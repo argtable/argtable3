@@ -141,7 +141,7 @@ static struct longoptions* alloc_longoptions(struct arg_hdr** table) {
 
     /* allocate storage for return data structure as: */
     /* (struct longoptions) + (struct options)[noptions] + char[longoptlen] */
-    nbytes = sizeof(struct longoptions) + sizeof(struct option) * noptions + longoptlen;
+    nbytes = sizeof(struct longoptions) + sizeof(struct option) * (size_t)noptions + longoptlen;
     result = (struct longoptions*)xmalloc(nbytes);
 
     result->getoptval = 0;
@@ -451,7 +451,7 @@ int arg_parse(int argc, char** argv, void** argtable) {
         return endtable->count;
     }
 
-    argvcopy = (char**)xmalloc(sizeof(char*) * (argc + 1));
+    argvcopy = (char**)xmalloc(sizeof(char*) * (size_t)(argc + 1));
 
     /*
         Fill in the local copy of argv[]. We need a local copy
@@ -515,7 +515,7 @@ static void arg_cat(char** pdest, const char* src, size_t* pndest) {
     *dest = 0;
 
     /* update *pdest and *pndest */
-    *pndest = end - dest;
+    *pndest = (size_t)(end - dest);
     *pdest = dest;
 }
 

@@ -110,7 +110,7 @@ static unsigned int hash_key(const void* key) {
     unsigned int hash = 5381;
 
     while ((c = *str++) != 0)
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+        hash = ((hash << 5) + hash) + (unsigned int)c; /* hash * 33 + c */
 
     return hash;
 }

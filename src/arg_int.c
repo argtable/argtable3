@@ -262,7 +262,7 @@ struct arg_int* arg_intn(const char* shortopts, const char* longopts, const char
     maxcount = (maxcount < mincount) ? mincount : maxcount;
 
     nbytes = sizeof(struct arg_int)    /* storage for struct arg_int */
-             + maxcount * sizeof(int); /* storage for ival[maxcount] array */
+             + (size_t)maxcount * sizeof(int); /* storage for ival[maxcount] array */
 
     result = (struct arg_int*)xmalloc(nbytes);
 
