@@ -34,6 +34,7 @@ MV       = mv
 CP       = cp
 CD       = cd
 ZIP      = zip
+TAR      = tar
 PUSHD    = pushd
 POPD     = popd
 MKINDEX  = makeindex
@@ -72,17 +73,28 @@ co:
 	@$(MKDIR) $(ARCHIVE_DIR)
 	@$(MKDIR) $(ARCHIVE_DIR)/$(TAG)
 	@$(PRINTF) "Export tag %s...\n" $(TAG)
-	@$(GIT) archive $(TAG) | tar -x -C $(ARCHIVE_DIR)/$(TAG)
+	@$(GIT) -c core.autocrlf=true archive $(TAG) | $(TAR) -x -C $(ARCHIVE_DIR)/$(TAG)
 	@$(MKDIR) $(TAGS_DIR)
 	@$(MV) $(ARCHIVE_DIR)/$(TAG) $(TAGS_DIR)/$(TAG)
-	@$(RM) $(ARCHIVE_DIR)
 	@$(PRINTF) $(TAG) > $(TAGS_DIR)/$(TAG)/version.tag
 
 
 .PHONY: archive
 archive:
 	@$(MKDIR) $(ARCHIVE_DIR)
-	@$(GIT) archive -o $(ARCHIVE_DIR)/argtable_$(TAG).zip $(TAG)
+	@$(MKDIR) $(ARCHIVE_DIR)/argtable-$(TAG)
+	@$(PRINTF) "Archive tag %s in %s...\n" $(TAG) $(ARCHIVE_DIR)/argtable-$(TAG).zip
+	@$(GIT) -c core.autocrlf=true archive $(TAG) | $(TAR) -x -C $(ARCHIVE_DIR)/argtable-$(TAG)
+	@$(PRINTF) $(TAG) > $(ARCHIVE_DIR)/argtable-$(TAG)/version.tag
+	@$(CD) $(ARCHIVE_DIR); $(ZIP) -rq argtable-$(TAG).zip argtable-$(TAG)
+	@$(RM) $(ARCHIVE_DIR)/argtable-$(TAG)
+
+	@$(MKDIR) $(ARCHIVE_DIR)/argtable-$(TAG)
+	@$(PRINTF) "Archive tag %s in %s...\n" $(TAG) $(ARCHIVE_DIR)/argtable-$(TAG).tar.gz
+	@$(GIT) archive $(TAG) | $(TAR) -x -C $(ARCHIVE_DIR)/argtable-$(TAG)
+	@$(PRINTF) $(TAG) > $(ARCHIVE_DIR)/argtable-$(TAG)/version.tag
+	@$(CD) $(ARCHIVE_DIR); $(TAR) -zcf argtable-$(TAG).tar.gz argtable-$(TAG)
+	@$(RM) $(ARCHIVE_DIR)/argtable-$(TAG)
 
 
 .PHONY: tag
@@ -105,4 +117,3 @@ cleanall:
 .PHONY: githead
 githead:
 	@$(GIT) rev-parse --short=7 HEAD
-
