@@ -6,19 +6,25 @@ Introduction of Argtable3
 =========================
 
 **Argtable3** is an open source ANSI C library that parses GNU-style
-command-line options. It simplifies command-line parsing by defining a
-declarative-style API that you can use to specify what your command-line syntax
-looks like. Argtable3 will automatically generate consistent error handling
-logic and textual descriptions of the command line syntax, which are essential
-but tedious to implement for a robust CLI program.
+command-line options with the `getopt` library. It simplifies command-line
+parsing by defining a declarative-style API that you can use to specify what
+your command-line syntax looks like. Argtable3 will automatically generate
+consistent error handling logic and textual descriptions of the command line
+syntax, which are essential but tedious to implement for a robust CLI program.
 
 
 Quick Start
 -----------
 
-> We no longer provide the amalgamation source code (`argtable3.c` and
-> `argtable3.h`) in the source code repository. You can get the amalgamation
-> distribution either from the release page (`argtable-3.x.x-amalgamation.zip`),
+You can embed the amalgamation source files in your projects, add Argtable3 as a
+dependency in the vcpkg manifest, install Argtable3 as a system-wide CMake
+package, or build the library from release archives.
+
+### Embed Amalgamation Source Files
+
+> We no longer provide the amalgamation source files (`argtable3.c` and
+> `argtable3.h`) in the repository. You can get the amalgamation distribution
+> either from the release page (`argtable-<version>-amalgamation.(zip|tar.gz)`),
 > or generate the distribution yourself by using the generator under the `tools`
 > directory:
 >
@@ -26,12 +32,96 @@ Quick Start
 > 2. Run `./build dist`, which will generate the distribution under the `<ROOT>/dist`
 >    directory.
 
+Add `argtable3.c` and `argtable3.h` from the amalgamation distribution to your
+projects. This is the simplest and recommended way to use Argtable3: it not only
+removes the hassle of building the library, but also allows compilers to do
+better inter-procedure optimization.
 
-Argtable3 is a single-file ANSI-C library. All you have to do is adding
-`argtable3.c` to your projects, and including `argtable3.h` in your source code.
 
-To build the library, examples, and unit tests, use CMake to generate
-out-of-source build:
+### Install for a Single Project with vcpkg Manifest
+
+[vcpkg](https://vcpkg.io) is an open source C/C++ package manager based on
+CMake, and it supports certain stable releases of Argtable3. To add the library
+to your CMake project, it's recommended to add vcpkg as a submodule to your
+project repo and use it to manage project dependencies. All libraries installed
+in this way can only be consumed by the project and won't impact other projects
+in the system.
+
+If your project is under `D:/projects/demo` and the vcpkg submodule is under
+`D:/projects/demo/deps/vcpkg`, first you need to add Argtable3 to the manifest,
+`D:/projects/demo/vcpkg.json`:
+```
+{
+    "name": "demo",
+    "version": "0.0.1",
+    "dependencies": [
+        {
+            "name": "argtable3",
+            "version>=": "3.2.1"
+        }
+    ],
+    "builtin-baseline": "a3db16a4475b963cacf0260068c497fb72c8f3c0"
+}
+```
+
+To add Argtable3 to your CMake scripts, you need to integrate the local vcpkg to
+CMake by setting the `CMAKE_TOOLCHAIN_FILE` variable. You also need to link to
+the static VC runtime (`/MT` or `/MTd`) if you want to use the static library
+version of Argtable3:
+```
+cmake_minimum_required(VERSION 3.18)
+
+set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/deps/vcpkg/scripts/buildsystems/vcpkg.cmake
+  CACHE STRING "Vcpkg toolchain file")
+
+project(versionstest)
+
+add_executable(main main.cpp)
+
+find_package(Argtable3 CONFIG REQUIRED)
+target_link_libraries(main PRIVATE argtable3::argtable3)
+
+if(VCPKG_TARGET_TRIPLET STREQUAL "x64-windows-static")
+  set_property(TARGET main PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+```
+
+Now you can run `cmake` to install Argtable3, configure and generate build
+scripts, and build the project:
+```
+$ mkdir build
+$ cd build
+$ cmake .. -DVCPKG_TARGET_TRIPLET=x64-windows-static
+$ cmake --build .
+```
+
+### Install for All Projects with vcpkg
+
+If you want to make Argtable3 available for all projects in the system, you can
+clone vcpkg to any directory and install packages there. Assuming vcpkg has been
+cloned in `D:/dev/vcpkg` and the directory has been added to `PATH`, you can
+install the static library version of Argtable3 in `D:/dev/vcpkg/installed`:
+```
+$ vcpkg install argtable3:x64-windows-static
+```
+
+Since each developer may clone vcpkg in a different place, it may not be
+appropriate to specify the `CMAKE_TOOLCHAIN_FILE` variable in `CMakeLists.txt`.
+Therefore, you should remove setting the `CMAKE_TOOLCHAIN_FILE` variable in the
+`CMakeLists.txt` example above, and set the variable in the command line:
+```
+$ mkdir build
+$ cd build
+$ cmake .. -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=D:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake
+$ cmake --build .
+```
+
+
+### Build from Release Archives or Source
+
+If none of the methods above suits your needs, or if you want to help developing
+Argtable3, you can always build from archives on the release page or from the
+repository.
 
 * If you use GCC (Linux, MacOSX, MinGW, Cygwin), run:
 
