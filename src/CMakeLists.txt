@@ -1,7 +1,7 @@
 ################################################################################
 # This file is part of the argtable3 library.
 #
-# Copyright (C) 2016-2019 Tom G. Huang
+# Copyright (C) 2016-2021 Tom G. Huang
 # <tomghuang@gmail.com>
 # All rights reserved.
 #
@@ -58,7 +58,7 @@ endif()
 
 add_definitions(-D_XOPEN_SOURCE=700)
 
-if(WIN32)
+if(BUILD_SHARED_LIBS AND WIN32)
   set(COMPANY_NAME "The Argtable3 Project")
   set(FILE_DESC "ANSI C command-line parsing library")
   set(INTERNAL_NAME "${PROJECT_NAME}")
@@ -69,19 +69,21 @@ if(WIN32)
     "${PROJECT_SOURCE_DIR}/src/version.rc.in"
     "${PROJECT_BINARY_DIR}/src/version.rc"
   )
-  add_library(argtable3 SHARED ${ARGTABLE3_SRC_FILES} "${PROJECT_BINARY_DIR}/src/version.rc")
+  add_library(argtable3 ${ARGTABLE3_SRC_FILES} "${PROJECT_BINARY_DIR}/src/version.rc")
   target_compile_definitions(argtable3 INTERFACE argtable3_IMPORTS)
 else()
-  add_library(argtable3 SHARED ${ARGTABLE3_SRC_FILES})
+  add_library(argtable3 ${ARGTABLE3_SRC_FILES})
 endif()
+
+add_library(${ARGTABLE3_PROJECT_NAME}::argtable3 ALIAS argtable3)
 target_include_directories(argtable3 PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
-add_library(argtable3_static STATIC ${ARGTABLE3_SRC_FILES})
-target_include_directories(argtable3_static PRIVATE ${PROJECT_SOURCE_DIR}/src)
-
-set_target_properties(argtable3 argtable3_static PROPERTIES
+set_target_properties(argtable3 PROPERTIES
   VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
-  SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+  SOVERSION ${PROJECT_VERSION_MAJOR}
+  OUTPUT_NAME "argtable3$<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:_static>"
+  DEBUG_POSTFIX "d"
+)
 
 include(GNUInstallDirs)
 if(UNIX OR MSYS OR MINGW)
@@ -94,9 +96,24 @@ install(TARGETS argtable3
   EXPORT ${ARGTABLE3_PACKAGE_NAME}Config
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(TARGETS argtable3_static
-  EXPORT ${ARGTABLE3_PACKAGE_NAME}Config
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(FILES "${PROJECT_SOURCE_DIR}/src/argtable3.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(EXPORT ${ARGTABLE3_PACKAGE_NAME}Config DESTINATION ${ARGTABLE3_INSTALL_CMAKEDIR})
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+install(FILES "${PROJECT_SOURCE_DIR}/src/argtable3.h"
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(EXPORT ${ARGTABLE3_PACKAGE_NAME}Config
+  NAMESPACE ${ARGTABLE3_PROJECT_NAME}::
+  DESTINATION ${ARGTABLE3_INSTALL_CMAKEDIR}
+)
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file("${PROJECT_BINARY_DIR}/${ARGTABLE3_PACKAGE_NAME}ConfigVersion.cmake"
+  VERSION ${ARGTABLE3_VERSION}
+  COMPATIBILITY SameMajorVersion
+)
+
+install(FILES "${PROJECT_BINARY_DIR}/${ARGTABLE3_PACKAGE_NAME}ConfigVersion.cmake"
+  DESTINATION ${ARGTABLE3_INSTALL_CMAKEDIR}
+)

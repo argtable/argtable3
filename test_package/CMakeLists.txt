@@ -1,7 +1,7 @@
 ################################################################################
 # This file is part of the argtable3 library.
 #
-# Copyright (C) 2016-2019 Tom G. Huang
+# Copyright (C) 2016-2021 Tom G. Huang
 # <tomghuang@gmail.com>
 # All rights reserved.
 #
@@ -44,7 +44,7 @@ enable_testing()
 if (CONAN_SETTINGS_OS)
   find_package(Argtable3 REQUIRED)
   add_executable(${PROJECT_NAME} testargtable3.c)
-  target_link_libraries(${PROJECT_NAME} PUBLIC argtable3 ${ARGTABLE3_EXTRA_LIBS})
+  target_link_libraries(${PROJECT_NAME} PUBLIC argtable3::argtable3 ${ARGTABLE3_EXTRA_LIBS})
   add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "$<TARGET_FILE:argtable3>"

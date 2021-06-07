@@ -1,7 +1,7 @@
 ################################################################################
 # This file is part of the argtable3 library.
 #
-# Copyright (C) 2016-2019 Tom G. Huang
+# Copyright (C) 2016-2021 Tom G. Huang
 # <tomghuang@gmail.com>
 # All rights reserved.
 #
@@ -35,10 +35,10 @@ set(ARGTABLE3_PACKAGE_NAME "Argtable3")
 
 project(${ARGTABLE3_PROJECT_NAME} "C")
 
+option(BUILD_SHARED_LIBS "Build shared library" OFF)
 option(ARGTABLE3_ENABLE_CONAN "Enable Conan dependency manager" OFF)
 option(ARGTABLE3_ENABLE_TESTS "Enable unit tests" ON)
 option(ARGTABLE3_ENABLE_ARG_REX_DEBUG "Enable arg_rex debug output" OFF)
-option(ARGTABLE3_BUILD_STATIC_EXAMPLES "Build examples with the static argtable3 library" ON)
 option(ARGTABLE3_REPLACE_GETOPT "Replace getopt in the system C library" ON)
 option(ARGTABLE3_LONG_ONLY "Use getopt_long_only instead of getopt_long" OFF)
 

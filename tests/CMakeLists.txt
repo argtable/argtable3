@@ -1,7 +1,7 @@
 ################################################################################
 # This file is part of the argtable3 library.
 #
-# Copyright (C) 2016-2019 Tom G. Huang
+# Copyright (C) 2016-2021 Tom G. Huang
 # <tomghuang@gmail.com>
 # All rights reserved.
 #
@@ -63,20 +63,25 @@ if(UNIX)
   set(ARGTABLE3_EXTRA_LIBS m)
 endif()
 
-add_executable(test_shared ${TEST_PUBLIC_SRC_FILES})
-target_compile_definitions(test_shared PRIVATE -DARGTABLE3_TEST_PUBLIC_ONLY)
-target_include_directories(test_shared PRIVATE ${PROJECT_SOURCE_DIR}/src)
-target_link_libraries(test_shared argtable3 ${ARGTABLE3_EXTRA_LIBS})
-add_custom_command(TARGET test_shared POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-  "$<TARGET_FILE:argtable3>"
-  "$<TARGET_FILE_DIR:test_shared>"
-)
+if(BUILD_SHARED_LIBS)
+  add_executable(test_shared ${TEST_PUBLIC_SRC_FILES})
+  target_compile_definitions(test_shared PRIVATE -DARGTABLE3_TEST_PUBLIC_ONLY)
+  target_include_directories(test_shared PRIVATE ${PROJECT_SOURCE_DIR}/src)
+  target_link_libraries(test_shared argtable3 ${ARGTABLE3_EXTRA_LIBS})
+  add_custom_command(TARGET test_shared POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "$<TARGET_FILE:argtable3>"
+    "$<TARGET_FILE_DIR:test_shared>"
+  )
 
-add_executable(test_static ${TEST_SRC_FILES})
-target_compile_definitions(test_static PRIVATE -DARGTABLE3_TEST_PUBLIC_ONLY)
-target_include_directories(test_static PRIVATE ${PROJECT_SOURCE_DIR}/src)
-target_link_libraries(test_static argtable3_static ${ARGTABLE3_EXTRA_LIBS})
+  add_test(NAME test_shared COMMAND "$<TARGET_FILE:test_shared>")
+else()
+  add_executable(test_static ${TEST_SRC_FILES})
+  target_include_directories(test_static PRIVATE ${PROJECT_SOURCE_DIR}/src)
+  target_link_libraries(test_static argtable3 ${ARGTABLE3_EXTRA_LIBS})
+
+  add_test(NAME test_static COMMAND "$<TARGET_FILE:test_static>")
+endif()
 
 add_executable(test_src ${TEST_SRC_FILES} ${ARGTABLE3_SRC_FILES})
 target_include_directories(test_src PRIVATE ${PROJECT_SOURCE_DIR}/src)
@@ -95,7 +100,5 @@ add_custom_command(TARGET test_amalgamation PRE_BUILD
   WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tools"
 )
 
-add_test(NAME test_shared COMMAND "$<TARGET_FILE:test_shared>")
-add_test(NAME test_static COMMAND "$<TARGET_FILE:test_static>")
 add_test(NAME test_src COMMAND "$<TARGET_FILE:test_src>")
 add_test(NAME test_amalgamation COMMAND "$<TARGET_FILE:test_amalgamation>")

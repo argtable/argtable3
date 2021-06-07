@@ -1,7 +1,7 @@
 ################################################################################
 # This file is part of the argtable3 library.
 #
-# Copyright (C) 2016-2019 Tom G. Huang
+# Copyright (C) 2016-2021 Tom G. Huang
 # <tomghuang@gmail.com>
 # All rights reserved.
 #
@@ -50,9 +50,5 @@ foreach(examples_src ${EXAMPLES_SOURCES})
   string(REPLACE ".c" "" examplename ${examples_src})
   add_executable(${examplename} ${PROJECT_SOURCE_DIR}/examples/${examples_src})
   target_include_directories(${examplename} PRIVATE ${PROJECT_SOURCE_DIR}/src)
-  if(ARGTABLE3_BUILD_STATIC_EXAMPLES)
-    target_link_libraries(${examplename} argtable3_static ${ARGTABLE3_EXTRA_LIBS})
-  else()
-    target_link_libraries(${examplename} argtable3 ${ARGTABLE3_EXTRA_LIBS})
-  endif()
+  target_link_libraries(${examplename} argtable3 ${ARGTABLE3_EXTRA_LIBS})
 endforeach()
