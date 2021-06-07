@@ -241,7 +241,7 @@ struct arg_rex* arg_rexn(const char* shortopts,
 
     nbytes = sizeof(struct arg_rex)      /* storage for struct arg_rex */
              + sizeof(struct privhdr)    /* storage for private arg_rex data */
-             + maxcount * sizeof(char*); /* storage for sval[maxcount] array */
+             + (size_t)maxcount * sizeof(char*); /* storage for sval[maxcount] array */
 
     /* init the arg_hdr struct */
     result = (struct arg_rex*)xmalloc(nbytes);
@@ -376,7 +376,7 @@ static int trex_newnode(TRex* exp, TRexNodeType type) {
         n.right = exp->_nsubexpr++;
     if (exp->_nallocated < (exp->_nsize + 1)) {
         exp->_nallocated *= 2;
-        exp->_nodes = (TRexNode*)xrealloc(exp->_nodes, exp->_nallocated * sizeof(TRexNode));
+        exp->_nodes = (TRexNode*)xrealloc(exp->_nodes, (size_t)exp->_nallocated * sizeof(TRexNode));
     }
     exp->_nodes[exp->_nsize++] = n;
     newid = exp->_nsize - 1;
@@ -902,8 +902,8 @@ TRex* trex_compile(const TRexChar* pattern, const TRexChar** error, int flags) {
     TRex* exp = (TRex*)xmalloc(sizeof(TRex));
     exp->_eol = exp->_bol = NULL;
     exp->_p = pattern;
-    exp->_nallocated = (int)scstrlen(pattern) * sizeof(TRexChar);
-    exp->_nodes = (TRexNode*)xmalloc(exp->_nallocated * sizeof(TRexNode));
+    exp->_nallocated = (int)(scstrlen(pattern) * sizeof(TRexChar));
+    exp->_nodes = (TRexNode*)xmalloc((size_t)exp->_nallocated * sizeof(TRexNode));
     exp->_nsize = 0;
     exp->_matches = 0;
     exp->_nsubexpr = 0;
@@ -931,8 +931,8 @@ TRex* trex_compile(const TRexChar* pattern, const TRexChar** error, int flags) {
             scprintf(_SC("\n"));
         }
 #endif
-        exp->_matches = (TRexMatch*)xmalloc(exp->_nsubexpr * sizeof(TRexMatch));
-        memset(exp->_matches, 0, exp->_nsubexpr * sizeof(TRexMatch));
+        exp->_matches = (TRexMatch*)xmalloc((size_t)exp->_nsubexpr * sizeof(TRexMatch));
+        memset(exp->_matches, 0, (size_t)exp->_nsubexpr * sizeof(TRexMatch));
     } else {
         trex_free(exp);
         return NULL;

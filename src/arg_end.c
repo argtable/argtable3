@@ -79,9 +79,9 @@ struct arg_end* arg_end(int maxcount) {
     size_t nbytes;
     struct arg_end* result;
 
-    nbytes = sizeof(struct arg_end) + maxcount * sizeof(int) /* storage for int error[maxcount] array*/
-             + maxcount * sizeof(void*)                      /* storage for void* parent[maxcount] array */
-             + maxcount * sizeof(char*);                     /* storage for char* argval[maxcount] array */
+    nbytes = sizeof(struct arg_end) + (size_t)maxcount * sizeof(int) /* storage for int error[maxcount] array*/
+             + (size_t)maxcount * sizeof(void*)                      /* storage for void* parent[maxcount] array */
+             + (size_t)maxcount * sizeof(char*);                     /* storage for char* argval[maxcount] array */
 
     result = (struct arg_end*)xmalloc(nbytes);
 

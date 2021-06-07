@@ -132,7 +132,7 @@ arg_daten(const char* shortopts, const char* longopts, const char* format, const
         format = "%x";
 
     nbytes = sizeof(struct arg_date)         /* storage for struct arg_date */
-             + maxcount * sizeof(struct tm); /* storage for tmval[maxcount] array */
+             + (size_t)maxcount * sizeof(struct tm); /* storage for tmval[maxcount] array */
 
     /* allocate storage for the arg_date struct + tmval[] array.    */
     /* we use calloc because we want the tmval[] array zero filled. */

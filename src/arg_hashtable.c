@@ -132,7 +132,7 @@ arg_hashtable_t* arg_hashtable_create(unsigned int minsize, unsigned int (*hashf
     h->entrycount = 0;
     h->hashfn = hashfn;
     h->eqfn = eqfn;
-    h->loadlimit = (unsigned int)ceil(size * max_load_factor);
+    h->loadlimit = (unsigned int)ceil(size * (double)max_load_factor);
     return h;
 }
 
@@ -167,7 +167,7 @@ static int arg_hashtable_expand(arg_hashtable_t* h) {
     xfree(h->table);
     h->table = newtable;
     h->tablelength = newsize;
-    h->loadlimit = (unsigned int)ceil(newsize * max_load_factor);
+    h->loadlimit = (unsigned int)ceil(newsize * (double)max_load_factor);
     return -1;
 }
 

@@ -124,7 +124,7 @@ struct arg_dbl* arg_dbln(const char* shortopts, const char* longopts, const char
     maxcount = (maxcount < mincount) ? mincount : maxcount;
 
     nbytes = sizeof(struct arg_dbl)             /* storage for struct arg_dbl */
-             + (maxcount + 1) * sizeof(double); /* storage for dval[maxcount] array plus one extra for padding to memory boundary */
+             + (size_t)(maxcount + 1) * sizeof(double); /* storage for dval[maxcount] array plus one extra for padding to memory boundary */
 
     result = (struct arg_dbl*)xmalloc(nbytes);
 

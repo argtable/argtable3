@@ -231,12 +231,12 @@ void arg_dstr_catf(arg_dstr_t ds, const char* fmt, ...) {
     if ((n = (int)(2 * strlen(fmt))) < START_VSNBUFF)
         n = START_VSNBUFF;
 
-    buff = (char*)xmalloc(n + 2);
-    memset(buff, 0, n + 2);
+    buff = (char*)xmalloc((size_t)(n + 2));
+    memset(buff, 0, (size_t)(n + 2));
 
     for (;;) {
         va_start(arglist, fmt);
-        r = vsnprintf(buff, n + 1, fmt, arglist);
+        r = vsnprintf(buff, (size_t)(n + 1), fmt, arglist);
         va_end(arglist);
 
         slen = strlen(buff);
@@ -249,8 +249,8 @@ void arg_dstr_catf(arg_dstr_t ds, const char* fmt, ...) {
             n += n;
 
         xfree(buff);
-        buff = (char*)xmalloc(n + 2);
-        memset(buff, 0, n + 2);
+        buff = (char*)xmalloc((size_t)(n + 2));
+        memset(buff, 0, (size_t)(n + 2));
     }
 
     arg_dstr_cat(ds, buff);
@@ -296,7 +296,7 @@ static void setup_append_buf(arg_dstr_t ds, int new_space) {
             total_space *= 2;
         }
         newbuf = (char*)xmalloc((unsigned)total_space);
-        memset(newbuf, 0, total_space);
+        memset(newbuf, 0, (size_t)total_space);
         strcpy(newbuf, ds->data);
         if (ds->append_data != NULL) {
             xfree(ds->append_data);

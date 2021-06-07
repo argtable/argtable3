@@ -170,9 +170,9 @@ struct arg_file* arg_filen(const char* shortopts, const char* longopts, const ch
     maxcount = (maxcount < mincount) ? mincount : maxcount;
 
     nbytes = sizeof(struct arg_file)     /* storage for struct arg_file */
-             + sizeof(char*) * maxcount  /* storage for filename[maxcount] array */
-             + sizeof(char*) * maxcount  /* storage for basename[maxcount] array */
-             + sizeof(char*) * maxcount; /* storage for extension[maxcount] array */
+             + sizeof(char*) * (size_t)maxcount  /* storage for filename[maxcount] array */
+             + sizeof(char*) * (size_t)maxcount  /* storage for basename[maxcount] array */
+             + sizeof(char*) * (size_t)maxcount; /* storage for extension[maxcount] array */
 
     result = (struct arg_file*)xmalloc(nbytes);
 

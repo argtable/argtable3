@@ -121,14 +121,14 @@ static void merge(void* data, int esize, int i, int j, int k, arg_comparefn* com
     mpos = 0;
 
     /* Allocate storage for the merged elements. */
-    m = (char*)xmalloc(esize * ((k - i) + 1));
+    m = (char*)xmalloc((size_t)(esize * ((k - i) + 1)));
 
     /* Continue while either division has elements to merge. */
     while (ipos <= j || jpos <= k) {
         if (ipos > j) {
             /* The left division has no more elements to merge. */
             while (jpos <= k) {
-                memcpy(&m[mpos * esize], &a[jpos * esize], esize);
+                memcpy(&m[mpos * esize], &a[jpos * esize], (size_t)esize);
                 jpos++;
                 mpos++;
             }
@@ -137,7 +137,7 @@ static void merge(void* data, int esize, int i, int j, int k, arg_comparefn* com
         } else if (jpos > k) {
             /* The right division has no more elements to merge. */
             while (ipos <= j) {
-                memcpy(&m[mpos * esize], &a[ipos * esize], esize);
+                memcpy(&m[mpos * esize], &a[ipos * esize], (size_t)esize);
                 ipos++;
                 mpos++;
             }
@@ -147,18 +147,18 @@ static void merge(void* data, int esize, int i, int j, int k, arg_comparefn* com
 
         /* Append the next ordered element to the merged elements. */
         if (comparefn(&a[ipos * esize], &a[jpos * esize]) < 0) {
-            memcpy(&m[mpos * esize], &a[ipos * esize], esize);
+            memcpy(&m[mpos * esize], &a[ipos * esize], (size_t)esize);
             ipos++;
             mpos++;
         } else {
-            memcpy(&m[mpos * esize], &a[jpos * esize], esize);
+            memcpy(&m[mpos * esize], &a[jpos * esize], (size_t)esize);
             jpos++;
             mpos++;
         }
     }
 
     /* Prepare to pass back the merged data. */
-    memcpy(&a[i * esize], m, esize * ((k - i) + 1));
+    memcpy(&a[i * esize], m, (size_t)(esize * ((k - i) + 1)));
     xfree(m);
 }
 

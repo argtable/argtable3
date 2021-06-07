@@ -261,7 +261,7 @@ parse_long_options(char * const *nargv, const char *options,
 
 	if ((has_equal = strchr(current_argv, '=')) != NULL) {
 		/* argument found (--option=arg) */
-		current_argv_len = has_equal - current_argv;
+		current_argv_len = (size_t)(has_equal - current_argv);
 		has_equal++;
 	} else
 		current_argv_len = strlen(current_argv);

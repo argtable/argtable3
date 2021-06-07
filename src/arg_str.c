@@ -40,7 +40,7 @@
 
 static void arg_str_resetfn(struct arg_str* parent) {
     int i;
-    
+
     ARG_TRACE(("%s:resetfn(%p)\n", __FILE__, parent));
     for (i = 0; i < parent->count; i++) {
         parent->sval[i] = "";
@@ -115,7 +115,7 @@ struct arg_str* arg_strn(const char* shortopts, const char* longopts, const char
     maxcount = (maxcount < mincount) ? mincount : maxcount;
 
     nbytes = sizeof(struct arg_str)      /* storage for struct arg_str */
-             + maxcount * sizeof(char*); /* storage for sval[maxcount] array */
+             + (size_t)maxcount * sizeof(char*); /* storage for sval[maxcount] array */
 
     result = (struct arg_str*)xmalloc(nbytes);
 
