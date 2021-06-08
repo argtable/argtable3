@@ -38,6 +38,7 @@ project(${ARGTABLE3_PROJECT_NAME} "C")
 option(BUILD_SHARED_LIBS "Build shared library" OFF)
 option(ARGTABLE3_ENABLE_CONAN "Enable Conan dependency manager" OFF)
 option(ARGTABLE3_ENABLE_TESTS "Enable unit tests" ON)
+option(ARGTABLE3_ENABLE_EXAMPLES "Enable examples" ON)
 option(ARGTABLE3_ENABLE_ARG_REX_DEBUG "Enable arg_rex debug output" OFF)
 option(ARGTABLE3_REPLACE_GETOPT "Replace getopt in the system C library" ON)
 option(ARGTABLE3_LONG_ONLY "Use getopt_long_only instead of getopt_long" OFF)
@@ -87,13 +88,15 @@ set(ARGTABLE3_SRC_FILES
   ${PROJECT_SOURCE_DIR}/src/arg_getopt_long.c
 )
 
-# Platform specific settings for installation
 if(APPLE)
   set(CMAKE_MACOSX_RPATH ON)
 endif()
 
 add_subdirectory(src)
-add_subdirectory(examples)
+
+if(ARGTABLE3_ENABLE_EXAMPLES)
+  add_subdirectory(examples)
+endif()
 
 if(ARGTABLE3_ENABLE_TESTS)
   enable_testing()
