@@ -138,6 +138,15 @@ repository.
   or `RelWithDebInfo`. To build multiple configurations, you need to create a
   build directory for each configuraiton.
 
+  Since v3.2.1, CMake scripts will check `BUILD_SHARED_LIBS` and build either
+  the static library or the dynamic library at a time. `BUILD_SHARED_LIBS` is
+  `OFF` by default, so if you want to build the dynamic library, you have to set
+  `BUILD_SHARED_LIBS` to `ON` explicitly:
+
+  ```
+  $ cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON ..
+  ```
+
   To cleanup, run `make clean` or remove the build directory:
 
   ```
