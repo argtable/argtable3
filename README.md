@@ -60,7 +60,7 @@ If your project is under `D:/projects/demo` and the vcpkg submodule is under
             "version>=": "3.2.1"
         }
     ],
-    "builtin-baseline": "a3db16a4475b963cacf0260068c497fb72c8f3c0"
+    "builtin-baseline": "92b42c4c680defe94f1665a847d04ded890f372e"
 }
 ```
 
