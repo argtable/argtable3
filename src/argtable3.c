@@ -572,7 +572,8 @@ static void arg_cat_option(char* dest, size_t ndest, const char* shortopts, cons
     }
 }
 
-static void arg_cat_optionv(char* dest, size_t ndest, const char* shortopts, const char* longopts, const char* datatype, int optvalue, const char* separator) {
+static void
+arg_cat_optionv(char* dest, size_t ndest, const char* shortopts, const char* longopts, const char* datatype, int optvalue, const char* separator) {
     separator = separator ? separator : "";
 
     if (shortopts) {
@@ -906,8 +907,8 @@ static void arg_print_formatted_ds(arg_dstr_t ds, const unsigned lmargin, const 
     while (line_end > line_start) {
         /* Eat leading white spaces. This is essential because while
            wrapping lines, there will often be a whitespace at beginning
-           of line */
-        while (isspace((int)(*(text + line_start)))) {
+           of line. Preserve newlines */
+        while (isspace((int)(*(text + line_start))) && *(text + line_start) != '\n') {
             line_start++;
         }
 
@@ -919,18 +920,31 @@ static void arg_print_formatted_ds(arg_dstr_t ds, const unsigned lmargin, const 
                 line_end--;
             }
 
-            /* Consume trailing spaces */
-            while ((line_end > line_start) && isspace((int)(*(text + line_end)))) {
-                line_end--;
-            }
+            /* If no whitespace could be found, eg. the text is one long word, break the word */
+            if (line_end == line_start) {
+                /* Set line_end to previous value */
+                line_end = line_start + colwidth;
+            } else {
+                /* Consume trailing spaces, except newlines */
+                while ((line_end > line_start) && isspace((int)(*(text + line_end))) && *(text + line_start) != '\n') {
+                    line_end--;
+                }
 
-            /* Restore the last non-space character */
-            line_end++;
+                /* Restore the last non-space character */
+                line_end++;
+            }
         }
 
         /* Output line of text */
         while (line_start < line_end) {
             char c = *(text + line_start);
+
+            /* If character is newline stop printing, skip this character, as a newline will be printed below. */
+            if (c == '\n') {
+                line_start++;
+                break;
+            }
+
             arg_dstr_catc(ds, c);
             line_start++;
         }
