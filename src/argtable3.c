@@ -572,8 +572,7 @@ static void arg_cat_option(char* dest, size_t ndest, const char* shortopts, cons
     }
 }
 
-static void
-arg_cat_optionv(char* dest, size_t ndest, const char* shortopts, const char* longopts, const char* datatype, int optvalue, const char* separator) {
+static void arg_cat_optionv(char* dest, size_t ndest, const char* shortopts, const char* longopts, const char* datatype, int optvalue, const char* separator) {
     separator = separator ? separator : "";
 
     if (shortopts) {
