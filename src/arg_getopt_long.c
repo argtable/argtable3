@@ -50,6 +50,9 @@
  */
 
 #include "argtable3.h"
+#ifndef ARG_AMALGAMATION
+#include "argtable3_private.h"
+#endif
 
 #if ARG_REPLACE_GETOPT == 1
 
