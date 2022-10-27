@@ -35,8 +35,13 @@
 
 #include <stdlib.h>
 
+#ifndef ARG_ENABLE_TRACE
 #define ARG_ENABLE_TRACE 0
+#endif /* ARG_ENABLE_TRACE */
+
+#ifndef ARG_ENABLE_LOG
 #define ARG_ENABLE_LOG 1
+#endif /* ARG_ENABLE_LOG */
 
 #ifdef __cplusplus
 extern "C" {
