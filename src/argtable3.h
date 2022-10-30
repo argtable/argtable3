@@ -41,13 +41,16 @@ extern "C" {
 #endif
 
 #define ARG_REX_ICASE 1
-#define ARG_DSTR_SIZE 200
-#define ARG_CMD_NAME_LEN 100
-#define ARG_CMD_DESCRIPTION_LEN 256
 
-#ifndef ARG_REPLACE_GETOPT
-#define ARG_REPLACE_GETOPT 1 /* use the embedded getopt as the system getopt(3) */
-#endif /* ARG_REPLACE_GETOPT */
+/* Maximum length of the command name */
+#ifndef ARG_CMD_NAME_LEN
+#define ARG_CMD_NAME_LEN 100
+#endif /* ARG_CMD_NAME_LEN */
+
+/* Maximum length of the command description */
+#ifndef ARG_CMD_DESCRIPTION_LEN
+#define ARG_CMD_DESCRIPTION_LEN 256
+#endif /* ARG_CMD_DESCRIPTION_LEN */
 
 /* bit masks for arg_hdr.flag */
 enum { ARG_TERMINATOR = 0x1, ARG_HASVALUE = 0x2, ARG_HASOPTVALUE = 0x4 };
