@@ -234,6 +234,7 @@ ARG_EXTERN void arg_print_syntaxv_ds(arg_dstr_t ds, void** argtable, const char*
 ARG_EXTERN void arg_print_glossary_ds(arg_dstr_t ds, void** argtable, const char* format);
 ARG_EXTERN void arg_print_glossary_gnu_ds(arg_dstr_t ds, void** argtable);
 ARG_EXTERN void arg_print_errors_ds(arg_dstr_t ds, struct arg_end* end, const char* progname);
+ARG_EXTERN void arg_print_formatted(FILE *fp, const unsigned lmargin, const unsigned rmargin, const char *text);
 ARG_EXTERN void arg_freetable(void** argtable, size_t n);
 
 ARG_EXTERN arg_dstr_t arg_dstr_create(void);
