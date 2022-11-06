@@ -1,0 +1,1 @@
+Checks: "-bugprone-*,clang-diagnostic-*,clang-analyzer-*,-modernize-*,-performance-*,-readability-*"
