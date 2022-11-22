@@ -14,5 +14,6 @@ class NewProjectTestConan(ConanFile):
         cmake.build()
 
     def test(self):
-        with tools.environment_append(RunEnvironment(self).vars):
-            self.run('ctest -C Debug --output-on-failure')
+        if not tools.cross_building(self, skip_x64_x86=True):
+            with tools.environment_append(RunEnvironment(self).vars):
+                self.run('ctest -C Debug --output-on-failure')
