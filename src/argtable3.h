@@ -53,7 +53,7 @@ extern "C" {
 #endif /* ARG_CMD_DESCRIPTION_LEN */
 
 /* bit masks for arg_hdr.flag */
-enum { ARG_TERMINATOR = 0x1, ARG_HASVALUE = 0x2, ARG_HASOPTVALUE = 0x4 };
+enum { ARG_TERMINATOR = 0x1, ARG_HASVALUE = 0x2, ARG_HASOPTVALUE = 0x4, ARG_STOPPARSE = 0x8 };
 
 #if defined(_WIN32)
   #if defined(argtable3_EXPORTS)
@@ -97,6 +97,7 @@ typedef int(arg_comparefn)(const void* k1, const void* k2);
  */
 typedef struct arg_hdr {
     char flag;             /* Modifier flags: ARG_TERMINATOR, ARG_HASVALUE. */
+    int idx;               /* Index where this value was observed if ARG_STOPPARSE flag is set */
     const char* shortopts; /* String defining the short options */
     const char* longopts;  /* String defiing the long options */
     const char* datatype;  /* Description of the argument data type */

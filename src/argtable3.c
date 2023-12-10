@@ -195,13 +195,14 @@ static char* alloc_shortoptions(struct arg_hdr** table) {
     /* determine the total number of option chars required */
     for (tabindex = 0; !(table[tabindex]->flag & ARG_TERMINATOR); tabindex++) {
         struct arg_hdr* hdr = table[tabindex];
-        len += 3 * (hdr->shortopts ? strlen(hdr->shortopts) : 0);
+        len += 4 * (hdr->shortopts ? strlen(hdr->shortopts) : 0);
     }
 
     result = xmalloc(len);
 
     res = result;
-
+    /* Add a leading + so getopt doesn't reorder argv */
+    *res++ = '+';
     /* add a leading ':' so getopt return codes distinguish    */
     /* unrecognised option and options missing argument values */
     *res++ = ':';
@@ -267,6 +268,12 @@ static void arg_parse_tagged(int argc, char** argv, struct arg_hdr** table, stru
                 int tabindex = longoptions->getoptval;
                 void* parent = table[tabindex]->parent;
                 /*printf("long option detected from argtable[%d]\n", tabindex);*/
+                /* We have come across a item that the user wants us to stop parsing after
+                 * probably a sub-command */
+                if (table[tabindex]->flag & ARG_STOPPARSE)
+                {
+                    return;
+                }
                 if (optarg && optarg[0] == 0 && (table[tabindex]->flag & ARG_HASVALUE)) {
                     /* printf(": long option %s requires an argument\n",argv[optind-1]); */
                     arg_register_error(endtable, endtable, ARG_EMISSARG, argv[optind - 1]);
@@ -330,6 +337,45 @@ static void arg_parse_tagged(int argc, char** argv, struct arg_hdr** table, stru
     xfree(longoptions);
 }
 
+static int arg_parse_find_stop(int argc, char** argv, struct arg_hdr** table, struct arg_end* endtable) {
+    int tabindex = 0;
+    while (!(table[tabindex]->flag & ARG_TERMINATOR))
+    {
+        void* parent;
+        int errorcode;
+
+        /* skip table entries with non-null long or short options (they are not untagged entries) */
+        if (table[tabindex]->longopts || table[tabindex]->shortopts) {
+            tabindex++;
+            continue;
+        }
+
+        /* skip table entries with NULL scanfn */
+        if (!(table[tabindex]->scanfn)) {
+            tabindex++;
+            continue;
+        }
+
+        /* attempt to scan the current argv[optind] with the current     */
+        /* table[tabindex] entry. If it succeeds then keep it, otherwise */
+        /* try again with the next table[] entry.                        */
+        parent = table[tabindex]->parent;
+        errorcode = table[tabindex]->scanfn(parent, argv[optind]);
+        if (errorcode == 0) {
+            if (table[tabindex]->flag & ARG_STOPPARSE)
+            {
+                return (optind + 1) > argc ? argc : (optind + 1);
+            }
+            /* success, move onto next argv[optind] but stay with same table[tabindex] */
+            optind++;
+        } else {
+            /* failure, try same argv[optind] with next table[tabindex] entry */
+            tabindex++;
+        }
+    }
+
+    return argc;
+}
 static void arg_parse_untagged(int argc, char** argv, struct arg_hdr** table, struct arg_end* endtable) {
     int tabindex = 0;
     int errorlast = 0;
@@ -367,6 +413,12 @@ static void arg_parse_untagged(int argc, char** argv, struct arg_hdr** table, st
         parent = table[tabindex]->parent;
         errorcode = table[tabindex]->scanfn(parent, argv[optind]);
         if (errorcode == 0) {
+            if (table[tabindex]->flag & ARG_STOPPARSE)
+            {
+                table[tabindex]->idx = optind;
+                return;
+
+            }
             /* success, move onto next argv[optind] but stay with same table[tabindex] */
             /*printf("arg_parse_untagged(): argtable[%d] successfully matched\n",tabindex);*/
             optind++;
@@ -466,8 +518,14 @@ int arg_parse(int argc, char** argv, void** argtable) {
     /* parse the command line (local copy) for tagged options */
     arg_parse_tagged(argc, argvcopy, table, endtable);
 
+    int stop = arg_parse_find_stop(argc, argvcopy, table, endtable);
+
+    arg_reset((void **)table);
+
+    /* parse the command line (local copy) for tagged options */
+    arg_parse_tagged(stop, argvcopy, table, endtable);
     /* parse the command line (local copy) for untagged options */
-    arg_parse_untagged(argc, argvcopy, table, endtable);
+    arg_parse_untagged(stop, argvcopy, table, endtable);
 
     /* if no errors so far then perform post-parse checks otherwise dont bother */
     if (endtable->count == 0)
