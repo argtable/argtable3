@@ -78,7 +78,7 @@ endif()
 
 add_library(${ARGTABLE3_PROJECT_NAME}::argtable3 ALIAS argtable3)
 target_include_directories(argtable3 PUBLIC
-  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCEDIR}>"
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
   "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
