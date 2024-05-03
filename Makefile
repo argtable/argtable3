@@ -41,9 +41,11 @@ MKINDEX  = makeindex
 PRINTF   = printf
 GIT      = git
 
-BUILD_DIR   = build
-ARCHIVE_DIR = .archive
-TAGS_DIR    = .tags
+BUILD_DIR       = build
+DOXYGEN_XML_DIR = docs/source/xml
+DOCS_BUILD_DIR  = docs/build
+ARCHIVE_DIR     = .archive
+TAGS_DIR        = .tags
 
 MAKEFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 MAKEFILE_DIR := $(abspath $(dir $(MAKEFILE_PATH)))
@@ -112,6 +114,8 @@ taglist:
 cleanall:
 	@$(PRINTF) "Clean the distribution package and temp files...\n"
 	@$(RM) $(BUILD_DIR)
+	@$(RM) $(DOXYGEN_XML_DIR)
+	@$(RM) $(DOCS_BUILD_DIR)
 
 
 .PHONY: githead

@@ -190,7 +190,7 @@ amalgamation distribution under the build directory.
 Documentation
 -------------
 
-To learn how to use the Argtable3 API, you can see the documentation on the web
+To learn how to use the Argtable3 API, you can read the documentation on the web
 site, study examples in the `examples` directory, or even check the unit tests
 in the `tests` directory.
 
@@ -199,24 +199,40 @@ tools:
 
 * [Sphinx](https://www.sphinx-doc.org): A documentation generator based on the
   reStructuredText markup format.
-* [Read the Docs Sphinx Theme](https://sphinx-rtd-theme.readthedocs.io): A
-  Sphinx theme designed to look modern and be mobile-friendly.
+* [Furo Theme](https://pradyunsg.me/furo/quickstart/): A Sphinx theme designed
+  to look modern and be mobile-friendly.
 * [Breathe](https://breathe.readthedocs.io): A bridge between the Sphinx and
   Doxygen documentation systems.
 * [Doxygen](http://www.doxygen.nl/): A documentation generator for C/C++
   sources.
+* [MyST Parser](https://myst-parser.readthedocs.io): A Sphinx extension to parse
+  MyST, a rich and extensible flavour of Markdown for authoring technical and
+  scientific documentation.
 
-Go to the `docs` directory and run the `doxygen` command to generate Doxygen XML
-output, which will be saved in the `docs/xml` directory:
+Except Doxygen, all the document generation tools are Python-based, so you can
+install the tools in a Python virtual environment:
 
 ```
+$ python --version
+Python 3.11.5
+
+$ python -m venv .py311
+$ .py311\Scripts\activate.bat
+
+(.py311) $ pip install --upgrade sphinx
+(.py311) $ pip install --upgrade furo
+(.py311) $ pip install --upgrade breathe
+(.py311) $ pip install --upgrade myst-parser
+```
+
+After installing the tools, go to the `docs` directory and run the `doxygen`
+command to generate the Doxygen XML output, which should be generated in the
+`docs/source/xml` directory. Finally, run `make html` to generate the
+documentation in the `docs/build/html` directory.
+
+```
+$ cd docs
 $ doxygen
-```
-
-Run the `make` batch script and you will see the documentation in the
-`docs/_build/html` directory.
-
-```
 $ make html
 ```
 
