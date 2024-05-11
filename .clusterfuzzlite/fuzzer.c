@@ -1,12 +1,7 @@
-#include <stdlib.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <string.h>
 
 #include "argtable3.h"
-#include "argtable3_private.h"
-#include "CuTest.h"
-#include "arg_getopt.h"
 
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     if (size < 3) {
