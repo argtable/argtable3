@@ -35,6 +35,7 @@
 
 #include <stdio.h> /* FILE */
 #include <time.h>  /* struct tm */
+#include <ctype.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -129,6 +130,14 @@ typedef struct arg_int {
     int* ival;          /* Array of parsed argument values */
 } arg_int_t;
 
+/* Comma-separated integers, e.g. 1,2,3,4  */
+typedef struct arg_csi {
+    struct arg_hdr hdr; /* The mandatory argtable header struct */
+    int count;          /* Number of matching command line args */
+    int num_vals;       /* Number of values per arg */
+    int** ival;          /* Array of parsed argument values */
+} arg_csi_t;
+
 typedef struct arg_dbl {
     struct arg_hdr hdr; /* The mandatory argtable header struct */
     int count;          /* Number of matching command line args */
@@ -192,6 +201,10 @@ ARG_EXTERN struct arg_int* arg_rint0(const char* shortopts, const char* longopts
 ARG_EXTERN struct arg_int* arg_rint1(const char* shortopts, const char* longopts, const char* datatype, int minval, int maxval, const char* glossary);
 ARG_EXTERN struct arg_int* arg_rintn(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, int minval, int maxval, const char* glossary);
 
+/* Comma-separated integers, e.g. 1,2,3,4  */
+ARG_EXTERN struct arg_csi* arg_csi0(const char* shortopts, const char* longopts, const char* datatype, int num_args, const char* glossary);
+ARG_EXTERN struct arg_csi* arg_csi1(const char* shortopts, const char* longopts, const char* datatype, int num_args, const char* glossary);
+ARG_EXTERN struct arg_csi* arg_csin(const char* shortopts, const char* longopts, const char* datatype, int num_args, int mincount, int maxcount, const char* glossary);
 
 ARG_EXTERN struct arg_dbl* arg_dbl0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_dbl* arg_dbl1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);

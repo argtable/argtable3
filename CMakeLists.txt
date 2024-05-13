@@ -72,6 +72,7 @@ endif()
 set(ARGTABLE3_AMALGAMATION_SRC_FILE ${PROJECT_SOURCE_DIR}/dist/argtable3.c)
 set(ARGTABLE3_SRC_FILES
   ${PROJECT_SOURCE_DIR}/src/arg_cmd.c
+  ${PROJECT_SOURCE_DIR}/src/arg_csi.c
   ${PROJECT_SOURCE_DIR}/src/arg_date.c
   ${PROJECT_SOURCE_DIR}/src/arg_dbl.c
   ${PROJECT_SOURCE_DIR}/src/arg_dstr.c

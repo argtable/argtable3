@@ -59,7 +59,18 @@
 extern "C" {
 #endif
 
-enum { ARG_ERR_MINCOUNT = 1, ARG_ERR_MAXCOUNT, ARG_ERR_BADINT, ARG_ERR_OVERFLOW, ARG_ERR_BADDOUBLE, ARG_ERR_BADDATE, ARG_ERR_REGNOMATCH, ARG_ERR_RANGE };
+enum {
+    ARG_ERR_MINCOUNT = 1,
+    ARG_ERR_MAXCOUNT,
+    ARG_ERR_BADINT,
+    ARG_ERR_OVERFLOW,
+    ARG_ERR_BADDOUBLE,
+    ARG_ERR_BADDATE,
+    ARG_ERR_REGNOMATCH,
+    ARG_ERR_NOTENOUGH,
+    ARG_ERR_TOOMANY,
+    ARG_ERR_RANGE
+};
 
 typedef void(arg_panicfn)(const char* fmt, ...);
 
@@ -109,6 +120,7 @@ extern void* xmalloc(size_t size);
 extern void* xcalloc(size_t count, size_t size);
 extern void* xrealloc(void* ptr, size_t size);
 extern void xfree(void* ptr);
+extern long int strtol0X(const char* str, const char** endptr, char X, int base);
 
 struct arg_hashtable_entry {
     void *k, *v;

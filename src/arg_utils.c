@@ -176,3 +176,65 @@ void arg_mgsort(void* data, int size, int esize, int i, int k, arg_comparefn* co
         merge(data, esize, i, j, k, comparefn);
     }
 }
+
+/* strtol0x() is like strtol() except that the numeric string is    */
+/* expected to be prefixed by "0X" where X is a user supplied char. */
+/* The string may optionally be prefixed by white space and + or -  */
+/* as in +0X123 or -0X123.                                          */
+/* Once the prefix has been scanned, the remainder of the numeric   */
+/* string is converted using strtol() with the given base.          */
+/* eg: to parse hex str="-0X12324", specify X='X' and base=16.      */
+/* eg: to parse oct str="+0o12324", specify X='O' and base=8.       */
+/* eg: to parse bin str="-0B01010", specify X='B' and base=2.       */
+/* Failure of conversion is indicated by result where *endptr==str. */
+long int strtol0X(const char* str, const char** endptr, char X, int base) {
+    long int val;          /* stores result */
+    int s = 1;             /* sign is +1 or -1 */
+    const char* ptr = str; /* ptr to current position in str */
+
+    /* skip leading whitespace */
+    while (isspace((int)(*ptr)))
+        ptr++;
+    /* printf("1) %s\n",ptr); */
+
+    /* scan optional sign character */
+    switch (*ptr) {
+        case '+':
+            ptr++;
+            s = 1;
+            break;
+        case '-':
+            ptr++;
+            s = -1;
+            break;
+        default:
+            s = 1;
+            break;
+    }
+    /* printf("2) %s\n",ptr); */
+
+    /* '0X' prefix */
+    if ((*ptr++) != '0') {
+        /* printf("failed to detect '0'\n"); */
+        *endptr = str;
+        return 0;
+    }
+    /* printf("3) %s\n",ptr); */
+    if (toupper(*ptr++) != toupper(X)) {
+        /* printf("failed to detect '%c'\n",X); */
+        *endptr = str;
+        return 0;
+    }
+    /* printf("4) %s\n",ptr); */
+
+    /* attempt conversion on remainder of string using strtol() */
+    val = strtol(ptr, (char**)endptr, base);
+    if (*endptr == ptr) {
+        /* conversion failed */
+        *endptr = str;
+        return 0;
+    }
+
+    /* success */
+    return s * val;
+}
