@@ -236,7 +236,7 @@ void arg_make_get_help_msg(arg_dstr_t res) {
     arg_dstr_catf(res, "Please type '%s help' to get more information.\n", module_name());
 }
 
-void arg_make_help_msg(arg_dstr_t ds, char* cmd_name, void** argtable) {
+void arg_make_help_msg(arg_dstr_t ds, const char* cmd_name, void** argtable) {
     arg_cmd_info_t* cmd_info = (arg_cmd_info_t*)arg_hashtable_search(s_hashtable, cmd_name);
     if (cmd_info) {
         arg_dstr_catf(ds, "%s: %s\n", cmd_name, cmd_info->description);
@@ -259,7 +259,7 @@ void arg_make_syntax_err_msg(arg_dstr_t ds, void** argtable, struct arg_end* end
     arg_dstr_cat(ds, "\n");
 }
 
-int arg_make_syntax_err_help_msg(arg_dstr_t ds, char* name, int help, int nerrors, void** argtable, struct arg_end* end, int* exitcode) {
+int arg_make_syntax_err_help_msg(arg_dstr_t ds, const char* name, int help, int nerrors, void** argtable, struct arg_end* end, int* exitcode) {
     /* help handling
      * note: '-h|--help' takes precedence over error reporting
      */

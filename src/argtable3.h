@@ -282,9 +282,9 @@ ARG_EXTERN arg_cmd_info_t* arg_cmd_itr_value(arg_cmd_itr_t itr);
 ARG_EXTERN int arg_cmd_itr_search(arg_cmd_itr_t itr, void* k);
 ARG_EXTERN void arg_mgsort(void* data, int size, int esize, int i, int k, arg_comparefn* comparefn);
 ARG_EXTERN void arg_make_get_help_msg(arg_dstr_t res);
-ARG_EXTERN void arg_make_help_msg(arg_dstr_t ds, char* cmd_name, void** argtable);
+ARG_EXTERN void arg_make_help_msg(arg_dstr_t ds, const char* cmd_name, void** argtable);
 ARG_EXTERN void arg_make_syntax_err_msg(arg_dstr_t ds, void** argtable, struct arg_end* end);
-ARG_EXTERN int arg_make_syntax_err_help_msg(arg_dstr_t ds, char* name, int help, int nerrors, void** argtable, struct arg_end* end, int* exitcode);
+ARG_EXTERN int arg_make_syntax_err_help_msg(arg_dstr_t ds, const char* name, int help, int nerrors, void** argtable, struct arg_end* end, int* exitcode);
 ARG_EXTERN void arg_set_module_name(const char* name);
 ARG_EXTERN void arg_set_module_version(int major, int minor, int patch, const char* tag);
 

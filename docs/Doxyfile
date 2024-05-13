@@ -1,5 +1,5 @@
 PROJECT_NAME      = "argtable"
-XML_OUTPUT        = xml
+XML_OUTPUT        = source/xml
 INPUT             = ../src
 GENERATE_LATEX    = NO
 GENERATE_MAN      = NO

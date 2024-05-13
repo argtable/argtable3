@@ -6,6 +6,9 @@ dist/
 .archive/
 .tags/
 .misc/
+.py*/
+docs/source/xml/
+docs/build/
 
 # Ignore JetBrains and Eclipse IDE metadata and default build directories
 .vscode/
