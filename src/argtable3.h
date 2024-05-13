@@ -124,6 +124,8 @@ typedef struct arg_lit {
 typedef struct arg_int {
     struct arg_hdr hdr; /* The mandatory argtable header struct */
     int count;          /* Number of matching command line args */
+    int minval;
+    int maxval;
     int* ival;          /* Array of parsed argument values */
 } arg_int_t;
 
@@ -186,6 +188,10 @@ ARG_EXTERN struct arg_lit* arg_litn(const char* shortopts, const char* longopts,
 ARG_EXTERN struct arg_int* arg_int0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_int* arg_int1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_int* arg_intn(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary);
+ARG_EXTERN struct arg_int* arg_rint0(const char* shortopts, const char* longopts, const char* datatype, int minval, int maxval, const char* glossary);
+ARG_EXTERN struct arg_int* arg_rint1(const char* shortopts, const char* longopts, const char* datatype, int minval, int maxval, const char* glossary);
+ARG_EXTERN struct arg_int* arg_rintn(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, int minval, int maxval, const char* glossary);
+
 
 ARG_EXTERN struct arg_dbl* arg_dbl0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_dbl* arg_dbl1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);

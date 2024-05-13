@@ -1954,6 +1954,63 @@ void test_argint_basic_054(CuTest* tc) {
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
+void test_argint_basic_055(CuTest* tc) {
+    struct arg_int* a = arg_rint0(NULL, NULL, "a", 0, 5, "a is <int>");
+    struct arg_end* end = arg_end(20);
+    void* argtable[] = {a, end};
+    int nerrors;
+    int i;
+
+    char* argv[] = {"program", "0", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
+
+    nerrors = arg_parse(argc, argv, argtable);
+
+    CuAssertIntEquals(tc, nerrors, 0);
+
+    arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+}
+
+void test_argint_basic_056(CuTest* tc) {
+    struct arg_int* a = arg_rint0(NULL, NULL, "a", 0, 5, "a is <int>");
+    struct arg_end* end = arg_end(20);
+    void* argtable[] = {a, end};
+    int nerrors;
+    int i;
+
+    char* argv[] = {"program", "5", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
+
+    nerrors = arg_parse(argc, argv, argtable);
+
+    CuAssertIntEquals(tc, nerrors, 0);
+
+    arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+}
+
+void test_argint_basic_057(CuTest* tc) {
+    struct arg_int* a = arg_rint0(NULL, NULL, "a", 0, 5, "a is <int>");
+    struct arg_end* end = arg_end(20);
+    void* argtable[] = {a, end};
+    int nerrors;
+    int i;
+
+    char* argv[] = {"program", "6", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
+
+    nerrors = arg_parse(argc, argv, argtable);
+
+    CuAssertIntEquals(tc, nerrors, 1);
+
+    arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+}
+
 CuSuite* get_argint_testsuite() {
     CuSuite* suite = CuSuiteNew();
     SUITE_ADD_TEST(suite, test_argint_basic_001);
@@ -2010,6 +2067,9 @@ CuSuite* get_argint_testsuite() {
     SUITE_ADD_TEST(suite, test_argint_basic_052);
     SUITE_ADD_TEST(suite, test_argint_basic_053);
     SUITE_ADD_TEST(suite, test_argint_basic_054);
+    SUITE_ADD_TEST(suite, test_argint_basic_055);
+    SUITE_ADD_TEST(suite, test_argint_basic_056);
+    SUITE_ADD_TEST(suite, test_argint_basic_057);
     return suite;
 }
 

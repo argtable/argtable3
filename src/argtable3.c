@@ -344,6 +344,11 @@ static int arg_parse_find_stop(int argc, char** argv, struct arg_hdr** table, st
         void* parent;
         int errorcode;
 
+        /* if we have exhausted our argv[optind] entries then we have finished */
+        if (optind >= argc) {
+            return argc;
+        }
+
         /* skip table entries with non-null long or short options (they are not untagged entries) */
         if (table[tabindex]->longopts || table[tabindex]->shortopts) {
             tabindex++;

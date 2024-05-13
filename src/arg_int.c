@@ -198,6 +198,9 @@ static int arg_int_scanfn(struct arg_int* parent, const char* argval) {
         } else if (!detectsuffix(end, ""))
             errorcode = ARG_ERR_BADINT; /* invalid suffix detected */
 
+        if (val < parent->minval || val > parent->maxval)
+            errorcode = ARG_ERR_RANGE;
+
         /* if success then store result in parent->ival[] array */
         if (errorcode == 0)
             parent->ival[parent->count++] = (int)val;
@@ -243,18 +246,36 @@ static void arg_int_errorfn(struct arg_int* parent, arg_dstr_t ds, int errorcode
             arg_print_option_ds(ds, shortopts, longopts, datatype, " ");
             arg_dstr_catf(ds, "(%s is too large)\n", argval);
             break;
+
+        case ARG_ERR_RANGE:
+            arg_dstr_catf(ds, "integer %d out of range (min: %d, max: %d)", argval, parent->minval, parent->maxval);
+            arg_print_option_ds(ds, shortopts, longopts, datatype, "\n");
+            break;
     }
 }
 
 struct arg_int* arg_int0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary) {
-    return arg_intn(shortopts, longopts, datatype, 0, 1, glossary);
+    return arg_rintn(shortopts, longopts, datatype, 0, 1, INT_MIN, INT_MAX, glossary);
 }
 
 struct arg_int* arg_int1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary) {
-    return arg_intn(shortopts, longopts, datatype, 1, 1, glossary);
+    return arg_rintn(shortopts, longopts, datatype, 1, 1, INT_MIN, INT_MAX, glossary);
 }
 
 struct arg_int* arg_intn(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary) {
+    return arg_rintn(shortopts, longopts, datatype, mincount, maxcount, INT_MIN, INT_MAX, glossary);
+}
+
+
+struct arg_int *arg_rint0(const char* shortopts, const char* longopts, const char* datatype, int minval, int maxval, const char* glossary) {
+    return arg_rintn(shortopts, longopts, datatype, 0, 1, minval, maxval, glossary);
+}
+
+struct arg_int* arg_rint1(const char* shortopts, const char* longopts, const char* datatype, int minval, int maxval, const char* glossary) {
+    return arg_rintn(shortopts, longopts, datatype, 1, 1, minval, maxval, glossary);
+}
+
+struct arg_int* arg_rintn(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, int minval, int maxval, const char* glossary) {
     size_t nbytes;
     struct arg_int* result;
 
@@ -279,6 +300,9 @@ struct arg_int* arg_intn(const char* shortopts, const char* longopts, const char
     result->hdr.scanfn = (arg_scanfn*)arg_int_scanfn;
     result->hdr.checkfn = (arg_checkfn*)arg_int_checkfn;
     result->hdr.errorfn = (arg_errorfn*)arg_int_errorfn;
+
+    result->minval = minval;
+    result->maxval = maxval;
 
     /* store the ival[maxcount] array immediately after the arg_int struct */
     result->ival = (int*)(result + 1);
