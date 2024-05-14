@@ -57,6 +57,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+enum { GETOPT_SHUFFLE = 0, GETOPT_NOSHUFFLE = 1 };
+
 static void arg_register_error(struct arg_end* end, void* parent, int error, const char* argval) {
     /* printf("arg_register_error(%p,%p,%d,%s)\n",end,parent,error,argval); */
     if (end->count < end->hdr.maxcount) {
@@ -186,7 +188,7 @@ static struct longoptions* alloc_longoptions(struct arg_hdr** table) {
     return result;
 }
 
-static char* alloc_shortoptions(struct arg_hdr** table) {
+static char* alloc_shortoptions(struct arg_hdr** table, int shuffle) {
     char* result;
     size_t len = 2;
     int tabindex;
@@ -201,8 +203,15 @@ static char* alloc_shortoptions(struct arg_hdr** table) {
     result = xmalloc(len);
 
     res = result;
-    /* Add a leading + so getopt doesn't reorder argv */
-    *res++ = '+';
+    if (GETOPT_NOSHUFFLE == shuffle)
+    {
+        /* Add a leading + so getopt doesn't reorder argv */
+        *res++ = '+';
+    }
+    else
+    {
+        assert(GETOPT_SHUFFLE == shuffle);
+    }
     /* add a leading ':' so getopt return codes distinguish    */
     /* unrecognised option and options missing argument values */
     *res++ = ':';
@@ -233,7 +242,7 @@ static int arg_endindex(struct arg_hdr** table) {
     return tabindex;
 }
 
-static void arg_parse_tagged(int argc, char** argv, struct arg_hdr** table, struct arg_end* endtable) {
+static void arg_parse_tagged(int argc, char** argv, struct arg_hdr** table, struct arg_end* endtable, int shuffle) {
     struct longoptions* longoptions;
     char* shortoptions;
     int copt;
@@ -243,7 +252,7 @@ static void arg_parse_tagged(int argc, char** argv, struct arg_hdr** table, stru
     /* allocate short and long option arrays for the given opttable[].   */
     /* if the allocs fail then put an error msg in the last table entry. */
     longoptions = alloc_longoptions(table);
-    shortoptions = alloc_shortoptions(table);
+    shortoptions = alloc_shortoptions(table, shuffle);
 
     /*dump_longoptions(longoptions);*/
 
@@ -521,14 +530,14 @@ int arg_parse(int argc, char** argv, void** argtable) {
     argvcopy[argc] = NULL;
 
     /* parse the command line (local copy) for tagged options */
-    arg_parse_tagged(argc, argvcopy, table, endtable);
+    arg_parse_tagged(argc, argvcopy, table, endtable, GETOPT_NOSHUFFLE);
 
     int stop = arg_parse_find_stop(argc, argvcopy, table, endtable);
 
     arg_reset((void **)table);
 
     /* parse the command line (local copy) for tagged options */
-    arg_parse_tagged(stop, argvcopy, table, endtable);
+    arg_parse_tagged(stop, argvcopy, table, endtable, GETOPT_SHUFFLE);
     /* parse the command line (local copy) for untagged options */
     arg_parse_untagged(stop, argvcopy, table, endtable);
 
