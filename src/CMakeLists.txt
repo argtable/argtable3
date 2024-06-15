@@ -93,7 +93,7 @@ set_target_properties(argtable3 PROPERTIES
 )
 
 include(GNUInstallDirs)
-if(UNIX OR MSYS OR MINGW)
+if(UNIX OR MSYS OR MINGW OR PSP)
   set(ARGTABLE3_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/cmake/argtable3)
 elseif(WIN32)
   set(ARGTABLE3_INSTALL_CMAKEDIR "cmake")
