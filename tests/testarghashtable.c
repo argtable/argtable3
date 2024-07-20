@@ -75,12 +75,12 @@ void test_arghashtable_basic_002(CuTest* tc) {
     char* key_1 = "k1";
     char* k_1 = (char*)malloc(strlen(key_1) + 1);
     memset(k_1, 0, strlen(key_1) + 1);
-    strncpy(k_1, key_1, strlen(key_1));
+    memcpy(k_1, key_1, strlen(key_1));
 
     char* value_1 = "v1";
     char* v_1 = (char*)malloc(strlen(value_1) + 1);
     memset(v_1, 0, strlen(value_1) + 1);
-    strncpy(v_1, value_1, strlen(value_1));
+    memcpy(v_1, value_1, strlen(value_1));
 
     arg_hashtable_insert(h, k_1, v_1);
     CuAssertIntEquals(tc, 1, arg_hashtable_count(h));
@@ -104,12 +104,12 @@ void test_arghashtable_basic_003(CuTest* tc) {
     char* key_1 = "k1";
     char* k_1 = (char*)malloc(strlen(key_1) + 1);
     memset(k_1, 0, strlen(key_1) + 1);
-    strncpy(k_1, key_1, strlen(key_1));
+    memcpy(k_1, key_1, strlen(key_1));
 
     char* value_1 = "v1";
     char* v_1 = (char*)malloc(strlen(value_1) + 1);
     memset(v_1, 0, strlen(value_1) + 1);
-    strncpy(v_1, value_1, strlen(value_1));
+    memcpy(v_1, value_1, strlen(value_1));
 
     arg_hashtable_insert(h, k_1, v_1);
     CuAssertIntEquals(tc, 1, arg_hashtable_count(h));
@@ -117,12 +117,12 @@ void test_arghashtable_basic_003(CuTest* tc) {
     char* key_2 = "k2";
     char* k_2 = (char*)malloc(strlen(key_2) + 1);
     memset(k_2, 0, strlen(key_2) + 1);
-    strncpy(k_2, key_2, strlen(key_2));
+    memcpy(k_2, key_2, strlen(key_2));
 
     char* value_2 = "v2";
     char* v_2 = (char*)malloc(strlen(value_2) + 1);
     memset(v_2, 0, strlen(value_2) + 1);
-    strncpy(v_2, value_2, strlen(value_2));
+    memcpy(v_2, value_2, strlen(value_2));
 
     arg_hashtable_insert(h, k_2, v_2);
     CuAssertIntEquals(tc, 2, arg_hashtable_count(h));
@@ -148,12 +148,12 @@ void test_arghashtable_basic_004(CuTest* tc) {
     char* key_1 = "k1";
     char* k_1 = (char*)malloc(strlen(key_1) + 1);
     memset(k_1, 0, strlen(key_1) + 1);
-    strncpy(k_1, key_1, strlen(key_1));
+    memcpy(k_1, key_1, strlen(key_1));
 
     char* value_1 = "v1";
     char* v_1 = (char*)malloc(strlen(value_1) + 1);
     memset(v_1, 0, strlen(value_1) + 1);
-    strncpy(v_1, value_1, strlen(value_1));
+    memcpy(v_1, value_1, strlen(value_1));
 
     arg_hashtable_insert(h, k_1, v_1);
     CuAssertTrue(tc, h != 0);
@@ -176,12 +176,12 @@ void test_arghashtable_basic_005(CuTest* tc) {
     char* key_1 = "k1";
     char* k_1 = (char*)malloc(strlen(key_1) + 1);
     memset(k_1, 0, strlen(key_1) + 1);
-    strncpy(k_1, key_1, strlen(key_1));
+    memcpy(k_1, key_1, strlen(key_1));
 
     char* value_1 = "v1";
     char* v_1 = (char*)malloc(strlen(value_1) + 1);
     memset(v_1, 0, strlen(value_1) + 1);
-    strncpy(v_1, value_1, strlen(value_1));
+    memcpy(v_1, value_1, strlen(value_1));
 
     arg_hashtable_insert(h, k_1, v_1);
     CuAssertTrue(tc, h != 0);
@@ -201,12 +201,12 @@ void test_arghashtable_basic_006(CuTest* tc) {
     char* key_1 = "k1";
     char* k_1 = (char*)malloc(strlen(key_1) + 1);
     memset(k_1, 0, strlen(key_1) + 1);
-    strncpy(k_1, key_1, strlen(key_1));
+    memcpy(k_1, key_1, strlen(key_1));
 
     char* value_1 = "v1";
     char* v_1 = (char*)malloc(strlen(value_1) + 1);
     memset(v_1, 0, strlen(value_1) + 1);
-    strncpy(v_1, value_1, strlen(value_1));
+    memcpy(v_1, value_1, strlen(value_1));
 
     arg_hashtable_insert(h, k_1, v_1);
     CuAssertTrue(tc, arg_hashtable_count(h) == 1);
@@ -225,12 +225,12 @@ void test_arghashtable_basic_007(CuTest* tc) {
     char* key_1 = "k1";
     char* k_1 = (char*)malloc(strlen(key_1) + 1);
     memset(k_1, 0, strlen(key_1) + 1);
-    strncpy(k_1, key_1, strlen(key_1));
+    memcpy(k_1, key_1, strlen(key_1));
 
     char* value_1 = "v1";
     char* v_1 = (char*)malloc(strlen(value_1) + 1);
     memset(v_1, 0, strlen(value_1) + 1);
-    strncpy(v_1, value_1, strlen(value_1));
+    memcpy(v_1, value_1, strlen(value_1));
 
     arg_hashtable_insert(h, k_1, v_1);
     CuAssertIntEquals(tc, 1, arg_hashtable_count(h));
@@ -238,12 +238,12 @@ void test_arghashtable_basic_007(CuTest* tc) {
     char* key_2 = "k2";
     char* k_2 = (char*)malloc(strlen(key_2) + 1);
     memset(k_2, 0, strlen(key_2) + 1);
-    strncpy(k_2, key_2, strlen(key_2));
+    memcpy(k_2, key_2, strlen(key_2));
 
     char* value_2 = "v2";
     char* v_2 = (char*)malloc(strlen(value_2) + 1);
     memset(v_2, 0, strlen(value_2) + 1);
-    strncpy(v_2, value_2, strlen(value_2));
+    memcpy(v_2, value_2, strlen(value_2));
 
     arg_hashtable_insert(h, k_2, v_2);
     CuAssertIntEquals(tc, 2, arg_hashtable_count(h));
