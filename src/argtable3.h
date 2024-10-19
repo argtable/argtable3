@@ -52,8 +52,14 @@ extern "C" {
 #define ARG_CMD_DESCRIPTION_LEN 256
 #endif /* ARG_CMD_DESCRIPTION_LEN */
 
-/* bit masks for arg_hdr.flag */
-enum { ARG_TERMINATOR = 0x1, ARG_HASVALUE = 0x2, ARG_HASOPTVALUE = 0x4 };
+/**
+ * Bit masks for `arg_hdr.flag`.
+ */
+enum arg_hdr_flag {
+    ARG_TERMINATOR = 0x1,
+    ARG_HASVALUE = 0x2,
+    ARG_HASOPTVALUE = 0x4
+};
 
 #if defined(_WIN32)
   #if defined(argtable3_EXPORTS)
@@ -78,100 +84,132 @@ typedef void(arg_dstr_freefn)(char* buf);
 typedef int(arg_cmdfn)(int argc, char* argv[], arg_dstr_t res);
 typedef int(arg_comparefn)(const void* k1, const void* k2);
 
-/*
- * The arg_hdr struct defines properties that are common to all arg_xxx structs.
- * The argtable library requires each arg_xxx struct to have an arg_hdr
- * struct as its first data member.
- * The argtable library functions then use this data to identify the
- * properties of the command line option, such as its option tags,
- * datatype string, and glossary strings, and so on.
- * Moreover, the arg_hdr struct contains pointers to custom functions that
- * are provided by each arg_xxx struct which perform the tasks of parsing
- * that particular arg_xxx arguments, performing post-parse checks, and
- * reporting errors.
- * These functions are private to the individual arg_xxx source code
- * and are the pointer to them are initiliased by that arg_xxx struct's
- * constructor function. The user could alter them after construction
- * if desired, but the original intention is for them to be set by the
- * constructor and left unaltered.
+/**
+ * Defines properties that are common to all `arg_xxx` structs.
+ *
+ * The argtable library requires each `arg_xxx` struct to have an `arg_hdr`
+ * struct as its first data member. The argtable library functions then use this
+ * data to identify the properties of the command line option, such as its
+ * option tags, datatype string, and glossary strings, and so on.
+ *
+ * Moreover, the `arg_hdr` struct contains pointers to custom functions that are
+ * provided by each `arg_xxx` struct which perform the tasks of parsing that
+ * particular `arg_xxx` arguments, performing post-parse checks, and reporting
+ * errors. These functions are private to the individual `arg_xxx` source code
+ * and are the pointer to them are initiliased by that `arg_xxx` struct's
+ * constructor function. The user could alter them after construction if
+ * desired, but the original intention is for them to be set by the constructor
+ * and left unaltered.
  */
 typedef struct arg_hdr {
-    char flag;             /* Modifier flags: ARG_TERMINATOR, ARG_HASVALUE. */
-    const char* shortopts; /* String defining the short options */
-    const char* longopts;  /* String defiing the long options */
-    const char* datatype;  /* Description of the argument data type */
-    const char* glossary;  /* Description of the option as shown by arg_print_glossary function */
-    int mincount;          /* Minimum number of occurences of this option accepted */
-    int maxcount;          /* Maximum number of occurences if this option accepted */
-    void* parent;          /* Pointer to parent arg_xxx struct */
-    arg_resetfn* resetfn;  /* Pointer to parent arg_xxx reset function */
-    arg_scanfn* scanfn;    /* Pointer to parent arg_xxx scan function */
-    arg_checkfn* checkfn;  /* Pointer to parent arg_xxx check function */
-    arg_errorfn* errorfn;  /* Pointer to parent arg_xxx error function */
-    void* priv;            /* Pointer to private header data for use by arg_xxx functions */
+    char flag;             /**< Modifier flags: available options are in enum `arg_hdr_flag`. */
+    const char* shortopts; /**< String defining the short options */
+    const char* longopts;  /**< String defiing the long options */
+    const char* datatype;  /**< Description of the argument data type */
+    const char* glossary;  /**< Description of the option as shown by arg_print_glossary function */
+    int mincount;          /**< Minimum number of occurences of this option accepted */
+    int maxcount;          /**< Maximum number of occurences if this option accepted */
+    void* parent;          /**< Pointer to parent arg_xxx struct */
+    arg_resetfn* resetfn;  /**< Pointer to parent arg_xxx reset function */
+    arg_scanfn* scanfn;    /**< Pointer to parent arg_xxx scan function */
+    arg_checkfn* checkfn;  /**< Pointer to parent arg_xxx check function */
+    arg_errorfn* errorfn;  /**< Pointer to parent arg_xxx error function */
+    void* priv;            /**< Pointer to private header data for use by arg_xxx functions */
 } arg_hdr_t;
 
+/**
+ * Contains remarks argument information, which is used to add an extra line to
+ * the syntax or glossary output.
+ */
 typedef struct arg_rem {
-    struct arg_hdr hdr; /* The mandatory argtable header struct */
+    struct arg_hdr hdr; /**< The mandatory argtable header struct */
 } arg_rem_t;
 
+/**
+ * Contains const-string-typed argument information.
+ */
 typedef struct arg_lit {
-    struct arg_hdr hdr; /* The mandatory argtable header struct */
-    int count;          /* Number of matching command line args */
+    struct arg_hdr hdr; /**< The mandatory argtable header struct */
+    int count;          /**< Number of matching command line args */
 } arg_lit_t;
 
+/**
+ * Contains int-typed argument information.
+ */
 typedef struct arg_int {
-    struct arg_hdr hdr; /* The mandatory argtable header struct */
-    int count;          /* Number of matching command line args */
-    int* ival;          /* Array of parsed argument values */
+    struct arg_hdr hdr; /**< The mandatory argtable header struct */
+    int count;          /**< Number of matching command line args */
+    int* ival;          /**< Array of parsed argument values */
 } arg_int_t;
 
+/**
+ * Contains double-typed argument information.
+ */
 typedef struct arg_dbl {
-    struct arg_hdr hdr; /* The mandatory argtable header struct */
-    int count;          /* Number of matching command line args */
-    double* dval;       /* Array of parsed argument values */
+    struct arg_hdr hdr; /**< The mandatory argtable header struct */
+    int count;          /**< Number of matching command line args */
+    double* dval;       /**< Array of parsed argument values */
 } arg_dbl_t;
 
+/**
+ * Contains string-typed argument information.
+ */
 typedef struct arg_str {
-    struct arg_hdr hdr; /* The mandatory argtable header struct */
-    int count;          /* Number of matching command line args */
-    const char** sval;  /* Array of parsed argument values */
+    struct arg_hdr hdr; /**< The mandatory argtable header struct */
+    int count;          /**< Number of matching command line args */
+    const char** sval;  /**< Array of parsed argument values */
 } arg_str_t;
 
+/**
+ * Contains regex-typed argument information.
+ */
 typedef struct arg_rex {
-    struct arg_hdr hdr; /* The mandatory argtable header struct */
-    int count;          /* Number of matching command line args */
-    const char** sval;  /* Array of parsed argument values */
+    struct arg_hdr hdr; /**< The mandatory argtable header struct */
+    int count;          /**< Number of matching command line args */
+    const char** sval;  /**< Array of parsed argument values */
 } arg_rex_t;
 
+/**
+ * Contains file-typed argument information.
+ */
 typedef struct arg_file {
-    struct arg_hdr hdr;     /* The mandatory argtable header struct */
-    int count;              /* Number of matching command line args*/
-    const char** filename;  /* Array of parsed filenames  (eg: /home/foo.bar) */
-    const char** basename;  /* Array of parsed basenames  (eg: foo.bar) */
-    const char** extension; /* Array of parsed extensions (eg: .bar) */
+    struct arg_hdr hdr;     /**< The mandatory argtable header struct */
+    int count;              /**< Number of matching command line args*/
+    const char** filename;  /**< Array of parsed filenames  (eg: /home/foo.bar) */
+    const char** basename;  /**< Array of parsed basenames  (eg: foo.bar) */
+    const char** extension; /**< Array of parsed extensions (eg: .bar) */
 } arg_file_t;
 
+/**
+ * Contains date-typed argument information.
+ */
 typedef struct arg_date {
-    struct arg_hdr hdr; /* The mandatory argtable header struct */
-    const char* format; /* strptime format string used to parse the date */
-    int count;          /* Number of matching command line args */
-    struct tm* tmval;   /* Array of parsed time values */
+    struct arg_hdr hdr; /**< The mandatory argtable header struct */
+    const char* format; /**< strptime format string used to parse the date */
+    int count;          /**< Number of matching command line args */
+    struct tm* tmval;   /**< Array of parsed time values */
 } arg_date_t;
 
 enum { ARG_ELIMIT = 1, ARG_EMALLOC, ARG_ENOMATCH, ARG_ELONGOPT, ARG_EMISSARG };
+
+/**
+ * Contains parser errors and terminates the argument table.
+ */
 typedef struct arg_end {
-    struct arg_hdr hdr;  /* The mandatory argtable header struct */
-    int count;           /* Number of errors encountered */
-    int* error;          /* Array of error codes */
-    void** parent;       /* Array of pointers to offending arg_xxx struct */
-    const char** argval; /* Array of pointers to offending argv[] string */
+    struct arg_hdr hdr;  /**< The mandatory argtable header struct */
+    int count;           /**< Number of errors encountered */
+    int* error;          /**< Array of error codes */
+    void** parent;       /**< Array of pointers to offending arg_xxx struct */
+    const char** argval; /**< Array of pointers to offending argv[] string */
 } arg_end_t;
 
+/**
+ * Contains sub-command information.
+ */
 typedef struct arg_cmd_info {
-    char name[ARG_CMD_NAME_LEN];
-    char description[ARG_CMD_DESCRIPTION_LEN];
-    arg_cmdfn* proc;
+    char name[ARG_CMD_NAME_LEN];               /**< Sub-command name */
+    char description[ARG_CMD_DESCRIPTION_LEN]; /**< A short description */
+    arg_cmdfn* proc;                           /**< Sub-command procedure */
 } arg_cmd_info_t;
 
 /**** arg_xxx constructor functions *********************************/
