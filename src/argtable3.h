@@ -376,21 +376,132 @@ ARG_EXTERN struct arg_end* arg_end(int maxcount);
 #define ARG_DSTR_DYNAMIC ((arg_dstr_freefn*)3)
 
 /**** other functions *******************************************/
+
+/**
+ * Checks the argument table for null entries.
+ *
+ * Each entry in the argument table is created by `arg_xxx` constructor
+ * functions, such as `arg_litn`. These constructor functions will return NULL
+ * when they fail to allocate enough memory. Instead of checking the return
+ * value of each constructor function, we can make the code more readable by
+ * calling `arg_nullcheck` when all the argument table entries have been
+ * constructed:
+ *
+ * ```
+ * struct arg_lit *list    = arg_lit0("lL",NULL,           "list files");
+ * struct arg_lit *verbose = arg_lit0("v","verbose,debug", "verbose messages");
+ * struct arg_lit *help    = arg_lit0(NULL,"help",         "print this help and exit");
+ * struct arg_lit *version = arg_lit0(NULL,"version",      "print version and exit");
+ * struct arg_end *end     = arg_end(20);
+ * void *argtable[] = {list, verbose, help, version, end};
+ * const char *progname = "myprog";
+ * int exitcode = 0;
+ *
+ * if (arg_nullcheck(argtable) != 0)
+ * {
+ *     printf("%s: insufficient memory\n", progname);
+ *     exitcode = 1;
+ *     goto exit;
+ * }
+ * ```
+ *
+ * @param argtable An array of argument table structs.
+ *
+ * @return
+ *   Returns 1 if any are found, zero otherwise.
+ */
 ARG_EXTERN int arg_nullcheck(void** argtable);
+
+/**
+ * Parses the command-line arguments.
+ *
+ * @param argc An integer representing the number of command-line arguments
+ *   passed to the program. The *argc* parameter is always greater than or equal
+ *   to 1.
+ * @param argv An array of null-terminated strings representing the command-line
+ *   arguments passed to the program. By convention, `argv[0]` is the command
+ *   with which the program is invoked. `argv[1]` is the first command-line
+ *   argument, and so on, until `argv[argc]`, which is always NULL.
+ * @param argtable An array of argument table structs.
+ *
+ * @return Number of errors found.
+ */
 ARG_EXTERN int arg_parse(int argc, char** argv, void** argtable);
+
+/**
+ * @brief Mainly used in error handling functions.
+ *
+ * @param fp FILE descriptor
+ * @param shortopts A pointer to a WNDCLASSEX structure. You must fill the
+ *   structure with the appropriate class attributes before passing it to the
+ *   function.
+ * @param longopts The second one, which follows @p shortopts.
+ * @param datatype The second one, which follows @p shortopts.
+ * @param suffix The second one, which follows @p shortopts.
+ */
 ARG_EXTERN void arg_print_option(FILE* fp, const char* shortopts, const char* longopts, const char* datatype, const char* suffix);
-ARG_EXTERN void arg_print_syntax(FILE* fp, void** argtable, const char* suffix);
-ARG_EXTERN void arg_print_syntaxv(FILE* fp, void** argtable, const char* suffix);
-ARG_EXTERN void arg_print_glossary(FILE* fp, void** argtable, const char* format);
-ARG_EXTERN void arg_print_glossary_gnu(FILE* fp, void** argtable);
-ARG_EXTERN void arg_print_errors(FILE* fp, struct arg_end* end, const char* progname);
 ARG_EXTERN void arg_print_option_ds(arg_dstr_t ds, const char* shortopts, const char* longopts, const char* datatype, const char* suffix);
+
+/**
+ * @brief GNU-style command-line option syntax.
+ *
+ * @param fp FILE descriptor
+ * @param argtable A pointer to a WNDCLASSEX structure. You must fill the
+ *   structure with the appropriate class attributes before passing it to the
+ *   function.
+ * @param suffix The second one, which follows @p shortopts.
+ */
+ARG_EXTERN void arg_print_syntax(FILE* fp, void** argtable, const char* suffix);
 ARG_EXTERN void arg_print_syntax_ds(arg_dstr_t ds, void** argtable, const char* suffix);
+
+/**
+ * @brief More verbose style command-line option syntax.
+ *
+ * @param fp FILE descriptor
+ * @param argtable A pointer to a WNDCLASSEX structure. You must fill the
+ *   structure with the appropriate class attributes before passing it to the
+ *   function.
+ * @param suffix The second one, which follows @p shortopts.
+ */
+ARG_EXTERN void arg_print_syntaxv(FILE* fp, void** argtable, const char* suffix);
 ARG_EXTERN void arg_print_syntaxv_ds(arg_dstr_t ds, void** argtable, const char* suffix);
+
+/**
+ * @brief customizable glossary.
+ *
+ * @param fp FILE descriptor
+ * @param argtable A pointer to a WNDCLASSEX structure. You must fill the
+ *   structure with the appropriate class attributes before passing it to the
+ *   function.
+ * @param format Printing format.
+ */
+ARG_EXTERN void arg_print_glossary(FILE* fp, void** argtable, const char* format);
 ARG_EXTERN void arg_print_glossary_ds(arg_dstr_t ds, void** argtable, const char* format);
+
+/**
+ * @brief GNU-style glossary.
+ *
+ * @param fp FILE descriptor
+ * @param argtable A pointer to a WNDCLASSEX structure. You must fill the
+ *   structure with the appropriate class attributes before passing it to the
+ *   function.
+ */
+ARG_EXTERN void arg_print_glossary_gnu(FILE* fp, void** argtable);
 ARG_EXTERN void arg_print_glossary_gnu_ds(arg_dstr_t ds, void** argtable);
+
+ARG_EXTERN void arg_print_errors(FILE* fp, struct arg_end* end, const char* progname);
 ARG_EXTERN void arg_print_errors_ds(arg_dstr_t ds, struct arg_end* end, const char* progname);
+
 ARG_EXTERN void arg_print_formatted(FILE *fp, const unsigned lmargin, const unsigned rmargin, const char *text);
+ARG_EXTERN void arg_print_formatted_ds(arg_dstr_t ds, const unsigned lmargin, const unsigned rmargin, const char* text);
+ARG_EXTERN void arg_cat_optionv(char* dest, size_t ndest, const char* shortopts, const char* longopts, const char* datatype, int optvalue, const char* separator);
+
+/**
+ * Deallocates or frees non-null entries of the argument table.
+ *
+ * @param argtable An array of argument table structs.
+ * @param n The number of structs in the argument table.
+ */
 ARG_EXTERN void arg_freetable(void** argtable, size_t n);
 
 ARG_EXTERN arg_dstr_t arg_dstr_create(void);
@@ -425,6 +536,18 @@ ARG_EXTERN void arg_set_module_name(const char* name);
 ARG_EXTERN void arg_set_module_version(int major, int minor, int patch, const char* tag);
 
 /**** deprecated functions, for back-compatibility only ********/
+
+/**
+ * arg_free() is deprecated in favour of arg_freetable() due to a flaw in its design.
+ * The flaw results in memory leak in the (very rare) case that an intermediate
+ * entry in the argtable array failed its memory allocation while others following
+ * that entry were still allocated ok. Those subsequent allocations will not be
+ * deallocated by arg_free().
+ * Despite the unlikeliness of the problem occurring, and the even unlikelier event
+ * that it has any deliterious effect, it is fixed regardless by replacing arg_free()
+ * with the newer arg_freetable() function.
+ * We still keep arg_free() for backwards compatibility.
+ */
 ARG_EXTERN void arg_free(void** argtable);
 
 #ifdef __cplusplus
