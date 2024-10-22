@@ -493,8 +493,7 @@ ARG_EXTERN void arg_print_errors(FILE* fp, struct arg_end* end, const char* prog
 ARG_EXTERN void arg_print_errors_ds(arg_dstr_t ds, struct arg_end* end, const char* progname);
 
 ARG_EXTERN void arg_print_formatted(FILE *fp, const unsigned lmargin, const unsigned rmargin, const char *text);
-ARG_EXTERN void arg_print_formatted_ds(arg_dstr_t ds, const unsigned lmargin, const unsigned rmargin, const char* text);
-ARG_EXTERN void arg_cat_optionv(char* dest, size_t ndest, const char* shortopts, const char* longopts, const char* datatype, int optvalue, const char* separator);
+
 
 /**
  * Deallocates or frees non-null entries of the argument table.
