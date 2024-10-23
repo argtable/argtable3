@@ -88,7 +88,6 @@ target_include_directories(argtable3 PUBLIC
 set_target_properties(argtable3 PROPERTIES
   VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
   SOVERSION ${PROJECT_VERSION_MAJOR}
-  OUTPUT_NAME "argtable3$<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:_static>"
   DEBUG_POSTFIX "d"
 )
 
