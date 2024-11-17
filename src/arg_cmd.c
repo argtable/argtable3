@@ -129,7 +129,7 @@ void arg_cmd_uninit(void) {
     arg_hashtable_destroy(s_hashtable, 1);
 }
 
-void arg_cmd_register(const char* name, arg_cmdfn* proc, const char* description) {
+void arg_cmd_register(const char* name, arg_cmdfn* proc, const char* description, void* ctx) {
     arg_cmd_info_t* cmd_info;
     size_t slen_name;
     void* k;
@@ -158,6 +158,7 @@ void arg_cmd_register(const char* name, arg_cmdfn* proc, const char* description
 #endif
 
     cmd_info->proc = proc;
+    cmd_info->ctx = ctx;
 
     slen_name = strlen(name);
     k = xmalloc(slen_name + 1);
@@ -182,7 +183,7 @@ int arg_cmd_dispatch(const char* name, int argc, char* argv[], arg_dstr_t res) {
     assert(cmd_info != NULL);
     assert(cmd_info->proc != NULL);
 
-    return cmd_info->proc(argc, argv, res);
+    return cmd_info->proc(argc, argv, res, cmd_info->ctx);
 }
 
 arg_cmd_info_t* arg_cmd_info(const char* name) {

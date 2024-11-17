@@ -81,7 +81,7 @@ typedef int(arg_scanfn)(void* parent, const char* argval);
 typedef int(arg_checkfn)(void* parent);
 typedef void(arg_errorfn)(void* parent, arg_dstr_t ds, int error, const char* argval, const char* progname);
 typedef void(arg_dstr_freefn)(char* buf);
-typedef int(arg_cmdfn)(int argc, char* argv[], arg_dstr_t res);
+typedef int(arg_cmdfn)(int argc, char* argv[], arg_dstr_t res, void* ctx);
 typedef int(arg_comparefn)(const void* k1, const void* k2);
 
 /**
@@ -210,6 +210,7 @@ typedef struct arg_cmd_info {
     char name[ARG_CMD_NAME_LEN];               /**< Sub-command name */
     char description[ARG_CMD_DESCRIPTION_LEN]; /**< A short description */
     arg_cmdfn* proc;                           /**< Sub-command procedure */
+    void* ctx;                                 /**< Sub-command context */
 } arg_cmd_info_t;
 
 /**** arg_xxx constructor functions *********************************/
@@ -515,7 +516,7 @@ ARG_EXTERN char* arg_dstr_cstr(arg_dstr_t ds);
 
 ARG_EXTERN void arg_cmd_init(void);
 ARG_EXTERN void arg_cmd_uninit(void);
-ARG_EXTERN void arg_cmd_register(const char* name, arg_cmdfn* proc, const char* description);
+ARG_EXTERN void arg_cmd_register(const char* name, arg_cmdfn* proc, const char* description, void* ctx);
 ARG_EXTERN void arg_cmd_unregister(const char* name);
 ARG_EXTERN int arg_cmd_dispatch(const char* name, int argc, char* argv[], arg_dstr_t res);
 ARG_EXTERN unsigned int arg_cmd_count(void);

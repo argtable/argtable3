@@ -41,7 +41,7 @@
 #pragma warning(disable : 4204)
 #endif
 
-int cmd1_proc(int argc, char* argv[], arg_dstr_t res) {
+int cmd1_proc(int argc, char* argv[], arg_dstr_t res, void* ctx) {
     if (argc == 0) {
         arg_dstr_catf(res, "cmd1 fail");
         return 1;
@@ -54,8 +54,8 @@ int cmd1_proc(int argc, char* argv[], arg_dstr_t res) {
 void test_argcmd_basic_001(CuTest* tc) {
     arg_cmd_init();
     CuAssertIntEquals(tc, 0, arg_cmd_count());
-    
-    arg_cmd_register("cmd1", cmd1_proc, "description of cmd1");
+
+    arg_cmd_register("cmd1", cmd1_proc, "description of cmd1", NULL);
     CuAssertIntEquals(tc, 1, arg_cmd_count());
 
     char* argv[] = {
