@@ -710,7 +710,7 @@ void test_argfile_basic_032(CuTest* tc) {
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW32__)
 void test_argfile_basic_033(CuTest* tc) {
     struct arg_file* a = arg_filen(NULL, NULL, "<file>", 0, 3, "filename to test");
     struct arg_end* end = arg_end(20);
@@ -760,7 +760,57 @@ void test_argfile_basic_034(CuTest* tc) {
 
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
-#endif /* #ifdef WIN32 */
+#else
+void test_argfile_basic_033(CuTest* tc) {
+    struct arg_file* a = arg_filen(NULL, NULL, "<file>", 0, 3, "filename to test");
+    struct arg_end* end = arg_end(20);
+    void* argtable[] = {a, end};
+    int nerrors;
+
+    char* argv[] = {"program", "/test folder/", "/test folder2", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
+    nerrors = arg_parse(argc, argv, argtable);
+
+    CuAssertTrue(tc, nerrors == 0);
+    CuAssertTrue(tc, a->count == 2);
+    CuAssertStrEquals(tc, a->filename[0], "/test folder/");
+    CuAssertStrEquals(tc, a->basename[0], "");
+    CuAssertStrEquals(tc, a->extension[0], "");
+    CuAssertStrEquals(tc, a->filename[1], "/test folder2");
+    CuAssertStrEquals(tc, a->basename[1], "test folder2");
+    CuAssertStrEquals(tc, a->extension[1], "");
+
+    arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+}
+
+void test_argfile_basic_034(CuTest* tc) {
+    struct arg_file* a = arg_filen(NULL, NULL, "<file>", 1, 1, "path a");
+    struct arg_file* b = arg_filen(NULL, NULL, "<file>", 1, 1, "path b");
+    struct arg_end* end = arg_end(20);
+    void* argtable[] = {a, b, end};
+    int nerrors;
+
+    char* argv[] = {"program", "/test folder/", "/test folder2", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    CuAssertTrue(tc, arg_nullcheck(argtable) == 0);
+    nerrors = arg_parse(argc, argv, argtable);
+
+    CuAssertTrue(tc, nerrors == 0);
+    CuAssertTrue(tc, a->count == 1);
+    CuAssertStrEquals(tc, a->filename[0], "/test folder/");
+    CuAssertStrEquals(tc, a->basename[0], "");
+    CuAssertStrEquals(tc, a->extension[0], "");
+    CuAssertTrue(tc, b->count == 1);
+    CuAssertStrEquals(tc, b->filename[0], "/test folder2");
+    CuAssertStrEquals(tc, b->basename[0], "test folder2");
+    CuAssertStrEquals(tc, b->extension[0], "");
+
+    arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+}
+#endif /* #if defined(WIN32) && !defined(__MINGW32__) */
 
 CuSuite* get_argfile_testsuite() {
     CuSuite* suite = CuSuiteNew();
@@ -796,11 +846,8 @@ CuSuite* get_argfile_testsuite() {
     SUITE_ADD_TEST(suite, test_argfile_basic_030);
     SUITE_ADD_TEST(suite, test_argfile_basic_031);
     SUITE_ADD_TEST(suite, test_argfile_basic_032);
-#ifdef WIN32
     SUITE_ADD_TEST(suite, test_argfile_basic_033);
     SUITE_ADD_TEST(suite, test_argfile_basic_034);
-#endif /* #ifdef WIN32 */
-
     return suite;
 }
 
