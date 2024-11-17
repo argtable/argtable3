@@ -62,7 +62,7 @@ endif()
 
 add_definitions(-D_XOPEN_SOURCE=700)
 
-if(BUILD_SHARED_LIBS AND WIN32)
+if(BUILD_SHARED_LIBS AND (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC"))
   set(COMPANY_NAME "The Argtable3 Project")
   set(FILE_DESC "ANSI C command-line parsing library")
   set(INTERNAL_NAME "${PROJECT_NAME}")
