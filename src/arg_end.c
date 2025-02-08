@@ -38,7 +38,8 @@
 
 #include <stdlib.h>
 
-static void arg_end_resetfn(struct arg_end* parent) {
+static void arg_end_resetfn(void* parent_) {
+    struct arg_end* parent = parent_;
     ARG_TRACE(("%s:resetfn(%p)\n", __FILE__, parent));
     parent->count = 0;
 }
@@ -94,10 +95,10 @@ struct arg_end* arg_end(int maxcount) {
     result->hdr.mincount = 1;
     result->hdr.maxcount = maxcount;
     result->hdr.parent = result;
-    result->hdr.resetfn = (arg_resetfn*)arg_end_resetfn;
+    result->hdr.resetfn = arg_end_resetfn;
     result->hdr.scanfn = NULL;
     result->hdr.checkfn = NULL;
-    result->hdr.errorfn = (arg_errorfn*)arg_end_errorfn;
+    result->hdr.errorfn = arg_end_errorfn;
 
     /* store error[maxcount] array immediately after struct arg_end */
     result->error = (int*)(result + 1);
