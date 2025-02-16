@@ -38,7 +38,8 @@
 
 #include <stdlib.h>
 
-static void arg_str_resetfn(struct arg_str* parent) {
+static void arg_str_resetfn(void* parent_) {
+    struct arg_str* parent = parent_;
     int i;
 
     ARG_TRACE(("%s:resetfn(%p)\n", __FILE__, parent));
@@ -48,7 +49,8 @@ static void arg_str_resetfn(struct arg_str* parent) {
     parent->count = 0;
 }
 
-static int arg_str_scanfn(struct arg_str* parent, const char* argval) {
+static int arg_str_scanfn(void* parent_, const char* argval) {
+    struct arg_str* parent = parent_;
     int errorcode = 0;
 
     if (parent->count == parent->hdr.maxcount) {
@@ -67,14 +69,16 @@ static int arg_str_scanfn(struct arg_str* parent, const char* argval) {
     return errorcode;
 }
 
-static int arg_str_checkfn(struct arg_str* parent) {
+static int arg_str_checkfn(void* parent_) {
+    struct arg_str* parent = parent_;
     int errorcode = (parent->count < parent->hdr.mincount) ? ARG_ERR_MINCOUNT : 0;
 
     ARG_TRACE(("%s:checkfn(%p) returns %d\n", __FILE__, parent, errorcode));
     return errorcode;
 }
 
-static void arg_str_errorfn(struct arg_str* parent, arg_dstr_t ds, int errorcode, const char* argval, const char* progname) {
+static void arg_str_errorfn(void* parent_, arg_dstr_t ds, int errorcode, const char* argval, const char* progname) {
+    struct arg_str* parent = parent_;
     const char* shortopts = parent->hdr.shortopts;
     const char* longopts = parent->hdr.longopts;
     const char* datatype = parent->hdr.datatype;
@@ -128,10 +132,10 @@ struct arg_str* arg_strn(const char* shortopts, const char* longopts, const char
     result->hdr.mincount = mincount;
     result->hdr.maxcount = maxcount;
     result->hdr.parent = result;
-    result->hdr.resetfn = (arg_resetfn*)arg_str_resetfn;
-    result->hdr.scanfn = (arg_scanfn*)arg_str_scanfn;
-    result->hdr.checkfn = (arg_checkfn*)arg_str_checkfn;
-    result->hdr.errorfn = (arg_errorfn*)arg_str_errorfn;
+    result->hdr.resetfn = arg_str_resetfn;
+    result->hdr.scanfn = arg_str_scanfn;
+    result->hdr.checkfn = arg_str_checkfn;
+    result->hdr.errorfn = arg_str_errorfn;
 
     /* store the sval[maxcount] array immediately after the arg_str struct */
     result->sval = (const char**)(result + 1);
