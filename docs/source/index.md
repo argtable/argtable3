@@ -188,8 +188,7 @@ arg_api_deprecated.md
 :maxdepth: 1
 :hidden: true
 
-arg_dev_build.md
-arg_dev_internals.md
 arg_dev_tests.md
 arg_dev_docs.md
+arg_dev_internals.md
 :::
