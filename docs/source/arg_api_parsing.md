@@ -87,6 +87,7 @@ command-line parsing API.
 :::{doxygenfunction} arg_freetable
 :::
 
+### Flag Option API
 
 :::{doxygenfunction} arg_lit0
 :outline:
@@ -99,6 +100,7 @@ command-line parsing API.
 :::{doxygenfunction} arg_litn
 :::
 
+### Integer Option API
 
 :::{doxygenfunction} arg_int0
 :outline:
@@ -111,6 +113,7 @@ command-line parsing API.
 :::{doxygenfunction} arg_intn
 :::
 
+### Double Option API
 
 :::{doxygenfunction} arg_dbl0
 :outline:
@@ -123,6 +126,7 @@ command-line parsing API.
 :::{doxygenfunction} arg_dbln
 :::
 
+### String Option API
 
 :::{doxygenfunction} arg_str0
 :outline:
@@ -135,6 +139,7 @@ command-line parsing API.
 :::{doxygenfunction} arg_strn
 :::
 
+### Regular Expression Option API
 
 :::{doxygenfunction} arg_rex0
 :outline:
@@ -147,6 +152,7 @@ command-line parsing API.
 :::{doxygenfunction} arg_rexn
 :::
 
+### File Option API
 
 :::{doxygenfunction} arg_file0
 :outline:
@@ -159,6 +165,7 @@ command-line parsing API.
 :::{doxygenfunction} arg_filen
 :::
 
+### Date Option API
 
 :::{doxygenfunction} arg_date0
 :outline:
@@ -171,6 +178,7 @@ command-line parsing API.
 :::{doxygenfunction} arg_daten
 :::
 
+### Miscellaneous API
 
 :::{doxygenfunction} arg_rem
 :::
