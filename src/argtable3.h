@@ -366,12 +366,41 @@ typedef struct arg_file {
 } arg_file_t;
 
 /**
- * Contains date-typed argument information.
+ * Structure for storing date-typed argument information.
+ *
+ * The `arg_date` struct is used to parse and store date or time arguments from
+ * the command line. It supports flexible date/time formats, which are specified
+ * using a `strptime`-style format string. Each successfully parsed date
+ * argument is converted into a `struct tm` value and stored in the `tmval`
+ * array.
+ *
+ * The `format` field defines the expected input format for date arguments,
+ * allowing you to accept a wide range of date/time styles. The `count` field
+ * stores the number of successfully matched arguments, and the `tmval` array
+ * holds the parsed results.
+ *
+ * Example usage:
+ * ```
+ * // Accepts one required date argument in YYYY-MM-DD format
+ * arg_date_t *date = arg_date1(NULL, "date", "%Y-%m-%d", "<date>", "Date in YYYY-MM-DD format");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = {date, end};
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors == 0 && date->count > 0) {
+ *     printf("Parsed date: %04d-%02d-%02d\n",
+ *         date->tmval[0].tm_year + 1900, date->tmval[0].tm_mon + 1, date->tmval[0].tm_mday);
+ * } else {
+ *     arg_print_errors(stdout, end, argv[0]);
+ * }
+ * ```
+ *
+ * @see arg_date0, arg_date1, arg_daten
  */
 typedef struct arg_date {
     struct arg_hdr hdr; /**< The mandatory argtable header struct */
     const char* format; /**< strptime format string used to parse the date */
-    int count;          /**< Number of matching command line args */
+    int count;          /**< Number of times this argument appears on the command line */
     struct tm* tmval;   /**< Array of parsed time values */
 } arg_date_t;
 
