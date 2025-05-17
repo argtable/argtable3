@@ -432,13 +432,37 @@ typedef struct arg_date {
 } arg_date_t;
 
 /**
- * Contains parser errors and terminates the argument table.
+ * Structure for collecting parser errors and terminating an argument table.
+ *
+ * The `arg_end` struct is used in Argtable3 to mark the end of an argument
+ * table and to collect information about any errors encountered during
+ * command-line parsing. It stores pointers to offending arguments in the input
+ * array, allowing the application to report detailed error messages to the
+ * user.
+ *
+ * Typically, an `arg_end_t` instance is created using the `arg_end` function
+ * and placed as the last element in the argument table array. After parsing,
+ * the structure contains information about missing required arguments, invalid
+ * values, or other parsing errors.
+ *
+ * Example usage:
+ * ```
+ * arg_lit_t *help = arg_lit0("h", "help", "Display help");
+ * arg_int_t *count = arg_int0("c", "count", "<n>", "Number of times");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = {help, count, end};
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors > 0) {
+ *     arg_print_errors(stdout, end, argv[0]); // handle errors...
+ * }
+ * ```
  */
 typedef struct arg_end {
     struct arg_hdr hdr;  /**< The mandatory argtable header struct */
     int count;           /**< Number of errors encountered */
     int* error;          /**< Array of error codes */
-    void** parent;       /**< Array of pointers to offending arg_xxx struct */
+    void** parent;       /**< Array of pointers to offending arg_<type> struct */
     const char** argval; /**< Array of pointers to offending argv[] string */
 } arg_end_t;
 
