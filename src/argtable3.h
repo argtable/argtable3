@@ -180,12 +180,39 @@ typedef struct arg_lit {
 } arg_lit_t;
 
 /**
- * Contains int-typed argument information.
+ * Structure for storing int-typed argument information.
+ *
+ * The `arg_int` struct is used to parse and store integer arguments from the
+ * command line. It is suitable for options that accept numeric values without
+ * fractional parts, such as counts, indices, or other whole-number parameters.
+ *
+ * The `count` field stores the number of successfully matched integer
+ * arguments, and the `ival` array holds the parsed integer values as provided
+ * by the user.
+ *
+ * Example usage:
+ * ```
+ * // Accepts one or more integer arguments
+ * arg_int_t *numbers = arg_intn("n", "number", "<int>", 1, 5, "Input numbers");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = {numbers, end};
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors == 0 && numbers->count > 0) {
+ *     for (int i = 0; i < numbers->count; ++i) {
+ *         printf("Input number: %d\n", numbers->ival[i]);
+ *     }
+ * } else {
+ *     arg_print_errors(stdout, end, argv[0]);
+ * }
+ * ```
+ *
+ * @see arg_int0, arg_int1, arg_intn
  */
 typedef struct arg_int {
     struct arg_hdr hdr; /**< The mandatory argtable header struct */
-    int count;          /**< Number of matching command line args */
-    int* ival;          /**< Array of parsed argument values */
+    int count;          /**< Number of times this argument appears on the command line */
+    int* ival;          /**< Array of parsed integer argument values */
 } arg_int_t;
 
 /**
