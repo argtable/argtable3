@@ -147,11 +147,36 @@ typedef struct arg_rem {
 } arg_rem_t;
 
 /**
- * Contains const-string-typed argument information.
+ * Structure for storing literal (boolean flag) argument information.
+ *
+ * The `arg_lit` struct is used to parse and store literal arguments (boolean
+ * flags) from the command line. It is suitable for options that do not take a
+ * value, such as `-h` for help or `--verbose` for enabling verbose output. Each
+ * occurrence of the flag increases the `count` field, allowing you to detect
+ * how many times the flag was specified.
+ *
+ * Example usage:
+ * ```
+ * // Accepts a help flag and a verbose flag (which can be specified multiple times)
+ * arg_lit_t *help    = arg_lit0("h", "help", "Display help");
+ * arg_lit_t *verbose = arg_litn("v", "verbose", 0, 3, "Increase verbosity");
+ * arg_end_t *end     = arg_end(20);
+ * void *argtable[] = { help, verbose, end };
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (help->count > 0) {
+ *     printf("Help requested\n");
+ * }
+ * if (verbose->count > 0) {
+ *     printf("Verbosity level: %d\n", verbose->count);
+ * }
+ * ```
+ *
+ * @see arg_lit0, arg_lit1, arg_litn
  */
 typedef struct arg_lit {
     struct arg_hdr hdr; /**< The mandatory argtable header struct */
-    int count;          /**< Number of matching command line args */
+    int count;          /**< Number of times this flag appears on the command line */
 } arg_lit_t;
 
 /**
