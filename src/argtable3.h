@@ -324,14 +324,45 @@ typedef struct arg_rex {
 } arg_rex_t;
 
 /**
- * Contains file-typed argument information.
+ * Structure for storing file-typed argument information.
+ *
+ * The `arg_file` struct is used to parse and store file path arguments from the
+ * command line. It provides convenient access to the full filename, the
+ * basename (file name without path), and the file extension for each matched
+ * argument. This allows applications to easily process and validate
+ * file-related options.
+ *
+ * The `count` field stores the number of successfully matched file arguments.
+ * The `filename` array holds the full file paths as provided by the user, while
+ * the `basename` and `extension` arrays provide the corresponding file names
+ * and extensions, respectively.
+ *
+ * Example usage:
+ * ```
+ * // Accepts one or more file arguments
+ * arg_file_t *files = arg_filen(NULL, NULL, "<file>", 1, 100, "Input files");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = {files, end};
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors == 0 && files->count > 0) {
+ *     for (int i = 0; i < files->count; ++i) {
+ *         printf("File: %s, Basename: %s, Extension: %s\n",
+ *             files->filename[i], files->basename[i], files->extension[i]);
+ *     }
+ * } else {
+ *     arg_print_errors(stdout, end, argv[0]);
+ * }
+ * ```
+ *
+ * @see arg_file0, arg_file1, arg_filen
  */
 typedef struct arg_file {
     struct arg_hdr hdr;     /**< The mandatory argtable header struct */
-    int count;              /**< Number of matching command line args*/
-    const char** filename;  /**< Array of parsed filenames  (eg: /home/foo.bar) */
-    const char** basename;  /**< Array of parsed basenames  (eg: foo.bar) */
-    const char** extension; /**< Array of parsed extensions (eg: .bar) */
+    int count;              /**< Number of times this argument appears on the command line */
+    const char** filename;  /**< Array of parsed file path values (e.g., /home/foo.bar) */
+    const char** basename;  /**< Array of parsed base names (e.g., foo.bar) */
+    const char** extension; /**< Array of parsed file extensions (e.g., .bar) */
 } arg_file_t;
 
 /**
