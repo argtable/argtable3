@@ -467,16 +467,48 @@ typedef struct arg_end {
 } arg_end_t;
 
 /**
- * Contains sub-command information.
+ * Structure for storing sub-command information.
+ *
+ * The `arg_cmd_info` struct is used to represent metadata and handler
+ * information for a sub-command in a multi-command command-line application.
+ * Each sub-command can have its own name, description, handler function, and
+ * context pointer, allowing you to build flexible interfaces similar to tools
+ * like `git` or `docker`.
+ *
+ * The `name` field stores the sub-command name, while the `description`
+ * provides a short summary for help and usage messages. The `proc` field is a
+ * pointer to the function that implements the sub-command's behavior, and `ctx`
+ * is a user-defined context pointer that can be used to pass additional data to
+ * the handler.
+ *
+ * Example usage:
+ * ```
+ * // Define a handler function for the "list" sub-command
+ * int list_cmd(int argc, char* argv[], arg_dstr_t res, void* ctx) {
+ *     // Implementation for the "list" command
+ *     return 0;
+ * }
+ *
+ * // Register the sub-command
+ * arg_cmd_register("list", list_cmd, "List all items", NULL);
+ *
+ * // Retrieve sub-command info
+ * arg_cmd_info_t* info = arg_cmd_info("list");
+ * if (info) {
+ *     printf("Sub-command: %s - %s\n", info->name, info->description);
+ * }
+ * ```
+ *
+ * @see arg_cmd_register, arg_cmd_info, arg_cmd_dispatch
  */
 typedef struct arg_cmd_info {
     char name[ARG_CMD_NAME_LEN];               /**< Sub-command name */
-    char description[ARG_CMD_DESCRIPTION_LEN]; /**< A short description */
-    arg_cmdfn* proc;                           /**< Sub-command procedure */
-    void* ctx;                                 /**< Sub-command context */
+    char description[ARG_CMD_DESCRIPTION_LEN]; /**< Short description of the sub-command */
+    arg_cmdfn* proc;                           /**< Sub-command handler function */
+    void* ctx;                                 /**< User-defined context pointer for the sub-command */
 } arg_cmd_info_t;
 
-/**** arg_xxx constructor functions *********************************/
+/**** arg_<type> constructor functions *********************************/
 
 /**
  * Creates a data type in the syntax or add a new line in the glossary.
