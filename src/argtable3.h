@@ -216,12 +216,39 @@ typedef struct arg_int {
 } arg_int_t;
 
 /**
- * Contains double-typed argument information.
+ * Structure for storing double-typed argument information.
+ *
+ * The `arg_dbl` struct is used to parse and store double-precision
+ * floating-point arguments from the command line. It is suitable for options
+ * that accept numeric values with fractional parts, such as thresholds, ratios,
+ * or measurements.
+ *
+ * The `count` field stores the number of successfully matched double arguments,
+ * and the `dval` array holds the parsed double values as provided by the user.
+ *
+ * Example usage:
+ * ```
+ * // Accepts one or more double arguments
+ * arg_dbl_t *values = arg_dbln("v", "value", "<double>", 1, 5, "Input values");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = {values, end};
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors == 0 && values->count > 0) {
+ *     for (int i = 0; i < values->count; ++i) {
+ *         printf("Input value: %f\n", values->dval[i]);
+ *     }
+ * } else {
+ *     arg_print_errors(stdout, end, argv[0]);
+ * }
+ * ```
+ *
+ * @see arg_dbl0, arg_dbl1, arg_dbln
  */
 typedef struct arg_dbl {
     struct arg_hdr hdr; /**< The mandatory argtable header struct */
-    int count;          /**< Number of matching command line args */
-    double* dval;       /**< Array of parsed argument values */
+    int count;          /**< Number of times this argument appears on the command line */
+    double* dval;       /**< Array of parsed double argument values */
 } arg_dbl_t;
 
 /**
