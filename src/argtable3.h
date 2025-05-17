@@ -55,22 +55,18 @@ extern "C" {
 /**
  * Bit masks for `arg_hdr.flag`.
  */
-enum arg_hdr_flag {
-    ARG_TERMINATOR = 0x1,
-    ARG_HASVALUE = 0x2,
-    ARG_HASOPTVALUE = 0x4
-};
+enum arg_hdr_flag { ARG_TERMINATOR = 0x1, ARG_HASVALUE = 0x2, ARG_HASOPTVALUE = 0x4 };
 
 #if defined(_WIN32)
-  #if defined(argtable3_EXPORTS)
-    #define ARG_EXTERN __declspec(dllexport)
-  #elif defined(argtable3_IMPORTS)
-    #define ARG_EXTERN __declspec(dllimport)
-  #else
-    #define ARG_EXTERN
-  #endif
+#if defined(argtable3_EXPORTS)
+#define ARG_EXTERN __declspec(dllexport)
+#elif defined(argtable3_IMPORTS)
+#define ARG_EXTERN __declspec(dllimport)
 #else
-  #define ARG_EXTERN
+#define ARG_EXTERN
+#endif
+#else
+#define ARG_EXTERN
 #endif
 
 typedef struct _internal_arg_dstr* arg_dstr_t;
@@ -341,34 +337,65 @@ ARG_EXTERN struct arg_lit* arg_lit1(const char* shortopts, const char* longopts,
 
 ARG_EXTERN struct arg_int* arg_int0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_int* arg_int1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
-ARG_EXTERN struct arg_int* arg_intn(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary);
+ARG_EXTERN struct arg_int* arg_intn(const char* shortopts,
+                                    const char* longopts,
+                                    const char* datatype,
+                                    int mincount,
+                                    int maxcount,
+                                    const char* glossary);
 
 ARG_EXTERN struct arg_dbl* arg_dbl0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_dbl* arg_dbl1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
-ARG_EXTERN struct arg_dbl* arg_dbln(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary);
+ARG_EXTERN struct arg_dbl* arg_dbln(const char* shortopts,
+                                    const char* longopts,
+                                    const char* datatype,
+                                    int mincount,
+                                    int maxcount,
+                                    const char* glossary);
 
 ARG_EXTERN struct arg_str* arg_str0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_str* arg_str1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
-ARG_EXTERN struct arg_str* arg_strn(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary);
+ARG_EXTERN struct arg_str* arg_strn(const char* shortopts,
+                                    const char* longopts,
+                                    const char* datatype,
+                                    int mincount,
+                                    int maxcount,
+                                    const char* glossary);
 
-ARG_EXTERN struct arg_rex* arg_rex0(const char* shortopts, const char* longopts, const char* pattern, const char* datatype, int flags, const char* glossary);
-ARG_EXTERN struct arg_rex* arg_rex1(const char* shortopts, const char* longopts, const char* pattern, const char* datatype, int flags, const char* glossary);
+ARG_EXTERN struct arg_rex* arg_rex0(const char* shortopts,
+                                    const char* longopts,
+                                    const char* pattern,
+                                    const char* datatype,
+                                    int flags,
+                                    const char* glossary);
+ARG_EXTERN struct arg_rex* arg_rex1(const char* shortopts,
+                                    const char* longopts,
+                                    const char* pattern,
+                                    const char* datatype,
+                                    int flags,
+                                    const char* glossary);
 ARG_EXTERN struct arg_rex* arg_rexn(const char* shortopts,
-                         const char* longopts,
-                         const char* pattern,
-                         const char* datatype,
-                         int mincount,
-                         int maxcount,
-                         int flags,
-                         const char* glossary);
+                                    const char* longopts,
+                                    const char* pattern,
+                                    const char* datatype,
+                                    int mincount,
+                                    int maxcount,
+                                    int flags,
+                                    const char* glossary);
 
 ARG_EXTERN struct arg_file* arg_file0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_file* arg_file1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
-ARG_EXTERN struct arg_file* arg_filen(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary);
+ARG_EXTERN struct arg_file* arg_filen(const char* shortopts,
+                                      const char* longopts,
+                                      const char* datatype,
+                                      int mincount,
+                                      int maxcount,
+                                      const char* glossary);
 
 ARG_EXTERN struct arg_date* arg_date0(const char* shortopts, const char* longopts, const char* format, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_date* arg_date1(const char* shortopts, const char* longopts, const char* format, const char* datatype, const char* glossary);
-ARG_EXTERN struct arg_date* arg_daten(const char* shortopts, const char* longopts, const char* format, const char* datatype, int mincount, int maxcount, const char* glossary);
+ARG_EXTERN struct arg_date*
+arg_daten(const char* shortopts, const char* longopts, const char* format, const char* datatype, int mincount, int maxcount, const char* glossary);
 
 ARG_EXTERN struct arg_end* arg_end(int maxcount);
 
@@ -493,8 +520,7 @@ ARG_EXTERN void arg_print_glossary_gnu_ds(arg_dstr_t ds, void** argtable);
 ARG_EXTERN void arg_print_errors(FILE* fp, struct arg_end* end, const char* progname);
 ARG_EXTERN void arg_print_errors_ds(arg_dstr_t ds, struct arg_end* end, const char* progname);
 
-ARG_EXTERN void arg_print_formatted(FILE *fp, const unsigned lmargin, const unsigned rmargin, const char *text);
-
+ARG_EXTERN void arg_print_formatted(FILE* fp, const unsigned lmargin, const unsigned rmargin, const char* text);
 
 /**
  * Deallocates or frees non-null entries of the argument table.
@@ -531,7 +557,8 @@ ARG_EXTERN void arg_mgsort(void* data, int size, int esize, int i, int k, arg_co
 ARG_EXTERN void arg_make_get_help_msg(arg_dstr_t res);
 ARG_EXTERN void arg_make_help_msg(arg_dstr_t ds, const char* cmd_name, void** argtable);
 ARG_EXTERN void arg_make_syntax_err_msg(arg_dstr_t ds, void** argtable, struct arg_end* end);
-ARG_EXTERN int arg_make_syntax_err_help_msg(arg_dstr_t ds, const char* name, int help, int nerrors, void** argtable, struct arg_end* end, int* exitcode);
+ARG_EXTERN int
+arg_make_syntax_err_help_msg(arg_dstr_t ds, const char* name, int help, int nerrors, void** argtable, struct arg_end* end, int* exitcode);
 ARG_EXTERN void arg_set_module_name(const char* name);
 ARG_EXTERN void arg_set_module_version(int major, int minor, int patch, const char* tag);
 
