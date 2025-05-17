@@ -252,12 +252,38 @@ typedef struct arg_dbl {
 } arg_dbl_t;
 
 /**
- * Contains string-typed argument information.
+ * Structure for storing string-typed argument information.
+ *
+ * The `arg_str` struct is used to parse and store string arguments from the
+ * command line. It is suitable for options that accept arbitrary text input,
+ * such as file names, user names, or other string values.
+ *
+ * The `count` field stores the number of successfully matched string arguments,
+ * and the `sval` array holds the parsed string values as provided by the user.
+ *
+ * Example usage:
+ * ```
+ * // Accepts one or more string arguments
+ * arg_str_t *inputs = arg_strn(NULL, NULL, "<input>", 1, 10, "Input strings");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = {inputs, end};
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors == 0 && inputs->count > 0) {
+ *     for (int i = 0; i < inputs->count; ++i) {
+ *         printf("Input string: %s\n", inputs->sval[i]);
+ *     }
+ * } else {
+ *     arg_print_errors(stdout, end, argv[0]);
+ * }
+ * ```
+ *
+ * @see arg_str0, arg_str1, arg_strn
  */
 typedef struct arg_str {
-    struct arg_hdr hdr; /**< The mandatory argtable header struct */
-    int count;          /**< Number of matching command line args */
-    const char** sval;  /**< Array of parsed argument values */
+    struct arg_hdr hdr;   /**< The mandatory argtable header struct */
+    int count;            /**< Number of times this argument appears on the command line */
+    const char** sval;    /**< Array of parsed string argument values */
 } arg_str_t;
 
 /**
