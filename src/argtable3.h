@@ -287,12 +287,40 @@ typedef struct arg_str {
 } arg_str_t;
 
 /**
- * Contains regex-typed argument information.
+ * Structure for storing regular expression-typed argument information.
+ *
+ * The `arg_rex` struct is used to parse and store command-line arguments that
+ * must match a specified regular expression pattern. This allows applications
+ * to validate input against complex patterns, such as email addresses,
+ * identifiers, or custom formats.
+ *
+ * The `pattern` is specified when constructing the argument and is used to
+ * check each input value. The `count` field stores the number of successfully
+ * matched arguments, and the `sval` array holds the matched strings.
+ *
+ * Example usage:
+ * ```
+ * // Accepts one or more arguments matching a simple email pattern
+ * arg_rex_t *emails = arg_rexn(NULL, "email", "^[^@]+@[^@]+\\.[^@]+$", "<email>", 1, 10, 0, "Email addresses");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = {emails, end};
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors == 0 && emails->count > 0) {
+ *     for (int i = 0; i < emails->count; ++i) {
+ *         printf("Matched email: %s\n", emails->sval[i]);
+ *     }
+ * } else {
+ *     arg_print_errors(stdout, end, argv[0]);
+ * }
+ * ```
+ *
+ * @see arg_rex0, arg_rex1, arg_rexn
  */
 typedef struct arg_rex {
-    struct arg_hdr hdr; /**< The mandatory argtable header struct */
-    int count;          /**< Number of matching command line args */
-    const char** sval;  /**< Array of parsed argument values */
+    struct arg_hdr hdr;   /**< The mandatory argtable header struct */
+    int count;            /**< Number of times this argument appears on the command line */
+    const char** sval;    /**< Array of parsed string argument values */
 } arg_rex_t;
 
 /**
