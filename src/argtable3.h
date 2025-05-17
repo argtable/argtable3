@@ -53,9 +53,36 @@ extern "C" {
 #endif /* ARG_CMD_DESCRIPTION_LEN */
 
 /**
- * Bit masks for `arg_hdr.flag`.
+ * Error codes returned by argument parsing and validation.
+ *
+ * These error codes are used by Argtable3 to indicate specific problems
+ * encountered during command-line parsing and validation. They are typically
+ * stored in the `error` array of the `arg_end_t` struct and can be used to
+ * generate detailed error messages for the user.
  */
-enum arg_hdr_flag { ARG_TERMINATOR = 0x1, ARG_HASVALUE = 0x2, ARG_HASOPTVALUE = 0x4 };
+enum {
+    ARG_ELIMIT   = 1, /**< Too many occurrences of an option or argument */
+    ARG_EMALLOC,      /**< Memory allocation failure */
+    ARG_ENOMATCH,     /**< Argument value does not match the expected format or pattern */
+    ARG_ELONGOPT,     /**< Unknown or invalid long option encountered */
+    ARG_EMISSARG      /**< Missing required argument value */
+};
+
+/**
+ * Bit masks for the `flag` field in the `arg_hdr` struct.
+ *
+ * The `arg_hdr_flag` enum defines bitwise flags that describe special
+ * properties of an argument entry in Argtable3. These flags are stored in the
+ * `flag` field of the `arg_hdr` struct and can be combined using bitwise OR.
+ *
+ * These flags help Argtable3 functions determine how to parse and process each
+ * argument entry.
+ */
+enum arg_hdr_flag {
+    ARG_TERMINATOR  = 0x1, /**< Marks the end of an argument table (sentinel entry) */
+    ARG_HASVALUE    = 0x2, /**< Argument expects a value (e.g., `--output <file>`) */
+    ARG_HASOPTVALUE = 0x4  /**< Argument can optionally take a value (e.g., `--color[=WHEN]`) */
+};
 
 #if defined(_WIN32)
 #if defined(argtable3_EXPORTS)
@@ -403,8 +430,6 @@ typedef struct arg_date {
     int count;          /**< Number of times this argument appears on the command line */
     struct tm* tmval;   /**< Array of parsed time values */
 } arg_date_t;
-
-enum { ARG_ELIMIT = 1, ARG_EMALLOC, ARG_ENOMATCH, ARG_ELONGOPT, ARG_EMISSARG };
 
 /**
  * Contains parser errors and terminates the argument table.
