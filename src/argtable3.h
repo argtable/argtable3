@@ -81,36 +81,35 @@ typedef int(arg_cmdfn)(int argc, char* argv[], arg_dstr_t res, void* ctx);
 typedef int(arg_comparefn)(const void* k1, const void* k2);
 
 /**
- * Defines properties that are common to all `arg_xxx` structs.
+ * Defines common properties shared by all `arg_<type>` structs.
  *
- * The argtable library requires each `arg_xxx` struct to have an `arg_hdr`
- * struct as its first data member. The argtable library functions then use this
- * data to identify the properties of the command line option, such as its
- * option tags, datatype string, and glossary strings, and so on.
+ * In the Argtable3 library, every `arg_<type>` struct must begin with an
+ * `arg_hdr` struct as its first member. This allows Argtable3 functions to
+ * access shared metadata about the command-line option, such as its option
+ * tags, data type string, glossary text, and other attributes.
  *
- * Moreover, the `arg_hdr` struct contains pointers to custom functions that are
- * provided by each `arg_xxx` struct which perform the tasks of parsing that
- * particular `arg_xxx` arguments, performing post-parse checks, and reporting
- * errors. These functions are private to the individual `arg_xxx` source code
- * and are the pointer to them are initiliased by that `arg_xxx` struct's
- * constructor function. The user could alter them after construction if
- * desired, but the original intention is for them to be set by the constructor
- * and left unaltered.
+ * The `arg_hdr` struct also contains pointers to type-specific functions
+ * provided by each `arg_<type>` implementation. These functions handle tasks
+ * such as parsing the option, performing post-parse validation, and reporting
+ * errors. Although these function pointers are initialized by the constructor
+ * of the respective `arg_<type>` struct, they can be modified by the user after
+ * construction if necessary. However, they are intended to remain unchanged
+ * once initialized.
  */
 typedef struct arg_hdr {
-    char flag;             /**< Modifier flags: available options are in enum `arg_hdr_flag`. */
-    const char* shortopts; /**< String defining the short options */
-    const char* longopts;  /**< String defiing the long options */
-    const char* datatype;  /**< Description of the argument data type */
-    const char* glossary;  /**< Description of the option as shown by arg_print_glossary function */
-    int mincount;          /**< Minimum number of occurences of this option accepted */
-    int maxcount;          /**< Maximum number of occurences if this option accepted */
-    void* parent;          /**< Pointer to parent arg_xxx struct */
-    arg_resetfn* resetfn;  /**< Pointer to parent arg_xxx reset function */
-    arg_scanfn* scanfn;    /**< Pointer to parent arg_xxx scan function */
-    arg_checkfn* checkfn;  /**< Pointer to parent arg_xxx check function */
-    arg_errorfn* errorfn;  /**< Pointer to parent arg_xxx error function */
-    void* priv;            /**< Pointer to private header data for use by arg_xxx functions */
+    char flag;             /**< Modifier flags for this option (see `enum arg_hdr_flag`) */
+    const char* shortopts; /**< String listing the short option characters (e.g., "hv") */
+    const char* longopts;  /**< String listing the long option names, comma-separated (e.g., "verbose,debug") */
+    const char* datatype;  /**< Description of the argument data type (e.g., "<file>") */
+    const char* glossary;  /**< Description of the option as shown in the glossary/help output */
+    int mincount;          /**< Minimum number of occurrences of this option accepted */
+    int maxcount;          /**< Maximum number of occurrences of this option accepted */
+    void* parent;          /**< Pointer to the parent arg_<type> struct instance */
+    arg_resetfn* resetfn;  /**< Pointer to the type-specific reset function for this argument */
+    arg_scanfn* scanfn;    /**< Pointer to the type-specific scan (parsing) function */
+    arg_checkfn* checkfn;  /**< Pointer to the type-specific validation function */
+    arg_errorfn* errorfn;  /**< Pointer to the type-specific error reporting function */
+    void* priv;            /**< Pointer to private data for use by arg_<type> functions */
 } arg_hdr_t;
 
 /**
