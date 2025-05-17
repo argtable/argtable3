@@ -40,7 +40,8 @@
 #include <limits.h>
 #include <stdlib.h>
 
-static void arg_int_resetfn(struct arg_int* parent) {
+static void arg_int_resetfn(void* parent_) {
+    struct arg_int* parent = parent_;
     ARG_TRACE(("%s:resetfn(%p)\n", __FILE__, parent));
     parent->count = 0;
 }
@@ -136,7 +137,8 @@ static int detectsuffix(const char* str, const char* suffix) {
     return (*str == '\0') ? 1 : 0;
 }
 
-static int arg_int_scanfn(struct arg_int* parent, const char* argval) {
+static int arg_int_scanfn(void* parent_, const char* argval) {
+    struct arg_int* parent = parent_;
     int errorcode = 0;
 
     if (parent->count == parent->hdr.maxcount) {
@@ -207,13 +209,15 @@ static int arg_int_scanfn(struct arg_int* parent, const char* argval) {
     return errorcode;
 }
 
-static int arg_int_checkfn(struct arg_int* parent) {
+static int arg_int_checkfn(void* parent_) {
+    struct arg_int* parent = parent_;
     int errorcode = (parent->count < parent->hdr.mincount) ? ARG_ERR_MINCOUNT : 0;
     /*printf("%s:checkfn(%p) returns %d\n",__FILE__,parent,errorcode);*/
     return errorcode;
 }
 
-static void arg_int_errorfn(struct arg_int* parent, arg_dstr_t ds, int errorcode, const char* argval, const char* progname) {
+static void arg_int_errorfn(void* parent_, arg_dstr_t ds, int errorcode, const char* argval, const char* progname) {
+    struct arg_int* parent = parent_;
     const char* shortopts = parent->hdr.shortopts;
     const char* longopts = parent->hdr.longopts;
     const char* datatype = parent->hdr.datatype;
@@ -275,10 +279,10 @@ struct arg_int* arg_intn(const char* shortopts, const char* longopts, const char
     result->hdr.mincount = mincount;
     result->hdr.maxcount = maxcount;
     result->hdr.parent = result;
-    result->hdr.resetfn = (arg_resetfn*)arg_int_resetfn;
-    result->hdr.scanfn = (arg_scanfn*)arg_int_scanfn;
-    result->hdr.checkfn = (arg_checkfn*)arg_int_checkfn;
-    result->hdr.errorfn = (arg_errorfn*)arg_int_errorfn;
+    result->hdr.resetfn = arg_int_resetfn;
+    result->hdr.scanfn = arg_int_scanfn;
+    result->hdr.checkfn = arg_int_checkfn;
+    result->hdr.errorfn = arg_int_errorfn;
 
     /* store the ival[maxcount] array immediately after the arg_int struct */
     result->ival = (int*)(result + 1);

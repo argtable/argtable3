@@ -38,12 +38,14 @@
 
 #include <stdlib.h>
 
-static void arg_lit_resetfn(struct arg_lit* parent) {
+static void arg_lit_resetfn(void* parent_) {
+    struct arg_lit* parent = parent_;
     ARG_TRACE(("%s:resetfn(%p)\n", __FILE__, parent));
     parent->count = 0;
 }
 
-static int arg_lit_scanfn(struct arg_lit* parent, const char* argval) {
+static int arg_lit_scanfn(void* parent_, const char* argval) {
+    struct arg_lit* parent = parent_;
     int errorcode = 0;
     if (parent->count < parent->hdr.maxcount)
         parent->count++;
@@ -54,13 +56,15 @@ static int arg_lit_scanfn(struct arg_lit* parent, const char* argval) {
     return errorcode;
 }
 
-static int arg_lit_checkfn(struct arg_lit* parent) {
+static int arg_lit_checkfn(void* parent_) {
+    struct arg_lit* parent = parent_;
     int errorcode = (parent->count < parent->hdr.mincount) ? ARG_ERR_MINCOUNT : 0;
     ARG_TRACE(("%s:checkfn(%p) returns %d\n", __FILE__, parent, errorcode));
     return errorcode;
 }
 
-static void arg_lit_errorfn(struct arg_lit* parent, arg_dstr_t ds, int errorcode, const char* argval, const char* progname) {
+static void arg_lit_errorfn(void* parent_, arg_dstr_t ds, int errorcode, const char* argval, const char* progname) {
+    struct arg_lit* parent = parent_;
     const char* shortopts = parent->hdr.shortopts;
     const char* longopts = parent->hdr.longopts;
     const char* datatype = parent->hdr.datatype;
@@ -106,10 +110,10 @@ struct arg_lit* arg_litn(const char* shortopts, const char* longopts, int mincou
     result->hdr.mincount = mincount;
     result->hdr.maxcount = maxcount;
     result->hdr.parent = result;
-    result->hdr.resetfn = (arg_resetfn*)arg_lit_resetfn;
-    result->hdr.scanfn = (arg_scanfn*)arg_lit_scanfn;
-    result->hdr.checkfn = (arg_checkfn*)arg_lit_checkfn;
-    result->hdr.errorfn = (arg_errorfn*)arg_lit_errorfn;
+    result->hdr.resetfn = arg_lit_resetfn;
+    result->hdr.scanfn = arg_lit_scanfn;
+    result->hdr.checkfn = arg_lit_checkfn;
+    result->hdr.errorfn = arg_lit_errorfn;
 
     /* init local variables */
     result->count = 0;

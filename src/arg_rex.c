@@ -122,12 +122,14 @@ struct privhdr {
     int flags;
 };
 
-static void arg_rex_resetfn(struct arg_rex* parent) {
+static void arg_rex_resetfn(void* parent_) {
+    struct arg_rex* parent = parent_;
     ARG_TRACE(("%s:resetfn(%p)\n", __FILE__, parent));
     parent->count = 0;
 }
 
-static int arg_rex_scanfn(struct arg_rex* parent, const char* argval) {
+static int arg_rex_scanfn(void* parent_, const char* argval) {
+    struct arg_rex* parent = parent_;
     int errorcode = 0;
     const TRexChar* error = NULL;
     TRex* rex = NULL;
@@ -161,7 +163,8 @@ static int arg_rex_scanfn(struct arg_rex* parent, const char* argval) {
     return errorcode;
 }
 
-static int arg_rex_checkfn(struct arg_rex* parent) {
+static int arg_rex_checkfn(void* parent_) {
+    struct arg_rex* parent = parent_;
     int errorcode = (parent->count < parent->hdr.mincount) ? ARG_ERR_MINCOUNT : 0;
 #if 0
     struct privhdr *priv = (struct privhdr*)parent->hdr.priv;
@@ -174,7 +177,8 @@ static int arg_rex_checkfn(struct arg_rex* parent) {
     return errorcode;
 }
 
-static void arg_rex_errorfn(struct arg_rex* parent, arg_dstr_t ds, int errorcode, const char* argval, const char* progname) {
+static void arg_rex_errorfn(void* parent_, arg_dstr_t ds, int errorcode, const char* argval, const char* progname) {
+    struct arg_rex* parent = parent_;
     const char* shortopts = parent->hdr.shortopts;
     const char* longopts = parent->hdr.longopts;
     const char* datatype = parent->hdr.datatype;
@@ -255,10 +259,10 @@ struct arg_rex* arg_rexn(const char* shortopts,
     result->hdr.mincount = mincount;
     result->hdr.maxcount = maxcount;
     result->hdr.parent = result;
-    result->hdr.resetfn = (arg_resetfn*)arg_rex_resetfn;
-    result->hdr.scanfn = (arg_scanfn*)arg_rex_scanfn;
-    result->hdr.checkfn = (arg_checkfn*)arg_rex_checkfn;
-    result->hdr.errorfn = (arg_errorfn*)arg_rex_errorfn;
+    result->hdr.resetfn = arg_rex_resetfn;
+    result->hdr.scanfn = arg_rex_scanfn;
+    result->hdr.checkfn = arg_rex_checkfn;
+    result->hdr.errorfn = arg_rex_errorfn;
 
     /* store the arg_rex_priv struct immediately after the arg_rex struct */
     result->hdr.priv = result + 1;
