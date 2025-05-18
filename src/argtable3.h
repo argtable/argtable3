@@ -1179,27 +1179,115 @@ ARG_EXTERN void arg_print_option(FILE* fp, const char* shortopts, const char* lo
 ARG_EXTERN void arg_print_option_ds(arg_dstr_t ds, const char* shortopts, const char* longopts, const char* datatype, const char* suffix);
 
 /**
- * @brief GNU-style command-line option syntax.
+ * Prints a compact, single-line command-line syntax summary to a file stream.
  *
- * @param fp FILE descriptor
- * @param argtable A pointer to a WNDCLASSEX structure. You must fill the
- *   structure with the appropriate class attributes before passing it to the
- *   function.
- * @param suffix The second one, which follows @p shortopts.
+ * The `arg_print_syntax` function generates a concise, single-line usage
+ * summary for the command-line options and arguments defined in the argument
+ * table. This summary is useful for displaying quick usage information to
+ * users, such as in the output of a `--help` or usage message.
+ *
+ * The formatted syntax summary is written to the specified file stream (`fp`).
+ * You can append a custom `suffix` string to the end of the summary, for
+ * example, to indicate positional arguments.
+ *
+ * Example usage:
+ * ```
+ * // Print compact syntax summary to stdout
+ * arg_print_syntax(stdout, argtable, "[FILES...]");
+ * ```
+ *
+ * @param fp      Output file stream to write to (e.g., `stdout` or `stderr`).
+ * @param argtable Array of argument table structs describing the available
+ *                 options and arguments.
+ * @param suffix  String to append at the end of the syntax summary (e.g., for
+ *                positional arguments).
  */
 ARG_EXTERN void arg_print_syntax(FILE* fp, void** argtable, const char* suffix);
+
+/**
+ * Prints a compact, single-line command-line syntax summary to a dynamic string.
+ *
+ * The `arg_print_syntax_ds` function generates a concise, single-line usage
+ * summary for the command-line options and arguments defined in the argument
+ * table. This summary is useful for displaying quick usage information to
+ * users, such as in the output of a `--help` or usage message, and is written
+ * to a dynamic string object (`arg_dstr_t`).
+ *
+ * You can append a custom `suffix` string to the end of the summary, for
+ * example, to indicate positional arguments.
+ *
+ * Example usage:
+ * ```
+ * // Print compact syntax summary to a dynamic string
+ * arg_dstr_t ds = arg_dstr_create();
+ * arg_print_syntax_ds(ds, argtable, "[FILES...]");
+ * printf("%s", arg_dstr_cstr(ds));
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds      Dynamic string object to write to.
+ * @param argtable Array of argument table structs describing the available
+ *                 options and arguments.
+ * @param suffix  String to append at the end of the syntax summary (e.g., for
+ *                positional arguments).
+ */
 ARG_EXTERN void arg_print_syntax_ds(arg_dstr_t ds, void** argtable, const char* suffix);
 
 /**
- * @brief More verbose style command-line option syntax.
+ * Prints a verbose, multi-line command-line syntax summary to a file stream.
  *
- * @param fp FILE descriptor
- * @param argtable A pointer to a WNDCLASSEX structure. You must fill the
- *   structure with the appropriate class attributes before passing it to the
- *   function.
- * @param suffix The second one, which follows @p shortopts.
+ * The `arg_print_syntaxv` function generates a detailed, multi-line usage
+ * summary for the command-line options and arguments defined in the argument
+ * table. This verbose style provides more clarity than the compact single-line
+ * form, making it easier for users to understand complex command-line
+ * interfaces.
+ *
+ * The formatted syntax summary is written to the specified file stream (`fp`).
+ * You can append a custom `suffix` string to the end of the summary, for
+ * example, to indicate positional arguments.
+ *
+ * Example usage:
+ * ```
+ * // Print verbose syntax summary to stdout
+ * arg_print_syntaxv(stdout, argtable, "[FILES...]");
+ * ```
+ *
+ * @param fp      Output file stream to write to (e.g., `stdout` or `stderr`).
+ * @param argtable Array of argument table structs describing the available
+ *                 options and arguments.
+ * @param suffix  String to append at the end of the syntax summary (e.g., for
+ *                positional arguments).
  */
 ARG_EXTERN void arg_print_syntaxv(FILE* fp, void** argtable, const char* suffix);
+
+/**
+ * Prints a verbose, multi-line command-line syntax summary to a dynamic string.
+ *
+ * The `arg_print_syntaxv_ds` function generates a detailed, multi-line usage
+ * summary for the command-line options and arguments defined in the argument
+ * table. This verbose style provides more clarity than the compact single-line
+ * form, making it easier for users to understand complex command-line
+ * interfaces.
+ *
+ * The formatted syntax summary is written to the specified dynamic string
+ * object (`arg_dstr_t`). You can append a custom `suffix` string to the end of
+ * the summary, for example, to indicate positional arguments.
+ *
+ * Example usage:
+ * ```
+ * // Print verbose syntax summary to a dynamic string
+ * arg_dstr_t ds = arg_dstr_create();
+ * arg_print_syntaxv_ds(ds, argtable, "[FILES...]");
+ * printf("%s", arg_dstr_cstr(ds));
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds      Dynamic string object to write to.
+ * @param argtable Array of argument table structs describing the available
+ *                 options and arguments.
+ * @param suffix  String to append at the end of the syntax summary (e.g., for
+ *                positional arguments).
+ */
 ARG_EXTERN void arg_print_syntaxv_ds(arg_dstr_t ds, void** argtable, const char* suffix);
 
 /**
