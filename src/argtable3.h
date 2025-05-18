@@ -631,14 +631,62 @@ ARG_EXTERN arg_lit_t* arg_litn(const char* shortopts, const char* longopts, int 
 ARG_EXTERN arg_lit_t* arg_lit0(const char* shortopts, const char* longopts, const char* glossary);
 ARG_EXTERN arg_lit_t* arg_lit1(const char* shortopts, const char* longopts, const char* glossary);
 
-ARG_EXTERN struct arg_int* arg_int0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
-ARG_EXTERN struct arg_int* arg_int1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
-ARG_EXTERN struct arg_int* arg_intn(const char* shortopts,
-                                    const char* longopts,
-                                    const char* datatype,
-                                    int mincount,
-                                    int maxcount,
-                                    const char* glossary);
+/**
+ * Creates an integer argument for the command-line parser.
+ *
+ * The `arg_intn` function defines an option that accepts integer values from
+ * the command line. You can specify the minimum and maximum number of times the
+ * argument can appear, making it suitable for optional, required, or repeatable
+ * integer options. Each occurrence of the option is parsed and stored in the
+ * `ival` array of the resulting `arg_int_t` struct, allowing you to retrieve
+ * all provided integer values after parsing.
+ *
+ * For convenience and backward compatibility, `arg_int0` is provided as a
+ * helper for optional integer arguments (where `mincount = 0` and
+ * `maxcount = 1`), and `arg_int1` is a helper for required integer arguments
+ * (where `mincount = 1` and `maxcount = 1`). While `arg_int0` and `arg_int1`
+ * are available, it is recommended to use `arg_intn` in new code as it is more
+ * explicit and flexible.
+ *
+ * Example usage:
+ * ```
+ * // Accepts one or more integer arguments
+ * arg_int_t *numbers = arg_intn("n", "number", "<int>", 1, 5, "Input numbers");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = { numbers, end };
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors == 0 && numbers->count > 0) {
+ *     for (int i = 0; i < numbers->count; ++i) {
+ *         printf("Input number: %d\n", numbers->ival[i]);
+ *     }
+ * } else {
+ *     arg_print_errors(stdout, end, argv[0]);
+ * }
+ * ```
+ *
+ * @param shortopts A string of single characters, each representing a short
+ *                  option name (e.g., `"n"` for `-n`). Pass `NULL` if no short
+ *                  option is desired.
+ * @param longopts  A string of comma-separated long option names (e.g.,
+ *                  `"number"` for `--number`). Pass `NULL` if no long option is
+ *                  desired.
+ * @param datatype  A string describing the expected data type (e.g., `"<int>"`),
+ *                  shown in help messages.
+ * @param mincount  The minimum number of times the argument must appear (set to 0
+ *                  for optional).
+ * @param maxcount  The maximum number of times the argument can appear (controls
+ *                  memory allocation).
+ * @param glossary  A short description of the argument for the glossary/help
+ *                  output. Pass `NULL` to omit.
+ *
+ * @return
+ *   If successful, returns a pointer to the allocated `struct arg_int`. Returns
+ *   `NULL` if there is insufficient memory.
+ */
+ARG_EXTERN arg_int_t* arg_intn(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary);
+ARG_EXTERN arg_int_t* arg_int0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
+ARG_EXTERN arg_int_t* arg_int1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 
 ARG_EXTERN struct arg_dbl* arg_dbl0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_dbl* arg_dbl1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
