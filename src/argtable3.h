@@ -2248,6 +2248,32 @@ ARG_EXTERN void arg_make_syntax_err_msg(arg_dstr_t ds, void** argtable, struct a
 ARG_EXTERN int
 arg_make_syntax_err_help_msg(arg_dstr_t ds, const char* name, int help, int nerrors, void** argtable, struct arg_end* end, int* exitcode);
 ARG_EXTERN void arg_set_module_name(const char* name);
+
+/**
+ * Sets the module (application) version information.
+ *
+ * The `arg_set_module_version` function allows you to specify the version
+ * information for your application or module, which can be displayed in help or
+ * version output. This function is typically called at program startup, before
+ * parsing command-line arguments, to ensure that version information is
+ * available for reporting to the user.
+ *
+ * The version is specified using three integer components (major, minor, patch)
+ * and an optional string tag (such as a commit hash or build identifier). This
+ * enables you to provide detailed versioning information, which is useful for
+ * debugging, support, and user reference.
+ *
+ * Example usage:
+ * ```
+ * arg_set_module_version(3, 1, 5, "githash-abc123");
+ * ```
+ *
+ * @param[in] major The major version number (e.g., 3 in version 3.1.5).
+ * @param[in] minor The minor version number (e.g., 1 in version 3.1.5).
+ * @param[in] patch The patch version number (e.g., 5 in version 3.1.5).
+ * @param[in] tag   An optional string identifying a version control commit,
+ *                  build tag, or other metadata. Pass `NULL` if not needed.
+ */
 ARG_EXTERN void arg_set_module_version(int major, int minor, int patch, const char* tag);
 
 /**** deprecated functions, for back-compatibility only ********/
