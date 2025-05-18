@@ -1122,17 +1122,60 @@ ARG_EXTERN int arg_nullcheck(void** argtable);
 ARG_EXTERN int arg_parse(int argc, char** argv, void** argtable);
 
 /**
- * @brief Mainly used in error handling functions.
+ * Prints a formatted command-line option specification to a file stream.
  *
- * @param fp FILE descriptor
- * @param shortopts A pointer to a WNDCLASSEX structure. You must fill the
- *   structure with the appropriate class attributes before passing it to the
- *   function.
- * @param longopts The second one, which follows @p shortopts.
- * @param datatype The second one, which follows @p shortopts.
- * @param suffix The second one, which follows @p shortopts.
+ * The `arg_print_option` function generates a formatted representation of a
+ * command-line option, including its short options, long options, data type,
+ * and an optional suffix. This is useful for displaying option syntax in help
+ * messages, usage output, or documentation.
+ *
+ * The formatted option is written to the specified file stream (`fp`). You can
+ * control the appearance of the option specification, making it easy to
+ * integrate with custom help or documentation systems.
+ *
+ * Example usage:
+ * ```
+ * // Print option to stdout
+ * arg_print_option(stdout, "h", "help", NULL, NULL);
+ * ```
+ *
+ * @param fp        Output file stream to write to (e.g., `stdout` or `stderr`).
+ * @param shortopts String of short option characters (e.g., `"h"` for `-h`).
+ * @param longopts  String of long option names, comma-separated (e.g., `"help"` for `--help`).
+ * @param datatype  String describing the expected data type (e.g., `"<file>"`).
+ * @param suffix    Optional string to append after the option specification.
  */
 ARG_EXTERN void arg_print_option(FILE* fp, const char* shortopts, const char* longopts, const char* datatype, const char* suffix);
+
+/**
+ * Prints a formatted command-line option specification to a dynamic string.
+ *
+ * The `arg_print_option_ds` function generates a formatted representation of a
+ * command-line option, including its short options, long options, data type,
+ * and an optional suffix. This is useful for displaying option syntax in help
+ * messages, usage output, or documentation that is built using dynamic string
+ * buffers.
+ *
+ * The formatted option is written to the specified dynamic string object
+ * (`arg_dstr_t`). You can control the appearance of the option specification,
+ * making it easy to integrate with custom help or documentation systems that
+ * require string-based output.
+ *
+ * Example usage:
+ * ```
+ * // Print option to a dynamic string
+ * arg_dstr_t ds = arg_dstr_create();
+ * arg_print_option_ds(ds, "v", "verbose", "<level>", NULL);
+ * printf("%s", arg_dstr_cstr(ds));
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds        Dynamic string object to write to.
+ * @param shortopts String of short option characters (e.g., `"h"` for `-h`).
+ * @param longopts  String of long option names, comma-separated (e.g., `"help"` for `--help`).
+ * @param datatype  String describing the expected data type (e.g., `"<file>"`).
+ * @param suffix    Optional string to append after the option specification.
+ */
 ARG_EXTERN void arg_print_option_ds(arg_dstr_t ds, const char* shortopts, const char* longopts, const char* datatype, const char* suffix);
 
 /**
