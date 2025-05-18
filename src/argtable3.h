@@ -1291,26 +1291,116 @@ ARG_EXTERN void arg_print_syntaxv(FILE* fp, void** argtable, const char* suffix)
 ARG_EXTERN void arg_print_syntaxv_ds(arg_dstr_t ds, void** argtable, const char* suffix);
 
 /**
- * @brief customizable glossary.
+ * Prints the argument glossary in a customizable format to a file stream.
  *
- * @param fp FILE descriptor
- * @param argtable A pointer to a WNDCLASSEX structure. You must fill the
- *   structure with the appropriate class attributes before passing it to the
- *   function.
- * @param format Printing format.
+ * The `arg_print_glossary` function generates a glossary of command-line
+ * options and arguments, formatted according to the specified format string.
+ * This glossary provides users with a summary of available options, their data
+ * types, and descriptions, making it easier to understand the command-line
+ * interface.
+ *
+ * The formatted glossary is written to the specified file stream (`fp`). The
+ * format string allows you to control the layout and appearance of each
+ * glossary entry, enabling integration with custom help or documentation
+ * systems.
+ *
+ * Example usage:
+ * ```
+ * // Print glossary to stdout with a custom format
+ * arg_print_glossary(stdout, argtable, "  %-20s %s\n");
+ * ```
+ *
+ * @param fp      Output file stream to write to (e.g., `stdout` or `stderr`).
+ * @param argtable Array of argument table structs describing the available
+ *                 options and arguments.
+ * @param format  Format string controlling the layout of each glossary entry.
  */
 ARG_EXTERN void arg_print_glossary(FILE* fp, void** argtable, const char* format);
+
+/**
+ * Prints the argument glossary in a customizable format to a dynamic string.
+ *
+ * The `arg_print_glossary_ds` function generates a glossary of command-line
+ * options and arguments, formatted according to the specified format string.
+ * This glossary provides users with a summary of available options, their data
+ * types, and descriptions, making it easier to understand the command-line
+ * interface.
+ *
+ * The formatted glossary is written to the specified dynamic string object
+ * (`arg_dstr_t`). The format string allows you to control the layout and
+ * appearance of each glossary entry, enabling integration with custom help or
+ * documentation systems.
+ *
+ * Example usage:
+ * ```
+ * // Print glossary to a dynamic string with a custom format
+ * arg_dstr_t ds = arg_dstr_create();
+ * arg_print_glossary_ds(ds, argtable, "  %-20s %s\n");
+ * printf("%s", arg_dstr_cstr(ds));
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds      Dynamic string object to write to.
+ * @param argtable Array of argument table structs describing the available
+ *                 options and arguments.
+ * @param format  Format string controlling the layout of each glossary entry.
+ */
 ARG_EXTERN void arg_print_glossary_ds(arg_dstr_t ds, void** argtable, const char* format);
 
 /**
- * @brief GNU-style glossary.
+ * Prints the argument glossary using strict GNU formatting conventions to a file
+ * stream.
  *
- * @param fp FILE descriptor
- * @param argtable A pointer to a WNDCLASSEX structure. You must fill the
- *   structure with the appropriate class attributes before passing it to the
- *   function.
+ * The `arg_print_glossary_gnu` function generates a glossary of command-line
+ * options and arguments, formatted to comply with GNU style conventions. In this
+ * format, long options are vertically aligned in a second column, and lines are
+ * wrapped at 80 characters for improved readability and consistency with GNU
+ * command-line tool documentation.
+ *
+ * The formatted glossary is written to the specified file stream (`fp`). This
+ * function is useful for generating help output that matches the look and feel
+ * of standard GNU utilities.
+ *
+ * Example usage:
+ * ```
+ * // Print GNU-style glossary to stdout
+ * arg_print_glossary_gnu(stdout, argtable);
+ * ```
+ *
+ * @param fp      Output file stream to write to (e.g., `stdout` or `stderr`).
+ * @param argtable Array of argument table structs describing the available
+ *                 options and arguments.
  */
 ARG_EXTERN void arg_print_glossary_gnu(FILE* fp, void** argtable);
+
+/**
+ * Prints the argument glossary using strict GNU formatting conventions to a
+ * dynamic string.
+ *
+ * The `arg_print_glossary_gnu_ds` function generates a glossary of command-line
+ * options and arguments, formatted to comply with GNU style conventions. In
+ * this format, long options are vertically aligned in a second column, and
+ * lines are wrapped at 80 characters for improved readability and consistency
+ * with GNU command-line tool documentation.
+ *
+ * The formatted glossary is written to the specified dynamic string object
+ * (`arg_dstr_t`). This function is useful for generating help output that
+ * matches the look and feel of standard GNU utilities, especially when you need
+ * the output as a string for further processing, logging, or GUI display.
+ *
+ * Example usage:
+ * ```
+ * // Print GNU-style glossary to a dynamic string
+ * arg_dstr_t ds = arg_dstr_create();
+ * arg_print_glossary_gnu_ds(ds, argtable);
+ * printf("%s", arg_dstr_cstr(ds));
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds      Dynamic string object to write to.
+ * @param argtable Array of argument table structs describing the available
+ *                 options and arguments.
+ */
 ARG_EXTERN void arg_print_glossary_gnu_ds(arg_dstr_t ds, void** argtable);
 
 ARG_EXTERN void arg_print_errors(FILE* fp, struct arg_end* end, const char* progname);
