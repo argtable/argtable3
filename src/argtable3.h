@@ -1812,20 +1812,436 @@ ARG_EXTERN void arg_dstr_catf(arg_dstr_t ds, const char* fmt, ...);
  */
 ARG_EXTERN char* arg_dstr_cstr(arg_dstr_t ds);
 
+/**
+ * Initializes the sub-command mechanism.
+ *
+ * The `arg_cmd_init` function sets up the internal data structures required for
+ * sub-command support in Argtable3. It must be called before registering,
+ * dispatching, or iterating over sub-commands in your application.
+ *
+ * This function is typically called once at program startup, before any
+ * sub-commands are registered. It ensures that the sub-command API is ready for
+ * use. After initialization, you can use functions such as `arg_cmd_register`,
+ * `arg_cmd_dispatch`, and `arg_cmd_itr_create`.
+ *
+ * When sub-command support is no longer needed (e.g., at program shutdown),
+ * call `arg_cmd_uninit` to release resources and prevent memory leaks.
+ *
+ * Example usage:
+ * ```
+ * arg_cmd_init();
+ * // Register and use sub-commands...
+ * arg_cmd_uninit();
+ * ```
+ *
+ * @see arg_cmd_uninit, arg_cmd_register, arg_cmd_unregister, arg_cmd_count
+ */
 ARG_EXTERN void arg_cmd_init(void);
+
+/**
+ * Releases resources and cleans up the sub-command mechanism.
+ *
+ * The `arg_cmd_uninit` function deinitializes the sub-command infrastructure,
+ * freeing any memory or resources allocated for sub-command registration,
+ * lookup, and iteration. After calling this function, all registered
+ * sub-commands are removed, and the sub-command API can no longer be used until
+ * `arg_cmd_init` is called again.
+ *
+ * This function should be called at program shutdown or when you no longer need
+ * sub-command support, to prevent memory leaks and ensure proper cleanup.
+ *
+ * Example usage:
+ * ```
+ * arg_cmd_init();
+ * // Register and use sub-commands...
+ * arg_cmd_uninit();
+ * ```
+ *
+ * @see arg_cmd_init, arg_cmd_register, arg_cmd_unregister, arg_cmd_count
+ */
 ARG_EXTERN void arg_cmd_uninit(void);
+
+/**
+ * Registers a new sub-command with the application.
+ *
+ * The `arg_cmd_register` function adds a sub-command to the application's
+ * sub-command table, associating it with a handler function, a description, and
+ * an optional context pointer. This enables applications to support multiple
+ * commands (such as `git` or `docker`-style interfaces), where each sub-command
+ * can have its own logic and help text.
+ *
+ * The handler function (`proc`) will be called when the sub-command is
+ * dispatched via `arg_cmd_dispatch`. The description is used in help and usage
+ * messages. The context pointer (`ctx`) can be used to pass user-defined data
+ * to the handler.
+ *
+ * If a sub-command with the same name already exists, its registration will be
+ * replaced with the new handler, description, and context.
+ *
+ * Example usage:
+ * ```
+ * // Register a "list" sub-command
+ * arg_cmd_register("list", list_cmd, "List all items", NULL);
+ *
+ * // Register a "remove" sub-command with context
+ * arg_cmd_register("remove", remove_cmd, "Remove an item", my_context_ptr);
+ * ```
+ *
+ * @param name        The name of the sub-command (null-terminated string).
+ * @param proc        Pointer to the handler function for the sub-command.
+ * @param description A short description of the sub-command for help output.
+ * @param ctx         Optional user-defined context pointer (may be NULL).
+ *
+ * @see arg_cmd_unregister, arg_cmd_dispatch, arg_cmd_info, arg_cmd_count
+ */
 ARG_EXTERN void arg_cmd_register(const char* name, arg_cmdfn* proc, const char* description, void* ctx);
+
+/**
+ * Unregisters a sub-command by name.
+ *
+ * The `arg_cmd_unregister` function removes a previously registered sub-command
+ * from the application's sub-command table. After calling this function, the
+ * specified sub-command will no longer be available for dispatch, iteration, or
+ * help output.
+ *
+ * This function is useful for applications that support dynamic registration
+ * and removal of sub-commands at runtime, such as plugin-based tools or
+ * interactive shells.
+ *
+ * If the sub-command with the given name does not exist, the function has no
+ * effect.
+ *
+ * Example usage:
+ * ```
+ * arg_cmd_register("remove", remove_cmd, "Remove an item", NULL);
+ * // ... later ...
+ * arg_cmd_unregister("remove");
+ * ```
+ *
+ * @param name The name of the sub-command to unregister (null-terminated
+ * string).
+ *
+ * @see arg_cmd_register, arg_cmd_dispatch, arg_cmd_count, arg_cmd_info
+ */
 ARG_EXTERN void arg_cmd_unregister(const char* name);
+
+/**
+ * Dispatches a registered sub-command by name.
+ *
+ * The `arg_cmd_dispatch` function locates the sub-command with the specified
+ * name and invokes its handler function, passing the provided command-line
+ * arguments and a dynamic string buffer for output or error messages.
+ *
+ * This function is typically used in applications that support multiple
+ * sub-commands (such as `git` or `docker`-style interfaces), allowing you to
+ * delegate command-line processing to the appropriate handler based on the
+ * user's input.
+ *
+ * If the sub-command is found, its handler function is called with the given
+ * arguments and context. If the sub-command is not found, an error message may
+ * be written to the result buffer, and a nonzero error code is returned.
+ *
+ * Example usage:
+ * ```
+ * // Register sub-commands
+ * arg_cmd_register("list", list_cmd, "List items", NULL);
+ * arg_cmd_register("add", add_cmd, "Add an item", NULL);
+ *
+ * // Dispatch based on argv[1]
+ * arg_dstr_t res = arg_dstr_create();
+ * int ret = arg_cmd_dispatch(argv[1], argc - 1, argv + 1, res);
+ * if (ret != 0) {
+ *     fprintf(stderr, "%s\n", arg_dstr_cstr(res));
+ * }
+ * arg_dstr_destroy(res);
+ * ```
+ *
+ * @param name The name of the sub-command to dispatch (null-terminated string).
+ * @param argc The number of command-line arguments for the sub-command.
+ * @param argv The array of command-line arguments for the sub-command.
+ * @param res  Pointer to a dynamic string buffer for output or error messages.
+ *
+ * @return 0 if the sub-command was found and executed successfully, nonzero if
+ *         the sub-command was not found or an error occurred.
+ *
+ * @see arg_cmd_register, arg_cmd_info, arg_cmd_count, arg_dstr_create,
+ *      arg_dstr_cstr
+ */
 ARG_EXTERN int arg_cmd_dispatch(const char* name, int argc, char* argv[], arg_dstr_t res);
+
+/**
+ * Returns the number of registered sub-commands.
+ *
+ * The `arg_cmd_count` function returns the total number of sub-commands
+ * currently registered in the application. This is useful for applications that
+ * support multiple commands (such as `git` or `docker`-style interfaces) and
+ * need to enumerate, display, or manage the available sub-commands.
+ *
+ * You can use this function to determine the size of the sub-command table,
+ * iterate over all registered sub-commands, or display a summary of available
+ * commands to the user.
+ *
+ * Example usage:
+ * ```
+ * unsigned int count = arg_cmd_count();
+ * printf("There are %u sub-commands registered.\n", count);
+ * ```
+ *
+ * @return The number of sub-commands currently registered.
+ *
+ * @see arg_cmd_register, arg_cmd_info, arg_cmd_itr_create
+ */
 ARG_EXTERN unsigned int arg_cmd_count(void);
+
+/**
+ * Retrieves information about a registered sub-command by name.
+ *
+ * The `arg_cmd_info` function returns a pointer to the `arg_cmd_info_t`
+ * structure for the sub-command with the specified name. This structure
+ * contains metadata such as the sub-command's name, description, handler
+ * function, and context pointer.
+ *
+ * This function is useful for querying details about a specific sub-command,
+ * such as when generating help output, dispatching commands, or inspecting
+ * available sub-commands in applications that support multiple commands (e.g.,
+ * `git` or `docker`-style interfaces).
+ *
+ * If the sub-command is not found, the function returns `NULL`.
+ *
+ * Example usage:
+ * ```
+ * arg_cmd_info_t* info = arg_cmd_info("list");
+ * if (info) {
+ *     printf("Sub-command: %s - %s\n", info->name, info->description);
+ * }
+ * ```
+ *
+ * @param name The name of the sub-command to look up (null-terminated string).
+ * @return     Pointer to the `arg_cmd_info_t` structure for the sub-command, or
+ *             `NULL` if the sub-command is not found.
+ *
+ * @see arg_cmd_register, arg_cmd_count, arg_cmd_itr_create, arg_cmd_info_t
+ */
 ARG_EXTERN arg_cmd_info_t* arg_cmd_info(const char* name);
+
+/**
+ * Creates a new sub-command iterator for traversing registered sub-commands.
+ *
+ * The `arg_cmd_itr_create` function allocates and initializes a sub-command
+ * iterator, which can be used to traverse all registered sub-commands in the
+ * application. This iterator provides a convenient way to enumerate, search, or
+ * process sub-commands, especially in applications that support multiple
+ * commands (such as `git` or `docker`-style interfaces).
+ *
+ * After creating the iterator, you can use functions like `arg_cmd_itr_advance`
+ * to move through the sub-command table, and `arg_cmd_itr_key` or
+ * `arg_cmd_itr_value` to access the current sub-command's name or metadata.
+ * When finished, call `arg_cmd_itr_destroy` to release resources.
+ *
+ * Example usage:
+ * ```
+ * arg_cmd_itr_t itr = arg_cmd_itr_create();
+ * while (arg_cmd_itr_advance(itr)) {
+ *     const char* key = arg_cmd_itr_key(itr);
+ *     printf("Sub-command: %s\n", key);
+ * }
+ * arg_cmd_itr_destroy(itr);
+ * ```
+ *
+ * @return A handle to the newly created sub-command iterator, or `NULL` if
+ *         allocation fails.
+ *
+ * @see arg_cmd_itr_destroy, arg_cmd_itr_advance, arg_cmd_itr_key,
+ *      arg_cmd_itr_value
+ */
 ARG_EXTERN arg_cmd_itr_t arg_cmd_itr_create(void);
+
+/**
+ * Destroys the sub-command iterator and releases associated resources.
+ *
+ * The `arg_cmd_itr_destroy` function deallocates any memory or resources
+ * associated with a sub-command iterator created by `arg_cmd_itr_create`. After
+ * calling this function, the iterator is no longer valid and must not be used.
+ *
+ * This function should be called when you are finished iterating over
+ * sub-commands to prevent memory leaks and ensure proper cleanup.
+ *
+ * Example usage:
+ * ```
+ * arg_cmd_itr_t itr = arg_cmd_itr_create();
+ * while (arg_cmd_itr_advance(itr)) {
+ *     // process sub-commands
+ * }
+ * arg_cmd_itr_destroy(itr);
+ * ```
+ *
+ * @param itr The sub-command iterator to destroy.
+ *
+ * @see arg_cmd_itr_create, arg_cmd_itr_advance, arg_cmd_itr_key,
+ *      arg_cmd_itr_value
+ */
 ARG_EXTERN void arg_cmd_itr_destroy(arg_cmd_itr_t itr);
+
+/**
+ * Advances the sub-command iterator to the next entry.
+ *
+ * The `arg_cmd_itr_advance` function moves the sub-command iterator to the next
+ * sub-command in the table. This allows you to iterate over all registered
+ * sub-commands in your application, enabling tasks such as listing available
+ * commands, generating help output, or performing batch operations.
+ *
+ * This function is typically used in a loop, where you repeatedly call
+ * `arg_cmd_itr_advance` and retrieve the current sub-command's key or value
+ * using `arg_cmd_itr_key` or `arg_cmd_itr_value`.
+ *
+ * Example usage:
+ * ```
+ * arg_cmd_itr_t itr = arg_cmd_itr_create();
+ * while (arg_cmd_itr_advance(itr)) {
+ *     const char* key = arg_cmd_itr_key(itr);
+ *     printf("Sub-command: %s\n", key);
+ * }
+ * arg_cmd_itr_destroy(itr);
+ * ```
+ *
+ * @param itr The sub-command iterator.
+ * @return    1 if the iterator was advanced to a valid entry, 0 if there are no
+ *            more entries (end of the sub-command table).
+ *
+ * @see arg_cmd_itr_create, arg_cmd_itr_key, arg_cmd_itr_value, arg_cmd_info_t
+ */
 ARG_EXTERN int arg_cmd_itr_advance(arg_cmd_itr_t itr);
+
+/**
+ * Retrieves the key (name) of the sub-command at the current iterator position.
+ *
+ * The `arg_cmd_itr_key` function returns a pointer to the key (typically the
+ * sub-command name as a null-terminated string) at the current position of the
+ * sub-command iterator. This allows you to access the identifier for the
+ * sub-command currently referenced by the iterator, which is useful for
+ * displaying, comparing, or processing sub-commands in applications that
+ * support multiple commands.
+ *
+ * This function is typically used when iterating over all registered
+ * sub-commands or after searching for a specific sub-command using the
+ * iterator.
+ *
+ * Example usage:
+ * ```
+ * arg_cmd_itr_t itr = arg_cmd_itr_create();
+ * while (arg_cmd_itr_advance(itr)) {
+ *     const char* key = arg_cmd_itr_key(itr);
+ *     printf("Sub-command: %s\n", key);
+ * }
+ * arg_cmd_itr_destroy(itr);
+ * ```
+ *
+ * @param itr The sub-command iterator.
+ * @return    Pointer to the key (sub-command name) at the current iterator
+ *            position, or `NULL` if the iterator is not valid or at the end.
+ *
+ * @see arg_cmd_itr_create, arg_cmd_itr_advance, arg_cmd_itr_value,
+ *      arg_cmd_info_t
+ */
 ARG_EXTERN char* arg_cmd_itr_key(arg_cmd_itr_t itr);
+
+/**
+ * Retrieves the value (sub-command information) at the current iterator
+ * position.
+ *
+ * The `arg_cmd_itr_value` function returns a pointer to the `arg_cmd_info_t`
+ * structure at the current position of the sub-command iterator. This allows
+ * you to access metadata and handler information for the sub-command found or
+ * iterated to by the iterator.
+ *
+ * This function is typically used after advancing the iterator or searching for
+ * a specific sub-command, enabling you to inspect the sub-command's name,
+ * description, handler function, and context pointer.
+ *
+ * Example usage:
+ * ```
+ * arg_cmd_itr_t itr = arg_cmd_itr_create();
+ * if (arg_cmd_itr_search(itr, "list")) {
+ *     arg_cmd_info_t* info = arg_cmd_itr_value(itr);
+ *     printf("Found sub-command: %s - %s\n", info->name, info->description);
+ * }
+ * arg_cmd_itr_destroy(itr);
+ * ```
+ *
+ * @param itr The sub-command iterator.
+ * @return    Pointer to the `arg_cmd_info_t` structure at the current iterator
+ *            position, or `NULL` if the iterator is not valid or at the end.
+ *
+ * @see arg_cmd_itr_create, arg_cmd_itr_advance, arg_cmd_itr_search,
+ *      arg_cmd_info_t
+ */
 ARG_EXTERN arg_cmd_info_t* arg_cmd_itr_value(arg_cmd_itr_t itr);
+
+/**
+ * Searches for a sub-command by key using the sub-command iterator.
+ *
+ * The `arg_cmd_itr_search` function searches the sub-command table for a
+ * sub-command whose key matches the specified value, starting from the current
+ * position of the iterator. If a match is found, the iterator is positioned at
+ * the found entry.
+ *
+ * This function is useful for efficiently locating a specific sub-command in
+ * applications that support multiple commands (such as `git` or `docker`-style
+ * interfaces), especially when iterating over or managing a dynamic set of
+ * sub-commands.
+ *
+ * Example usage:
+ * ```
+ * arg_cmd_itr_t itr = arg_cmd_itr_create();
+ * if (arg_cmd_itr_search(itr, "list")) {
+ *     arg_cmd_info_t* info = arg_cmd_itr_value(itr);
+ *     printf("Found sub-command: %s - %s\n", info->name, info->description);
+ * }
+ * arg_cmd_itr_destroy(itr);
+ * ```
+ *
+ * @param itr The sub-command iterator.
+ * @param k   The key to search for (typically a string with the sub-command
+ * name).
+ * @return    1 if the key is found and the iterator is positioned at the entry,
+ *            0 otherwise.
+ *
+ * @see arg_cmd_itr_create, arg_cmd_itr_value, arg_cmd_info_t
+ */
 ARG_EXTERN int arg_cmd_itr_search(arg_cmd_itr_t itr, void* k);
+
+/**
+ * Sorts an array using a custom comparison function.
+ *
+ * The `arg_mgsort` function performs a merge sort on the specified array,
+ * allowing you to sort elements of any type using a user-provided comparison
+ * function. This is useful for sorting sub-command tables, argument arrays, or
+ * any other data structures used within Argtable3 or your application.
+ *
+ * The function is flexible and can sort arrays of arbitrary element size. The
+ * comparison function should return an integer less than, equal to, or greater
+ * than zero if the first argument is considered to be respectively less than,
+ * equal to, or greater than the second.
+ *
+ * Example usage:
+ * ```
+ * // Sort an array of sub-command info structures by name
+ * arg_mgsort(cmd_array, cmd_count, sizeof(arg_cmd_info_t), 0, cmd_count - 1, compare_cmd_info);
+ * ```
+ *
+ * @param data      Pointer to the array to be sorted.
+ * @param size      Number of elements in the array.
+ * @param esize     Size of each element in bytes.
+ * @param i         Starting index of the range to sort (typically 0).
+ * @param k         Ending index of the range to sort (typically size - 1).
+ * @param comparefn Pointer to a comparison function that takes two `const
+ *                  void*` arguments and returns an int (like `strcmp` or
+ *                  `memcmp`).
+ *
+ * @see arg_cmd_info_t, arg_cmd_itr_t
+ */
 ARG_EXTERN void arg_mgsort(void* data, int size, int esize, int i, int k, arg_comparefn* comparefn);
+
 ARG_EXTERN void arg_make_get_help_msg(arg_dstr_t res);
 ARG_EXTERN void arg_make_help_msg(arg_dstr_t ds, const char* cmd_name, void** argtable);
 ARG_EXTERN void arg_make_syntax_err_msg(arg_dstr_t ds, void** argtable, struct arg_end* end);
