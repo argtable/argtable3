@@ -688,14 +688,63 @@ ARG_EXTERN arg_int_t* arg_intn(const char* shortopts, const char* longopts, cons
 ARG_EXTERN arg_int_t* arg_int0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN arg_int_t* arg_int1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 
-ARG_EXTERN struct arg_dbl* arg_dbl0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
-ARG_EXTERN struct arg_dbl* arg_dbl1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
-ARG_EXTERN struct arg_dbl* arg_dbln(const char* shortopts,
-                                    const char* longopts,
-                                    const char* datatype,
-                                    int mincount,
-                                    int maxcount,
-                                    const char* glossary);
+/**
+ * Creates a double-precision floating-point argument for the command-line parser.
+ *
+ * The `arg_dbln` function defines an option that accepts double-precision
+ * floating-point values from the command line. You can specify the minimum and
+ * maximum number of times the argument can appear, making it suitable for
+ * optional, required, or repeatable floating-point options. Each occurrence of
+ * the option is parsed and stored in the `dval` array of the resulting
+ * `arg_dbl_t` struct, allowing you to retrieve all provided double values after
+ * parsing.
+ *
+ * For convenience and backward compatibility, `arg_dbl0` is provided as a
+ * helper for optional double arguments (where `mincount = 0` and
+ * `maxcount = 1`), and `arg_dbl1` is a helper for required double arguments
+ * (where `mincount = 1` and `maxcount = 1`). While `arg_dbl0` and `arg_dbl1`
+ * are available, it is recommended to use `arg_dbln` in new code as it is more
+ * explicit and flexible.
+ *
+ * Example usage:
+ * ```
+ * // Accepts one or more double arguments
+ * arg_dbl_t *values = arg_dbln("v", "value", "<double>", 1, 5, "Input values");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = {values, end};
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors == 0 && values->count > 0) {
+ *     for (int i = 0; i < values->count; ++i) {
+ *         printf("Input value: %f\n", values->dval[i]);
+ *     }
+ * } else {
+ *     arg_print_errors(stdout, end, argv[0]);
+ * }
+ * ```
+ *
+ * @param shortopts A string of single characters, each representing a short
+ *                  option name (e.g., `"v"` for `-v`). Pass `NULL` if no short
+ *                  option is desired.
+ * @param longopts  A string of comma-separated long option names (e.g.,
+ *                  `"value"` for `--value`). Pass `NULL` if no long option is
+ *                  desired.
+ * @param datatype  A string describing the expected data type (e.g.,
+ *                  `"<double>"`), shown in help messages.
+ * @param mincount  The minimum number of times the argument must appear (set to
+ *                  0 for optional).
+ * @param maxcount  The maximum number of times the argument can appear
+ *                  (controls memory allocation).
+ * @param glossary  A short description of the argument for the glossary/help
+ *                  output. Pass `NULL` to omit.
+ *
+ * @return
+ *   If successful, returns a pointer to the allocated `struct arg_dbl`. Returns
+ *   `NULL` if there is insufficient memory.
+ */
+ARG_EXTERN arg_dbl_t* arg_dbln(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary);
+ARG_EXTERN arg_dbl_t* arg_dbl0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
+ARG_EXTERN arg_dbl_t* arg_dbl1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 
 ARG_EXTERN struct arg_str* arg_str0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_str* arg_str1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
