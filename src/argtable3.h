@@ -1078,18 +1078,46 @@ ARG_EXTERN arg_end_t* arg_end(int maxcount);
 ARG_EXTERN int arg_nullcheck(void** argtable);
 
 /**
- * Parses the command-line arguments.
+ * Parses the command-line arguments according to the specified argument table.
  *
- * @param argc An integer representing the number of command-line arguments
- *   passed to the program. The *argc* parameter is always greater than or equal
- *   to 1.
- * @param argv An array of null-terminated strings representing the command-line
- *   arguments passed to the program. By convention, `argv[0]` is the command
- *   with which the program is invoked. `argv[1]` is the first command-line
- *   argument, and so on, until `argv[argc]`, which is always NULL.
- * @param argtable An array of argument table structs.
+ * The `arg_parse` function processes the command-line arguments provided in
+ * `argv` and populates the fields of each argument structure in the `argtable`
+ * array. It checks for the presence, validity, and value of each option or
+ * positional argument as defined by the argument table. Any errors encountered
+ * during parsing, such as missing required arguments or invalid values, are
+ * recorded in the `arg_end_t` structure (typically the last entry in the table).
  *
- * @return Number of errors found.
+ * After calling `arg_parse`, you can inspect the fields of each argument struct
+ * (such as `count`, `ival`, `dval`, `sval`, etc.) to retrieve the parsed
+ * values. If errors are detected (i.e., the return value is greater than zero),
+ * you can use `arg_print_errors` to display detailed error messages to the user.
+ *
+ * Example usage:
+ * ```
+ * arg_lit_t *help = arg_lit0("h", "help", "Display help");
+ * arg_int_t *count = arg_int0("c", "count", "<n>", "Number of times");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = {help, count, end};
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors > 0) {
+ *     arg_print_errors(stdout, end, argv[0]);
+ *     // handle errors...
+ * }
+ * ```
+ *
+ * @param argc     The number of command-line arguments passed to the program.
+ *                 The value is always greater than or equal to 1.
+ * @param argv     An array of null-terminated strings representing the
+ *                 command-line arguments. By convention, `argv[0]` is the
+ *                 program name, and `argv[1]` to `argv[argc-1]` are the
+ *                 arguments. `argv[argc]` is always NULL.
+ * @param argtable An array of pointers to argument table structs, each created
+ *                 by an `arg_<type>` constructor. The last entry should be an
+ *                 `arg_end` struct.
+ *
+ * @return The number of errors found during parsing. Returns 0 if parsing was
+ *         successful and no errors were detected.
  */
 ARG_EXTERN int arg_parse(int argc, char** argv, void** argtable);
 
