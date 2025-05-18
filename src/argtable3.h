@@ -996,6 +996,42 @@ arg_daten(const char* shortopts, const char* longopts, const char* format, const
 ARG_EXTERN arg_date_t* arg_date0(const char* shortopts, const char* longopts, const char* format, const char* datatype, const char* glossary);
 ARG_EXTERN arg_date_t* arg_date1(const char* shortopts, const char* longopts, const char* format, const char* datatype, const char* glossary);
 
+/**
+ * Creates an end-of-table marker and error collector for the argument table.
+ *
+ * The `arg_end` function is used to create an `arg_end_t` struct, which should
+ * be placed as the last element in the argument table array. This structure
+ * serves two purposes: it marks the end of the argument table for the parser,
+ * and it collects information about any errors encountered during command-line
+ * parsing.
+ *
+ * The `maxerrors` parameter specifies the maximum number of errors that can be
+ * recorded. After parsing, the `arg_end_t` struct contains details about
+ * missing required arguments, invalid values, or other parsing errors, which
+ * can be reported to the user using functions like `arg_print_errors`.
+ *
+ * Example usage:
+ * ```
+ * arg_lit_t *help = arg_lit0("h", "help", "Display help");
+ * arg_int_t *count = arg_int0("c", "count", "<n>", "Number of times");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = {help, count, end};
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors > 0) {
+ *     arg_print_errors(stdout, end, argv[0]);
+ *     // handle errors...
+ * }
+ * ```
+ *
+ * @param maxcount The maximum number of errors to record during parsing.
+ *                 Choose a value large enough to capture all possible errors.
+ * @return
+ *   If successful, returns a pointer to the allocated `struct arg_end`. Returns
+ *   `NULL` if there is insufficient memory.
+ *
+ * @see arg_end_t, arg_parse, arg_print_errors
+ */
 ARG_EXTERN struct arg_end* arg_end(int maxcount);
 
 #define ARG_DSTR_STATIC ((arg_dstr_freefn*)0)
