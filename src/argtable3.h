@@ -567,15 +567,16 @@ typedef struct arg_cmd_info {
 ARG_EXTERN arg_rem_t* arg_rem(const char* datatype, const char* glossary);
 
 /**
- * Creates a literal argument that does not take an argument value.
+ * Creates a literal (boolean flag) argument for the command-line parser.
  *
- * A literal argument is usually used to express a boolean flag, such as `-h`
- * and `--version`. However, since a literal argument can appear multiple times
- * in a command line, we can use the number of occurrence as an implicit
- * argument value.
+ * The `arg_litn` function defines an option that does not take a value, such as
+ * a boolean flag (e.g., `-h` for help or `--verbose` for verbosity). You can
+ * specify the minimum and maximum number of times the flag can appear, making
+ * it suitable for optional, required, or repeatable flags. Each occurrence of
+ * the flag increases the `count` field in the resulting `arg_lit_t` struct.
  *
- * For example, the `tar` utility uses `--verbose` or `-v` to show the files
- * being worked on as `tar` is creating an archive:
+ * A classic example is the `tar` utility, which uses `--verbose` or `-v` to
+ * show the files being worked on as `tar` is creating an archive:
  * ```
  * $ tar -cvf afiles.tar apple angst aspic
  * apple
@@ -593,46 +594,42 @@ ARG_EXTERN arg_rem_t* arg_rem(const char* datatype, const char* glossary);
  * -rw-r--r-- gray/staff    23152 2006-06-09 12:06 aspic
  * ```
  *
- * `arg_lit0` is a helper function of `arg_litn` when we specify `mincount` to
- * `0` and `maxcount` to `1`. `arg_lit1` is a helper function of `arg_litn` when
- * we specify both `mincount` and `maxcount` to `1`. These helper functions are
- * considered deprecated, but they will be kept for backward compatibility. You
- * should use `arg_litn` in new projects, since it is more explicit and easier
- * to understand.
+ * The `arg_litn` function allows you to specify both the minimum and maximum
+ * number of times a flag can appear. For convenience and backward
+ * compatibility, `arg_lit0` is provided as a helper for optional flags
+ * (where `mincount = 0` and `maxcount = 1`), and `arg_lit1` is a helper for
+ * required flags (where `mincount = 1` and `maxcount = 1`). While `arg_lit0`
+ * and `arg_lit1` are available, it is recommended to use `arg_litn` in new
+ * code as it is more explicit and flexible.
  *
- * **Example** Creating literal arguments
+ * Example usage:
  * ```
- * struct arg_lit *list    = arg_litn("lL",NULL,           0, 1, "list files");
- * struct arg_lit *verbose = arg_litn("v","verbose,debug", 0, 3, "verbosity level");
- * struct arg_lit *help    = arg_litn("h","help",          0, 1, "print this help");
- * struct arg_lit *version = arg_litn(NULL,"version",      0, 1, "print version info");
+ * arg_lit_t *list    = arg_litn("lL",NULL,           0, 1, "list files");
+ * arg_lit_t *verbose = arg_litn("v","verbose,debug", 0, 3, "verbosity level");
+ * arg_lit_t *help    = arg_litn("h","help",          0, 1, "print this help");
+ * arg_lit_t *version = arg_litn(NULL,"version",      0, 1, "print version info");
  * ```
  *
- * @param shortopts A string of single characters, and each character is an
- *        alternative short option name of the argument. For example, `"kKx"`
- *        means you can use `-k`, `-K`, or `-x` as the short options. If you
- *        don't want to use any short option, pass `NULL` to this parameter.
- * @param longopts A string of alternative long option names of the argument,
- *        separated by commas. For example, `"verbose,debug"` means you can use
- *        `--verbose` or `--debug` as the long options. If you don't want to use
- *        any long option, pass `NULL` to this parameter.
- * @param mincount The minimum number of the argument. Setting it to `0` means
- *        that the argument is optional.
- * @param maxcount The maximum number of the argument. The value of `maxcount`
- *        decides how much memory we need to allocate to store argument values.
- *        Choose a reasonable value, so we don't increase unnecessary memory
- *        usage.
- * @param glossary A short description of the argument. If you don't want to
- *        display this argument in the glossary, pass `NULL` to this parameter.
+ * @param shortopts A string of single characters, each representing a short option
+ *                  name (e.g., `"v"` for `-v`). Pass `NULL` if no short option is
+ *                  desired.
+ * @param longopts  A string of comma-separated long option names (e.g.,
+ *                  `"verbose"` for `--verbose`). Pass `NULL` if no long option is
+ *                  desired.
+ * @param mincount  The minimum number of times the flag must appear (set to 0 for
+ *                  optional).
+ * @param maxcount  The maximum number of times the flag can appear (controls memory
+ *                  allocation).
+ * @param glossary  A short description of the argument for the glossary/help
+ *                  output. Pass `NULL` to omit.
  *
  * @return
- *   If successful, `arg_litn`, `arg_lit0`, and `arg_lit1` return a pointer to
- *   the allocated `struct arg_lit`. Otherwise, these functions return `NULL` if
- *   there is insufficient memory available.
+ *   If successful, returns a pointer to the allocated `struct arg_lit`. Returns
+ *   `NULL` if there is insufficient memory.
  */
-ARG_EXTERN struct arg_lit* arg_litn(const char* shortopts, const char* longopts, int mincount, int maxcount, const char* glossary);
-ARG_EXTERN struct arg_lit* arg_lit0(const char* shortopts, const char* longopts, const char* glossary);
-ARG_EXTERN struct arg_lit* arg_lit1(const char* shortopts, const char* longopts, const char* glossary);
+ARG_EXTERN arg_lit_t* arg_litn(const char* shortopts, const char* longopts, int mincount, int maxcount, const char* glossary);
+ARG_EXTERN arg_lit_t* arg_lit0(const char* shortopts, const char* longopts, const char* glossary);
+ARG_EXTERN arg_lit_t* arg_lit1(const char* shortopts, const char* longopts, const char* glossary);
 
 ARG_EXTERN struct arg_int* arg_int0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_int* arg_int1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
