@@ -1403,7 +1403,73 @@ ARG_EXTERN void arg_print_glossary_gnu(FILE* fp, void** argtable);
  */
 ARG_EXTERN void arg_print_glossary_gnu_ds(arg_dstr_t ds, void** argtable);
 
+/**
+ * Prints the details of all errors stored in the end data structure.
+ *
+ * The `arg_print_errors` function writes formatted error messages for all
+ * errors recorded in the specified `arg_end_t` structure to the given file
+ * stream (`fp`). The `progname` string is prepended to each error message,
+ * making it suitable for displaying or logging error output in command-line
+ * applications.
+ *
+ * This function is useful for reporting parsing errors to the user after
+ * calling `arg_parse`. It provides clear feedback about missing required
+ * arguments, invalid values, or other issues encountered during command-line
+ * parsing.
+ *
+ * Example usage:
+ * ```
+ * arg_lit_t *help = arg_lit0("h", "help", "Display help");
+ * arg_int_t *count = arg_int0("c", "count", "<n>", "Number of times");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = {help, count, end};
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors > 0) {
+ *     arg_print_errors(stderr, end, argv[0]);
+ * }
+ * ```
+ *
+ * @param fp       Output file stream to write to (e.g., `stdout` or `stderr`).
+ * @param end      Pointer to the `arg_end` structure containing error details.
+ * @param progname The name of the program to prepend to each error message.
+ *
+ * @see arg_parse, arg_print_errors_ds, arg_dstr_create, arg_dstr_cstr
+ */
 ARG_EXTERN void arg_print_errors(FILE* fp, struct arg_end* end, const char* progname);
+
+/**
+ * Prints the details of all errors stored in the end data structure to a dynamic
+ * string.
+ *
+ * The `arg_print_errors_ds` function writes formatted error messages for all
+ * errors recorded in the specified `arg_end_t` structure to the provided
+ * dynamic string object (`arg_dstr_t`). The `progname` string is prepended to
+ * each error message, making it suitable for displaying or logging error output
+ * in applications that use dynamic string buffers instead of standard output
+ * streams.
+ *
+ * This function is useful for applications that want to capture error messages
+ * for later display, logging, or integration with GUI or web interfaces.
+ *
+ * Example usage:
+ * ```
+ * arg_dstr_t ds = arg_dstr_create();
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors > 0) {
+ *     arg_print_errors_ds(ds, end, argv[0]);
+ *     fprintf(stderr, "%s", arg_dstr_cstr(ds));
+ * }
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds       Pointer to the dynamic string object to which the error
+ *                 messages are written.
+ * @param end      Pointer to the `arg_end` structure containing error details.
+ * @param progname The name of the program to prepend to each error message.
+ *
+ * @see arg_print_errors, arg_parse, arg_dstr_create, arg_dstr_cstr
+ */
 ARG_EXTERN void arg_print_errors_ds(arg_dstr_t ds, struct arg_end* end, const char* progname);
 
 ARG_EXTERN void arg_print_formatted(FILE* fp, const unsigned lmargin, const unsigned rmargin, const char* text);
