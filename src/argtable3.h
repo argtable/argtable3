@@ -1472,6 +1472,30 @@ ARG_EXTERN void arg_print_errors(FILE* fp, struct arg_end* end, const char* prog
  */
 ARG_EXTERN void arg_print_errors_ds(arg_dstr_t ds, struct arg_end* end, const char* progname);
 
+/**
+ * Prints a formatted block of text with specified left and right margins.
+ *
+ * The `arg_print_formatted` function outputs the given text to the specified
+ * file stream (`fp`), arranging it in a column with the provided left and right
+ * margins. This is useful for generating neatly aligned help messages,
+ * glossaries, or any output where column formatting is desired.
+ *
+ * The function automatically wraps lines as needed to ensure that text does not
+ * exceed the specified right margin, and indents each line according to the
+ * left margin.
+ *
+ * Example usage:
+ * ```
+ * const char* msg = "This is a long help message that will be wrapped and "
+ *                   "indented according to the specified margins.";
+ * arg_print_formatted(stdout, 4, 60, msg);
+ * ```
+ *
+ * @param fp      Output file stream to write to (e.g., `stdout` or `stderr`).
+ * @param lmargin Left margin (number of spaces to indent each line).
+ * @param rmargin Right margin (maximum line width).
+ * @param text    Text to be printed and formatted.
+ */
 ARG_EXTERN void arg_print_formatted(FILE* fp, const unsigned lmargin, const unsigned rmargin, const char* text);
 
 /**
