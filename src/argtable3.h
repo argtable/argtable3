@@ -1005,7 +1005,7 @@ ARG_EXTERN arg_date_t* arg_date1(const char* shortopts, const char* longopts, co
  * and it collects information about any errors encountered during command-line
  * parsing.
  *
- * The `maxerrors` parameter specifies the maximum number of errors that can be
+ * The `maxcount` parameter specifies the maximum number of errors that can be
  * recorded. After parsing, the `arg_end_t` struct contains details about
  * missing required arguments, invalid values, or other parsing errors, which
  * can be reported to the user using functions like `arg_print_errors`.
@@ -2242,11 +2242,157 @@ ARG_EXTERN int arg_cmd_itr_search(arg_cmd_itr_t itr, void* k);
  */
 ARG_EXTERN void arg_mgsort(void* data, int size, int esize, int i, int k, arg_comparefn* comparefn);
 
+/**
+ * Generates and retrieves the default help message for the application.
+ *
+ * The `arg_make_get_help_msg` function constructs a standard help message
+ * describing the usage, options, and arguments for the main application or
+ * module. The generated help text is written to a dynamic string buffer, which
+ * can be displayed to the user, printed to the console, or included in
+ * documentation.
+ *
+ * This function is typically used to provide users with a quick reference to
+ * the application's command-line interface, especially when no specific command
+ * or argument table is provided. It is useful for displaying help output in
+ * response to `--help` or similar flags.
+ *
+ * The help message typically includes the application name and its usage
+ * syntax, a glossary of available options and arguments with descriptions, and
+ * any additional remarks or formatting defined in the argument table.
+ *
+ * Example usage:
+ * ```
+ * arg_dstr_t ds = arg_dstr_create();
+ * arg_make_get_help_msg(ds);
+ * printf("%s", arg_dstr_cstr(ds));
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param res Dynamic string handle to store the generated help message.
+ *
+ * @see arg_make_help_msg, arg_dstr_create, arg_dstr_cstr
+ */
 ARG_EXTERN void arg_make_get_help_msg(arg_dstr_t res);
+
+/**
+ * Generates a formatted help message for the command-line interface.
+ *
+ * The `arg_make_help_msg` function constructs a comprehensive help message
+ * describing the usage, options, and arguments for a command-line application
+ * or sub-command. The generated help text is written to a dynamic string
+ * buffer, which can be displayed to the user, printed to the console, or
+ * included in documentation.
+ *
+ * The help message typically includes the command or sub-command name and its
+ * usage syntax, a glossary of available options and arguments with descriptions,
+ * and any additional formatting or custom remarks defined in the argument table.
+ *
+ * This function is useful for providing users with clear guidance on how to
+ * invoke the application and what options are available. It is commonly called
+ * when the user requests help (e.g., with `-h` or `--help`).
+ *
+ * Example usage:
+ * ```
+ * arg_dstr_t ds = arg_dstr_create();
+ * arg_make_help_msg(ds, "myapp", argtable);
+ * printf("%s", arg_dstr_cstr(ds));
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds        Dynamic string to store the generated help message.
+ * @param cmd_name  Name of the command or sub-command to display in the usage
+ *                  line.
+ * @param argtable  Array of argument table structs describing the available
+ *                  options and arguments.
+ *
+ * @see arg_dstr_create, arg_dstr_cstr, arg_rem, arg_print_glossary
+ */
 ARG_EXTERN void arg_make_help_msg(arg_dstr_t ds, const char* cmd_name, void** argtable);
-ARG_EXTERN void arg_make_syntax_err_msg(arg_dstr_t ds, void** argtable, struct arg_end* end);
-ARG_EXTERN int
-arg_make_syntax_err_help_msg(arg_dstr_t ds, const char* name, int help, int nerrors, void** argtable, struct arg_end* end, int* exitcode);
+
+/**
+ * Generates a concise syntax error message for command-line parsing errors.
+ *
+ * The `arg_make_syntax_err_msg` function constructs a brief error message
+ * summarizing the syntax errors detected during argument parsing. The message
+ * is written to a dynamic string buffer, which can then be displayed to the
+ * user or logged for diagnostics. This function is useful for applications that
+ * want to provide immediate feedback about what went wrong, without including
+ * full usage or help information.
+ *
+ * The generated message typically includes a summary of the errors encountered
+ * and the relevant arguments or options that caused the error.
+ *
+ * For a more comprehensive help message that includes usage and glossary
+ * information, use `arg_make_syntax_err_help_msg`.
+ *
+ * Example usage:
+ * ```
+ * arg_dstr_t ds = arg_dstr_create();
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors > 0) {
+ *     arg_make_syntax_err_msg(ds, argtable, end);
+ *     fprintf(stderr, "%s", arg_dstr_cstr(ds));
+ * }
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds       Pointer to a dynamic string object to store the generated
+ *                 message.
+ * @param argtable An array of argument table structs describing the expected
+ *                 arguments.
+ * @param end      Pointer to the `arg_end` structure containing error details.
+ *
+ * @see arg_make_syntax_err_help_msg, arg_parse, arg_print_errors,
+ *      arg_dstr_create, arg_dstr_cstr
+ */
+ARG_EXTERN void arg_make_syntax_err_msg(arg_dstr_t ds, void** argtable, arg_end_t* end);
+
+/**
+ * Generates a detailed syntax error help message for command-line parsing errors.
+ *
+ * The `arg_make_syntax_err_help_msg` function constructs a comprehensive help
+ * message when syntax errors are detected during argument parsing. It combines
+ * error details, usage information, and optional help text into a dynamic string
+ * buffer, which can then be displayed to the user or logged for diagnostics.
+ *
+ * This function is typically used in applications that want to provide users
+ * with clear feedback about what went wrong, what the correct syntax is, and
+ * how to get further help. It is especially useful for CLI tools that need to
+ * guide users through complex argument requirements.
+ *
+ * The generated message may include the command name and a summary of the
+ * errors, the correct usage syntax for the command, a glossary of available
+ * options and arguments, and additional help text if the help flag is set.
+ *
+ * Example usage:
+ * ```
+ * arg_dstr_t ds = arg_dstr_create();
+ * int exitcode = 0;
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors > 0) {
+ *     arg_make_syntax_err_help_msg(ds, argv[0], 0, nerrors, argtable, end,
+ *                                  &exitcode);
+ *     fprintf(stderr, "%s", arg_dstr_cstr(ds));
+ * }
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds       Pointer to a dynamic string object to store the generated
+ *                 message.
+ * @param name     The name of the command or application.
+ * @param help     Nonzero if the help flag was specified; zero otherwise.
+ * @param nerrors  The number of syntax errors detected during parsing.
+ * @param argtable An array of argument table structs describing the expected
+ *                 arguments.
+ * @param end      Pointer to the `arg_end` structure containing error details.
+ * @param exitcode Pointer to an integer where the recommended exit code will be
+ *                 stored.
+ *
+ * @return Returns 0 on success, or a nonzero error code on failure.
+ *
+ * @see arg_parse, arg_print_errors, arg_dstr_create, arg_dstr_cstr
+ */
+ARG_EXTERN int arg_make_syntax_err_help_msg(arg_dstr_t ds, const char* name, int help, int nerrors, void** argtable, arg_end_t* end, int* exitcode);
 
 /**
  * Sets the module (application) name.
