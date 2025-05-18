@@ -1034,10 +1034,6 @@ ARG_EXTERN arg_date_t* arg_date1(const char* shortopts, const char* longopts, co
  */
 ARG_EXTERN arg_end_t* arg_end(int maxcount);
 
-#define ARG_DSTR_STATIC ((arg_dstr_freefn*)0)
-#define ARG_DSTR_VOLATILE ((arg_dstr_freefn*)1)
-#define ARG_DSTR_DYNAMIC ((arg_dstr_freefn*)3)
-
 /**** other functions *******************************************/
 
 /**
@@ -1529,14 +1525,291 @@ ARG_EXTERN void arg_print_formatted(FILE* fp, const unsigned lmargin, const unsi
  */
 ARG_EXTERN void arg_freetable(void** argtable, size_t n);
 
+/**
+ * Creates a new dynamic string object.
+ *
+ * The `arg_dstr_create` function allocates and initializes a new dynamic string
+ * object (`arg_dstr_t`). This object can be used to efficiently build, modify,
+ * and manage strings of arbitrary length, such as help messages, error
+ * messages, or logs.
+ *
+ * The dynamic string automatically grows as needed to accommodate additional
+ * content appended via functions like `arg_dstr_cat`, `arg_dstr_catc`, or
+ * `arg_dstr_catf`. When you are finished using the dynamic string, release its
+ * resources with `arg_dstr_destroy` or `arg_dstr_free`.
+ *
+ * Example usage:
+ * ```
+ * arg_dstr_t ds = arg_dstr_create();
+ * arg_dstr_cat(ds, "Hello, ");
+ * arg_dstr_cat(ds, "world!");
+ * printf("%s\n", arg_dstr_cstr(ds)); // Output: Hello, world!
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @return A handle to the newly created dynamic string object, or `NULL` if
+ *         allocation fails.
+ *
+ * @see arg_dstr_destroy, arg_dstr_cat, arg_dstr_catc, arg_dstr_catf,
+ *      arg_dstr_cstr
+ */
 ARG_EXTERN arg_dstr_t arg_dstr_create(void);
+
+/**
+ * Destroys a dynamic string object and releases its resources.
+ *
+ * The `arg_dstr_destroy` function frees all memory and resources associated
+ * with the specified dynamic string object (`arg_dstr_t`). After calling this
+ * function, the dynamic string handle becomes invalid and must not be used
+ * unless reinitialized with `arg_dstr_create`.
+ *
+ * This function should be called when you are finished using a dynamic string
+ * to prevent memory leaks and ensure proper cleanup.
+ *
+ * The difference between `arg_dstr_destroy` and `arg_dstr_free` is that
+ * `arg_dstr_destroy` both frees the memory and invalidates the handle, making
+ * it safe for typical use cases where you want to fully release the dynamic
+ * string. `arg_dstr_free` only releases the memory, but does not necessarily
+ * invalidate the handle, and is intended for advanced or custom memory
+ * management scenarios. For most applications, `arg_dstr_destroy` is the
+ * preferred function to use.
+ *
+ * Example usage:
+ * ```
+ * arg_dstr_t ds = arg_dstr_create();
+ * arg_dstr_cat(ds, "Temporary string");
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds Pointer to the dynamic string object to destroy.
+ *
+ * @see arg_dstr_create, arg_dstr_free, arg_dstr_reset, arg_dstr_set
+ */
 ARG_EXTERN void arg_dstr_destroy(arg_dstr_t ds);
+
+/**
+ * Resets the dynamic string object to an empty state.
+ *
+ * The `arg_dstr_reset` function clears the contents of the specified dynamic
+ * string object (`arg_dstr_t`), making it an empty string but retaining the
+ * allocated memory for future use. This is useful when you want to reuse a
+ * dynamic string buffer without reallocating memory, such as when building
+ * multiple messages in a loop.
+ *
+ * Any previously stored string data is discarded, and the dynamic string is
+ * ready to accept new content via `arg_dstr_cat`, `arg_dstr_catc`, or
+ * `arg_dstr_catf`.
+ *
+ * Example usage:
+ * ```
+ * arg_dstr_t ds = arg_dstr_create();
+ * arg_dstr_cat(ds, "First message");
+ * printf("%s\n", arg_dstr_cstr(ds)); // Output: First message
+ * arg_dstr_reset(ds);
+ * arg_dstr_cat(ds, "Second message");
+ * printf("%s\n", arg_dstr_cstr(ds)); // Output: Second message
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds Pointer to the dynamic string object to reset.
+ *
+ * @see arg_dstr_create, arg_dstr_cat, arg_dstr_catc, arg_dstr_catf,
+ *      arg_dstr_cstr, arg_dstr_destroy
+ */
 ARG_EXTERN void arg_dstr_reset(arg_dstr_t ds);
+
+/**
+ * Frees the memory associated with a dynamic string object.
+ *
+ * The `arg_dstr_free` function releases all memory and resources allocated for
+ * the specified dynamic string object (`arg_dstr_t`). After calling this
+ * function, the dynamic string handle becomes invalid and must not be used
+ * unless reinitialized.
+ *
+ * The difference between `arg_dstr_free` and `arg_dstr_destroy` is that
+ * `arg_dstr_free` only releases the memory, but does not necessarily invalidate
+ * the handle. This is intended for advanced or custom memory management
+ * scenarios. In contrast, `arg_dstr_destroy` both frees the memory and
+ * invalidates the handle, making it safer and preferred for typical use cases
+ * where you want to fully release the dynamic string.
+ *
+ * For most applications, use `arg_dstr_destroy` to ensure proper cleanup and
+ * avoid accidental use of an invalid handle.
+ *
+ * Example usage:
+ * ```
+ * arg_dstr_t ds = arg_dstr_create();
+ * arg_dstr_cat(ds, "Temporary string");
+ * arg_dstr_free(ds); // Frees the memory associated with ds
+ * ```
+ *
+ * @param ds Pointer to the dynamic string object to free.
+ *
+ * @see arg_dstr_create, arg_dstr_destroy, arg_dstr_reset, arg_dstr_set
+ */
 ARG_EXTERN void arg_dstr_free(arg_dstr_t ds);
+
+#define ARG_DSTR_STATIC ((arg_dstr_freefn*)0)
+#define ARG_DSTR_VOLATILE ((arg_dstr_freefn*)1)
+#define ARG_DSTR_DYNAMIC ((arg_dstr_freefn*)3)
+
+/**
+ * Sets the contents of the dynamic string object to a specified string.
+ *
+ * The `arg_dstr_set` function replaces the current contents of the dynamic
+ * string object (`arg_dstr_t`) with the provided string. You can also specify a
+ * custom free function to control how the memory for the string is managed.
+ * This is useful when you want to take ownership of an existing string buffer
+ * or integrate with custom memory management schemes.
+ *
+ * The `free_proc` parameter determines how the memory for the string will be
+ * released when the dynamic string is reset or destroyed. You can use one of
+ * the following standard macros:
+ *
+ * - `ARG_DSTR_STATIC`: Indicates that the string is statically allocated or
+ *   should not be freed. Use this when the string is a string literal or
+ *   managed elsewhere and does not need to be freed by Argtable3.
+ * - `ARG_DSTR_VOLATILE`: Indicates that the string is temporary and should not
+ *   be freed. Use this when the string is only valid for the current scope or
+ *   will be replaced soon, and you do not want Argtable3 to free it.
+ * - `ARG_DSTR_DYNAMIC`: Indicates that the string was dynamically allocated
+ *   (e.g., with `malloc` or `strdup`) and should be freed by Argtable3. Use
+ *   this when you want Argtable3 to take ownership and automatically free the
+ *   memory when the dynamic string is reset or destroyed.
+ *
+ * If you provide a custom free function, it will be called to release the
+ * string when appropriate.
+ *
+ * Example usage:
+ * ```
+ * arg_dstr_t ds = arg_dstr_create();
+ * char* buf = strdup("Hello, Argtable!");
+ * arg_dstr_set(ds, buf, ARG_DSTR_DYNAMIC); // ds takes ownership of buf
+ * printf("%s\n", arg_dstr_cstr(ds)); // Output: Hello, Argtable!
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds        Pointer to the dynamic string object.
+ * @param str       Pointer to the string to set as the new content.
+ * @param free_proc Pointer to a function that will be used to free the string,
+ *                  or one of the standard macros (`ARG_DSTR_STATIC`,
+ *                  `ARG_DSTR_VOLATILE`, `ARG_DSTR_DYNAMIC`).
+ *
+ * @see arg_dstr_create, arg_dstr_cat, arg_dstr_cstr, arg_dstr_destroy
+ */
 ARG_EXTERN void arg_dstr_set(arg_dstr_t ds, char* str, arg_dstr_freefn* free_proc);
+
+/**
+ * Appends a string to the dynamic string object.
+ *
+ * The `arg_dstr_cat` function appends the specified null-terminated string to
+ * the end of the dynamic string object (`arg_dstr_t`). This is useful for
+ * building up complex strings incrementally, such as constructing help
+ * messages, error messages, or logs.
+ *
+ * The dynamic string automatically grows as needed to accommodate the
+ * additional content.
+ *
+ * Example usage:
+ * ```
+ * arg_dstr_t ds = arg_dstr_create();
+ * arg_dstr_cat(ds, "Hello, ");
+ * arg_dstr_cat(ds, "world!");
+ * printf("%s\n", arg_dstr_cstr(ds)); // Output: Hello, world!
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds  Pointer to the dynamic string object.
+ * @param str Null-terminated string to append.
+ *
+ * @see arg_dstr_create, arg_dstr_catc, arg_dstr_catf, arg_dstr_cstr,
+ *      arg_dstr_destroy
+ */
 ARG_EXTERN void arg_dstr_cat(arg_dstr_t ds, const char* str);
+
+/**
+ * Appends a single character to the dynamic string object.
+ *
+ * The `arg_dstr_catc` function appends the specified character to the end of
+ * the dynamic string object (`arg_dstr_t`). This is useful for building up
+ * strings character by character, such as when formatting output, constructing
+ * error messages, or processing input streams.
+ *
+ * The dynamic string automatically grows as needed to accommodate additional
+ * characters.
+ *
+ * Example usage:
+ * ```
+ * arg_dstr_t ds = arg_dstr_create();
+ * arg_dstr_catc(ds, 'A');
+ * arg_dstr_catc(ds, 'B');
+ * arg_dstr_catc(ds, 'C');
+ * printf("%s\n", arg_dstr_cstr(ds)); // Output: ABC
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds Pointer to the dynamic string object.
+ * @param c  The character to append.
+ *
+ * @see arg_dstr_create, arg_dstr_cat, arg_dstr_catf, arg_dstr_cstr,
+ *      arg_dstr_destroy
+ */
 ARG_EXTERN void arg_dstr_catc(arg_dstr_t ds, char c);
+
+/**
+ * Appends a formatted string to the dynamic string object.
+ *
+ * The `arg_dstr_catf` function appends a formatted string, generated using
+ * `printf`-style formatting, to the end of the specified dynamic string object
+ * (`arg_dstr_t`). This allows you to efficiently build up complex strings with
+ * variable content, such as error messages, help text, or logs.
+ *
+ * The function accepts a format string and a variable number of arguments,
+ * similar to `printf`. The resulting formatted string is concatenated to the
+ * current contents of the dynamic string.
+ *
+ * Example usage:
+ * ```
+ * arg_dstr_t ds = arg_dstr_create();
+ * arg_dstr_catf(ds, "Error: invalid value '%s' for option --%s\n", value, optname);
+ * printf("%s", arg_dstr_cstr(ds));
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds  Pointer to the dynamic string object.
+ * @param fmt Format string (as in `printf`).
+ * @param ... Additional arguments to format.
+ *
+ * @see arg_dstr_create, arg_dstr_cat, arg_dstr_cstr, arg_dstr_destroy
+ */
 ARG_EXTERN void arg_dstr_catf(arg_dstr_t ds, const char* fmt, ...);
+
+/**
+ * Retrieves the null-terminated string from a dynamic string object.
+ *
+ * The `arg_dstr_cstr` function returns a pointer to the internal
+ * null-terminated character buffer managed by the dynamic string object
+ * (`arg_dstr_t`). This allows you to access the current contents of the dynamic
+ * string for printing, logging, or further processing.
+ *
+ * The returned pointer remains valid until the dynamic string is reset,
+ * modified, or destroyed. Do not modify or free the returned string directly;
+ * use the appropriate Argtable3 dynamic string functions for memory management.
+ *
+ * Example usage:
+ * ```
+ * arg_dstr_t ds = arg_dstr_create();
+ * arg_dstr_cat(ds, "Hello, ");
+ * arg_dstr_cat(ds, "world!");
+ * printf("%s\n", arg_dstr_cstr(ds)); // Output: Hello, world!
+ * arg_dstr_destroy(ds);
+ * ```
+ *
+ * @param ds Dynamic string object.
+ * @return   Pointer to the internal null-terminated string buffer.
+ *
+ * @see arg_dstr_create, arg_dstr_cat, arg_dstr_destroy
+ */
 ARG_EXTERN char* arg_dstr_cstr(arg_dstr_t ds);
 
 ARG_EXTERN void arg_cmd_init(void);
