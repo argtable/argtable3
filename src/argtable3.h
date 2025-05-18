@@ -99,12 +99,163 @@ enum arg_hdr_flag {
 typedef struct _internal_arg_dstr* arg_dstr_t;
 typedef void* arg_cmd_itr_t;
 
+/**
+ * Function pointer type for resetting an argument structure to its initial state.
+ *
+ * The `arg_resetfn` type defines the signature for functions that reset an
+ * argument structure (such as `arg_lit_t`, `arg_int_t`, etc.) to its initial
+ * state. This is typically used internally by Argtable3 to clear any parsed
+ * values, counts, or state information before reusing the argument structure
+ * for another round of parsing.
+ *
+ * This function pointer is primarily intended for developers who want to
+ * implement and register new command-line option data types with Argtable3.
+ * If you are extending Argtable3 with custom argument types, you should
+ * provide a suitable reset function that matches this signature.
+ *
+ * The function receives a pointer to the parent argument structure and should
+ * reset all relevant fields to their default values.
+ *
+ * Example usage:
+ * ```
+ * void my_arg_reset(void* parent) {
+ *     arg_int_t* arg = (arg_int_t*)parent;
+ *     arg->count = 0;
+ *     // Reset other fields as needed...
+ * }
+ * ```
+ *
+ * @param parent Pointer to the argument structure to reset.
+ */
 typedef void(arg_resetfn)(void* parent);
+
+/**
+ * Function pointer type for scanning and parsing a command-line argument value.
+ *
+ * The `arg_scanfn` type defines the signature for functions that parse a
+ * command-line argument value and store the result in the parent argument
+ * structure (such as `arg_int_t`, `arg_str_t`, etc.). This function is called
+ * by Argtable3 during argument parsing to convert the input string (`argval`)
+ * into the appropriate data type and store it in the corresponding field of the
+ * parent struct.
+ *
+ * This function pointer is primarily intended for developers who want to
+ * implement and register new command-line option data types with Argtable3.
+ * If you are extending Argtable3 with custom argument types, you should provide
+ * a suitable scan function that matches this signature.
+ *
+ * @param parent Pointer to the argument structure where the parsed value should
+ *               be stored.
+ * @param argval The string value from the command line to be parsed.
+ * @return Returns 0 on success, or a nonzero error code if parsing fails.
+ */
 typedef int(arg_scanfn)(void* parent, const char* argval);
+
+/**
+ * Function pointer type for validating a parsed argument structure.
+ *
+ * The `arg_checkfn` type defines the signature for functions that perform
+ * post-parsing validation on an argument structure (such as `arg_int_t`,
+ * `arg_str_t`, etc.). This function is called by Argtable3 after all arguments
+ * have been parsed, allowing you to check for additional constraints or
+ * perform custom validation logic.
+ *
+ * This function pointer is primarily intended for developers who want to
+ * implement and register new command-line option data types with Argtable3.
+ * If you are extending Argtable3 with custom argument types, you should provide
+ * a suitable check function that matches this signature.
+ *
+ * @param parent Pointer to the argument structure to validate.
+ * @return Returns 0 if validation succeeds, or a nonzero error code if validation
+ *         fails.
+ */
 typedef int(arg_checkfn)(void* parent);
+
+/**
+ * Function pointer type for reporting argument parsing or validation errors.
+ *
+ * The `arg_errorfn` type defines the signature for functions that generate
+ * error messages when an argument fails to parse or validate. This function is
+ * called by Argtable3 when an error is detected for a specific argument, and it
+ * is responsible for formatting and appending a descriptive error message to
+ * the provided dynamic string object (`arg_dstr_t`).
+ *
+ * This function pointer is primarily intended for developers who want to
+ * implement and register new command-line option data types with Argtable3.
+ * If you are extending Argtable3 with custom argument types, you should provide
+ * a suitable error reporting function that matches this signature.
+ *
+ * @param parent   Pointer to the argument structure that caused the error.
+ * @param ds       Dynamic string object to which the error message should be
+ *                 appended.
+ * @param error    Error code indicating the type of error encountered.
+ * @param argval   The offending argument value from the command line, or NULL if
+ *                 not applicable.
+ * @param progname The name of the program or command, used for context in the
+ *                 error message.
+ */
 typedef void(arg_errorfn)(void* parent, arg_dstr_t ds, int error, const char* argval, const char* progname);
+
+/**
+ * Function pointer type for freeing a dynamically allocated string buffer.
+ *
+ * The `arg_dstr_freefn` type defines the signature for functions that release
+ * memory allocated for a string buffer managed by a dynamic string object
+ * (`arg_dstr_t`). This allows custom memory management strategies to be used
+ * when setting or replacing the contents of a dynamic string.
+ *
+ * You can provide a custom free function when calling `arg_dstr_set`, or use
+ * one of the standard macros (`ARG_DSTR_STATIC`, `ARG_DSTR_VOLATILE`,
+ * `ARG_DSTR_DYNAMIC`) to control how the buffer is released.
+ *
+ * @param buf Pointer to the string buffer to be freed.
+ *
+ * @see arg_dstr_set, ARG_DSTR_STATIC, ARG_DSTR_VOLATILE, ARG_DSTR_DYNAMIC
+ */
 typedef void(arg_dstr_freefn)(char* buf);
+
+/**
+ * Function pointer type for sub-command handler functions.
+ *
+ * The `arg_cmdfn` type defines the signature for functions that implement the
+ * logic of a sub-command in a multi-command command-line application. When a
+ * sub-command is dispatched (for example, via `arg_cmd_dispatch`), the
+ * corresponding handler function is called with the command-line arguments,
+ * a dynamic string buffer for output or error messages, and an optional
+ * user-defined context pointer.
+ *
+ * This function pointer is primarily intended for developers who want to
+ * implement custom sub-commands and register them with Argtable3. The handler
+ * should return 0 on success, or a nonzero error code on failure.
+ *
+ * @param argc The number of command-line arguments for the sub-command.
+ * @param argv The array of command-line arguments for the sub-command.
+ * @param res  Dynamic string buffer for output or error messages.
+ * @param ctx  User-defined context pointer, as provided during registration.
+ * @return 0 on success, or a nonzero error code on failure.
+ */
 typedef int(arg_cmdfn)(int argc, char* argv[], arg_dstr_t res, void* ctx);
+
+/**
+ * Function pointer type for custom comparison functions used in sorting.
+ *
+ * The `arg_comparefn` type defines the signature for functions that compare two
+ * elements, typically used with sorting algorithms such as `arg_mgsort`. The
+ * comparison function should return an integer less than, equal to, or greater
+ * than zero if the first argument is considered to be respectively less than,
+ * equal to, or greater than the second.
+ *
+ * This function pointer is primarily intended for developers who want to
+ * implement custom sorting or searching logic for arrays of arbitrary data
+ * types within Argtable3 or their own applications.
+ *
+ * @param k1 Pointer to the first element to compare.
+ * @param k2 Pointer to the second element to compare.
+ * @return Negative value if `k1` < `k2`, zero if `k1` == `k2`, positive value
+ *         if `k1` > `k2`.
+ *
+ * @see arg_mgsort
+ */
 typedef int(arg_comparefn)(const void* k1, const void* k2);
 
 /**
