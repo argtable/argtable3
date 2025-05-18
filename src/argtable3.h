@@ -937,10 +937,64 @@ ARG_EXTERN arg_file_t* arg_filen(const char* shortopts, const char* longopts, co
 ARG_EXTERN arg_file_t* arg_file0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN arg_file_t* arg_file1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 
-ARG_EXTERN struct arg_date* arg_date0(const char* shortopts, const char* longopts, const char* format, const char* datatype, const char* glossary);
-ARG_EXTERN struct arg_date* arg_date1(const char* shortopts, const char* longopts, const char* format, const char* datatype, const char* glossary);
-ARG_EXTERN struct arg_date*
+/**
+ * Creates a date/time argument for the command-line parser.
+ *
+ * The `arg_daten` function defines an option that accepts date or time values
+ * from the command line. You can specify the minimum and maximum number of
+ * times the argument can appear, making it suitable for optional, required, or
+ * repeatable date/time arguments. Each occurrence of the option is parsed using
+ * the specified `format` (a `strptime`-style format string) and stored as a
+ * `struct tm` value in the `tmval` array of the resulting `arg_date_t` struct,
+ * allowing you to retrieve all provided date/time values after parsing.
+ *
+ * For convenience and backward compatibility, `arg_date0` is provided as a
+ * helper for optional date arguments (where `mincount = 0` and `maxcount = 1`),
+ * and `arg_date1` is a helper for required date arguments (where `mincount = 1`
+ * and `maxcount = 1`). While `arg_date0` and `arg_date1` are available, it is
+ * recommended to use `arg_daten` in new code as it is more explicit and flexible.
+ *
+ * Example usage:
+ * ```
+ * // Accepts one required date argument in YYYY-MM-DD format
+ * arg_date_t *date = arg_date1(NULL, "date", "%Y-%m-%d", "<date>", "Date in YYYY-MM-DD format");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = { date, end };
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors == 0 && date->count > 0) {
+ *     printf("Parsed date: %04d-%02d-%02d\n",
+ *         date->tmval[0].tm_year + 1900, date->tmval[0].tm_mon + 1, date->tmval[0].tm_mday);
+ * } else {
+ *     arg_print_errors(stdout, end, argv[0]);
+ * }
+ * ```
+ *
+ * @param shortopts A string of single characters, each representing a short
+ *                  option name (e.g., `"d"` for `-d`). Pass `NULL` if no short
+ *                  option is desired.
+ * @param longopts  A string of comma-separated long option names (e.g.,
+ *                  `"date"` for `--date`). Pass `NULL` if no long option is
+ *                  desired.
+ * @param format    A `strptime`-style format string describing the expected
+ *                  date/time input (e.g., `"%Y-%m-%d"`).
+ * @param datatype  A string describing the expected data type (e.g.,
+ *                  `"<date>"`), shown in help messages.
+ * @param mincount  The minimum number of times the argument must appear (set to
+ *                  0 for optional).
+ * @param maxcount  The maximum number of times the argument can appear
+ *                  (controls memory allocation).
+ * @param glossary  A short description of the argument for the glossary/help
+ *                  output. Pass `NULL` to omit.
+ *
+ * @return
+ *   If successful, returns a pointer to the allocated `struct arg_date`.
+ *   Returns `NULL` if there is insufficient memory.
+ */
+ARG_EXTERN arg_date_t*
 arg_daten(const char* shortopts, const char* longopts, const char* format, const char* datatype, int mincount, int maxcount, const char* glossary);
+ARG_EXTERN arg_date_t* arg_date0(const char* shortopts, const char* longopts, const char* format, const char* datatype, const char* glossary);
+ARG_EXTERN arg_date_t* arg_date1(const char* shortopts, const char* longopts, const char* format, const char* datatype, const char* glossary);
 
 ARG_EXTERN struct arg_end* arg_end(int maxcount);
 
