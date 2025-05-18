@@ -880,14 +880,62 @@ ARG_EXTERN arg_rex_t* arg_rex1(const char* shortopts,
                                int flags,
                                const char* glossary);
 
-ARG_EXTERN struct arg_file* arg_file0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
-ARG_EXTERN struct arg_file* arg_file1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
-ARG_EXTERN struct arg_file* arg_filen(const char* shortopts,
-                                      const char* longopts,
-                                      const char* datatype,
-                                      int mincount,
-                                      int maxcount,
-                                      const char* glossary);
+/**
+ * Creates a file path argument for the command-line parser.
+ *
+ * The `arg_filen` function defines an option that accepts file path values from
+ * the command line. You can specify the minimum and maximum number of times the
+ * argument can appear, making it suitable for optional, required, or repeatable
+ * file arguments. Each occurrence of the option is parsed and stored in the
+ * `filename` array of the resulting `arg_file_t` struct. The struct also
+ * provides convenient access to the basename and extension for each file.
+ *
+ * For convenience and backward compatibility, `arg_file0` is provided as a
+ * helper for optional file arguments (where `mincount = 0` and `maxcount = 1`),
+ * and `arg_file1` is a helper for required file arguments (where `mincount = 1`
+ * and `maxcount = 1`). While `arg_file0` and `arg_file1` are available, it is
+ * recommended to use `arg_filen` in new code as it is more explicit and flexible.
+ *
+ * Example usage:
+ * ```
+ * // Accepts one or more file arguments
+ * arg_file_t *files = arg_filen(NULL, NULL, "<file>", 1, 100, "Input files");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = { files, end };
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors == 0 && files->count > 0) {
+ *     for (int i = 0; i < files->count; ++i) {
+ *         printf("File: %s, Basename: %s, Extension: %s\n",
+ *             files->filename[i], files->basename[i], files->extension[i]);
+ *     }
+ * } else {
+ *     arg_print_errors(stdout, end, argv[0]);
+ * }
+ * ```
+ *
+ * @param shortopts A string of single characters, each representing a short
+ *                  option name (e.g., `"f"` for `-f`). Pass `NULL` if no short
+ *                  option is desired.
+ * @param longopts  A string of comma-separated long option names (e.g.,
+ *                  `"file"` for `--file`). Pass `NULL` if no long option is
+ *                  desired.
+ * @param datatype  A string describing the expected data type (e.g.,
+ *                  `"<file>"`), shown in help messages.
+ * @param mincount  The minimum number of times the argument must appear (set to
+ *                  0 for optional).
+ * @param maxcount  The maximum number of times the argument can appear
+ *                  (controls memory allocation).
+ * @param glossary  A short description of the argument for the glossary/help
+ *                  output. Pass `NULL` to omit.
+ *
+ * @return
+ *   If successful, returns a pointer to the allocated `struct arg_file`.
+ *   Returns `NULL` if there is insufficient memory.
+ */
+ARG_EXTERN arg_file_t* arg_filen(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary);
+ARG_EXTERN arg_file_t* arg_file0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
+ARG_EXTERN arg_file_t* arg_file1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 
 ARG_EXTERN struct arg_date* arg_date0(const char* shortopts, const char* longopts, const char* format, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_date* arg_date1(const char* shortopts, const char* longopts, const char* format, const char* datatype, const char* glossary);
