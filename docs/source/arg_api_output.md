@@ -34,42 +34,36 @@ for each function in the output API.
 ## API
 
 :::{doxygenfunction} arg_print_option
-:outline:
 :::
 
 :::{doxygenfunction} arg_print_option_ds
 :::
 
 :::{doxygenfunction} arg_print_syntax
-:outline:
 :::
 
 :::{doxygenfunction} arg_print_syntax_ds
 :::
 
 :::{doxygenfunction} arg_print_syntaxv
-:outline:
 :::
 
 :::{doxygenfunction} arg_print_syntaxv_ds
 :::
 
 :::{doxygenfunction} arg_print_glossary
-:outline:
 :::
 
 :::{doxygenfunction} arg_print_glossary_ds
 :::
 
 :::{doxygenfunction} arg_print_glossary_gnu
-:outline:
 :::
 
 :::{doxygenfunction} arg_print_glossary_gnu_ds
 :::
 
 :::{doxygenfunction} arg_print_errors
-:outline:
 :::
 
 :::{doxygenfunction} arg_print_errors_ds
