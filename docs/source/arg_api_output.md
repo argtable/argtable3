@@ -71,3 +71,15 @@ for each function in the output API.
 
 :::{doxygenfunction} arg_print_formatted
 :::
+
+:::{doxygenfunction} arg_make_get_help_msg
+:::
+
+:::{doxygenfunction} arg_make_help_msg
+:::
+
+:::{doxygenfunction} arg_make_syntax_err_msg
+:::
+
+:::{doxygenfunction} arg_make_syntax_err_help_msg
+:::
