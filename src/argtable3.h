@@ -1436,7 +1436,7 @@ ARG_EXTERN void arg_print_glossary_gnu_ds(arg_dstr_t ds, void** argtable);
  *
  * @see arg_parse, arg_print_errors_ds, arg_dstr_create, arg_dstr_cstr
  */
-ARG_EXTERN void arg_print_errors(FILE* fp, struct arg_end* end, const char* progname);
+ARG_EXTERN void arg_print_errors(FILE* fp, arg_end_t* end, const char* progname);
 
 /**
  * Prints the details of all errors stored in the end data structure to a dynamic
@@ -1470,7 +1470,7 @@ ARG_EXTERN void arg_print_errors(FILE* fp, struct arg_end* end, const char* prog
  *
  * @see arg_print_errors, arg_parse, arg_dstr_create, arg_dstr_cstr
  */
-ARG_EXTERN void arg_print_errors_ds(arg_dstr_t ds, struct arg_end* end, const char* progname);
+ARG_EXTERN void arg_print_errors_ds(arg_dstr_t ds, arg_end_t* end, const char* progname);
 
 /**
  * Prints a formatted block of text with specified left and right margins.
@@ -1499,10 +1499,33 @@ ARG_EXTERN void arg_print_errors_ds(arg_dstr_t ds, struct arg_end* end, const ch
 ARG_EXTERN void arg_print_formatted(FILE* fp, const unsigned lmargin, const unsigned rmargin, const char* text);
 
 /**
- * Deallocates or frees non-null entries of the argument table.
+ * Deallocates or frees all non-null entries in the argument table.
  *
- * @param argtable An array of argument table structs.
- * @param n The number of structs in the argument table.
+ * The `arg_freetable` function iterates over the specified argument table array
+ * and frees any non-null entries, releasing the memory allocated for each
+ * argument structure. This is useful for cleaning up all argument objects
+ * created by `arg_<type>` constructor functions after you are done parsing and
+ * processing command-line arguments.
+ *
+ * You should call this function once for each argument table array before your
+ * program exits to prevent memory leaks.
+ *
+ * Example usage:
+ * ```
+ * arg_lit_t *help = arg_lit0("h", "help", "Display help");
+ * arg_int_t *count = arg_int0("c", "count", "<n>", "Number of times");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = { help, count, end };
+ *
+ * // ... use argtable ...
+ *
+ * arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+ * ```
+ *
+ * @param argtable An array of pointers to argument table structs.
+ * @param n        The number of structs in the argument table.
+ *
+ * @see arg_free
  */
 ARG_EXTERN void arg_freetable(void** argtable, size_t n);
 
