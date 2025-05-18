@@ -803,26 +803,82 @@ ARG_EXTERN arg_str_t* arg_strn(const char* shortopts, const char* longopts, cons
 ARG_EXTERN arg_str_t* arg_str0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN arg_str_t* arg_str1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 
-ARG_EXTERN struct arg_rex* arg_rex0(const char* shortopts,
-                                    const char* longopts,
-                                    const char* pattern,
-                                    const char* datatype,
-                                    int flags,
-                                    const char* glossary);
-ARG_EXTERN struct arg_rex* arg_rex1(const char* shortopts,
-                                    const char* longopts,
-                                    const char* pattern,
-                                    const char* datatype,
-                                    int flags,
-                                    const char* glossary);
-ARG_EXTERN struct arg_rex* arg_rexn(const char* shortopts,
-                                    const char* longopts,
-                                    const char* pattern,
-                                    const char* datatype,
-                                    int mincount,
-                                    int maxcount,
-                                    int flags,
-                                    const char* glossary);
+/**
+ * Creates a regular expression argument for the command-line parser.
+ *
+ * The `arg_rexn` function defines an option that accepts values matching a
+ * specified regular expression pattern. You can specify the minimum and maximum
+ * number of times the argument can appear, making it suitable for optional,
+ * required, or repeatable regex-matched options. Each occurrence of the option
+ * is parsed and stored in the `sval` array of the resulting `arg_rex_t` struct,
+ * allowing you to retrieve all provided values that match the regular expression
+ * after parsing.
+ *
+ * For convenience and backward compatibility, `arg_rex0` is provided as a
+ * helper for optional regex arguments (where `mincount = 0` and `maxcount = 1`),
+ * and `arg_rex1` is a helper for required regex arguments (where `mincount = 1`
+ * and `maxcount = 1`). While `arg_rex0` and `arg_rex1` are available, it is
+ * recommended to use `arg_rexn` in new code as it is more explicit and flexible.
+ *
+ * Example usage:
+ * ```
+ * // Accepts one or more arguments matching a simple email pattern
+ * arg_rex_t *emails = arg_rexn(NULL, "email", "^[^@]+@[^@]+\\.[^@]+$", "<email>", 1, 10, 0, "Email addresses");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = { emails, end };
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors == 0 && emails->count > 0) {
+ *     for (int i = 0; i < emails->count; ++i) {
+ *         printf("Matched email: %s\n", emails->sval[i]);
+ *     }
+ * } else {
+ *     arg_print_errors(stdout, end, argv[0]);
+ * }
+ * ```
+ *
+ * @param shortopts A string of single characters, each representing a short
+ *                  option name (e.g., `"e"` for `-e`). Pass `NULL` if no short
+ *                  option is desired.
+ * @param longopts  A string of comma-separated long option names (e.g.,
+ *                  `"email"` for `--email`). Pass `NULL` if no long option is
+ *                  desired.
+ * @param pattern   The regular expression pattern to match input values.
+ * @param datatype  A string describing the expected data type (e.g.,
+ *                  `"<email>"`), shown in help messages.
+ * @param mincount  The minimum number of times the argument must appear (set to
+ *                  0 for optional).
+ * @param maxcount  The maximum number of times the argument can appear
+ *                  (controls memory allocation).
+ * @param flags     Flags to modify regex matching behavior (e.g.,
+ *                  `ARG_REX_ICASE` for case-insensitive).
+ * @param glossary  A short description of the argument for the glossary/help
+ *                  output. Pass `NULL` to omit.
+ *
+ * @return
+ *   If successful, returns a pointer to the allocated `struct arg_rex`. Returns
+ *   `NULL` if there is insufficient memory.
+ */
+ARG_EXTERN arg_rex_t* arg_rexn(const char* shortopts,
+                               const char* longopts,
+                               const char* pattern,
+                               const char* datatype,
+                               int mincount,
+                               int maxcount,
+                               int flags,
+                               const char* glossary);
+ARG_EXTERN arg_rex_t* arg_rex0(const char* shortopts,
+                               const char* longopts,
+                               const char* pattern,
+                               const char* datatype,
+                               int flags,
+                               const char* glossary);
+ARG_EXTERN arg_rex_t* arg_rex1(const char* shortopts,
+                               const char* longopts,
+                               const char* pattern,
+                               const char* datatype,
+                               int flags,
+                               const char* glossary);
 
 ARG_EXTERN struct arg_file* arg_file0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN struct arg_file* arg_file1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
