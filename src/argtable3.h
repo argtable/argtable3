@@ -1043,35 +1043,37 @@ ARG_EXTERN arg_end_t* arg_end(int maxcount);
 /**
  * Checks the argument table for null entries.
  *
- * Each entry in the argument table is created by `arg_xxx` constructor
- * functions, such as `arg_litn`. These constructor functions will return NULL
- * when they fail to allocate enough memory. Instead of checking the return
- * value of each constructor function, we can make the code more readable by
- * calling `arg_nullcheck` when all the argument table entries have been
- * constructed:
+ * The `arg_nullcheck` function scans the provided argument table array and
+ * returns 1 if any entry is NULL, or 0 if all entries are valid. This is useful
+ * for detecting memory allocation failures after constructing all argument
+ * table entries with `arg_<type>` constructor functions, such as `arg_litn`.
  *
+ * Instead of checking the return value of each constructor individually, you
+ * can call `arg_nullcheck` once after building the argument table to ensure
+ * that all arguments were allocated successfully. This helps make your code
+ * cleaner and more robust.
+ *
+ * Example usage:
  * ```
- * struct arg_lit *list    = arg_lit0("lL",NULL,           "list files");
- * struct arg_lit *verbose = arg_lit0("v","verbose,debug", "verbose messages");
- * struct arg_lit *help    = arg_lit0(NULL,"help",         "print this help and exit");
- * struct arg_lit *version = arg_lit0(NULL,"version",      "print version and exit");
- * struct arg_end *end     = arg_end(20);
+ * arg_lit_t *list    = arg_lit0("lL",NULL,           "list files");
+ * arg_lit_t *verbose = arg_lit0("v","verbose,debug", "verbose messages");
+ * arg_lit_t *help    = arg_lit0(NULL,"help",         "print this help and exit");
+ * arg_lit_t *version = arg_lit0(NULL,"version",      "print version and exit");
+ * arg_end_t *end     = arg_end(20);
  * void *argtable[] = {list, verbose, help, version, end};
  * const char *progname = "myprog";
  * int exitcode = 0;
  *
- * if (arg_nullcheck(argtable) != 0)
- * {
+ * if (arg_nullcheck(argtable) != 0) {
  *     printf("%s: insufficient memory\n", progname);
  *     exitcode = 1;
  *     goto exit;
  * }
  * ```
  *
- * @param argtable An array of argument table structs.
+ * @param argtable Array of pointers to argument table structs.
  *
- * @return
- *   Returns 1 if any are found, zero otherwise.
+ * @return Returns 1 if any entry is NULL, 0 if all entries are valid.
  */
 ARG_EXTERN int arg_nullcheck(void** argtable);
 
