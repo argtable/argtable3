@@ -746,14 +746,62 @@ ARG_EXTERN arg_dbl_t* arg_dbln(const char* shortopts, const char* longopts, cons
 ARG_EXTERN arg_dbl_t* arg_dbl0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 ARG_EXTERN arg_dbl_t* arg_dbl1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 
-ARG_EXTERN struct arg_str* arg_str0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
-ARG_EXTERN struct arg_str* arg_str1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
-ARG_EXTERN struct arg_str* arg_strn(const char* shortopts,
-                                    const char* longopts,
-                                    const char* datatype,
-                                    int mincount,
-                                    int maxcount,
-                                    const char* glossary);
+/**
+ * Creates a string argument for the command-line parser.
+ *
+ * The `arg_strn` function defines an option that accepts string values from the
+ * command line. You can specify the minimum and maximum number of times the
+ * argument can appear, making it suitable for optional, required, or repeatable
+ * string options. Each occurrence of the option is parsed and stored in the
+ * `sval` array of the resulting `arg_str_t` struct, allowing you to retrieve
+ * all provided string values after parsing.
+ *
+ * For convenience and backward compatibility, `arg_str0` is provided as a
+ * helper for optional string arguments (where `mincount = 0` and
+ * `maxcount = 1`), and `arg_str1` is a helper for required string arguments
+ * (where `mincount = 1` and `maxcount = 1`). While `arg_str0` and `arg_str1`
+ * are available, it is recommended to use `arg_strn` in new code as it is more
+ * explicit and flexible.
+ *
+ * Example usage:
+ * ```
+ * // Accepts one or more string arguments
+ * arg_str_t *inputs = arg_strn(NULL, NULL, "<input>", 1, 10, "Input strings");
+ * arg_end_t *end = arg_end(20);
+ * void *argtable[] = { inputs, end };
+ *
+ * int nerrors = arg_parse(argc, argv, argtable);
+ * if (nerrors == 0 && inputs->count > 0) {
+ *     for (int i = 0; i < inputs->count; ++i) {
+ *         printf("Input string: %s\n", inputs->sval[i]);
+ *     }
+ * } else {
+ *     arg_print_errors(stdout, end, argv[0]);
+ * }
+ * ```
+ *
+ * @param shortopts A string of single characters, each representing a short
+ *                  option name (e.g., `"i"` for `-i`). Pass `NULL` if no short
+ *                  option is desired.
+ * @param longopts  A string of comma-separated long option names (e.g.,
+ *                  `"input"` for `--input`). Pass `NULL` if no long option is
+ *                  desired.
+ * @param datatype  A string describing the expected data type (e.g.,
+ *                  `"<input>"`), shown in help messages.
+ * @param mincount  The minimum number of times the argument must appear (set to
+ *                  0 for optional).
+ * @param maxcount  The maximum number of times the argument can appear
+ *                  (controls memory allocation).
+ * @param glossary  A short description of the argument for the glossary/help
+ *                  output. Pass `NULL` to omit.
+ *
+ * @return
+ *   If successful, returns a pointer to the allocated `struct arg_str`. Returns
+ *   `NULL` if there is insufficient memory.
+ */
+ARG_EXTERN arg_str_t* arg_strn(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary);
+ARG_EXTERN arg_str_t* arg_str0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
+ARG_EXTERN arg_str_t* arg_str1(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
 
 ARG_EXTERN struct arg_rex* arg_rex0(const char* shortopts,
                                     const char* longopts,
