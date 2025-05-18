@@ -2253,15 +2253,21 @@ ARG_EXTERN void arg_set_module_version(int major, int minor, int patch, const ch
 /**** deprecated functions, for back-compatibility only ********/
 
 /**
- * arg_free() is deprecated in favour of arg_freetable() due to a flaw in its design.
- * The flaw results in memory leak in the (very rare) case that an intermediate
- * entry in the argtable array failed its memory allocation while others following
- * that entry were still allocated ok. Those subsequent allocations will not be
- * deallocated by arg_free().
- * Despite the unlikeliness of the problem occurring, and the even unlikelier event
- * that it has any deliterious effect, it is fixed regardless by replacing arg_free()
- * with the newer arg_freetable() function.
- * We still keep arg_free() for backwards compatibility.
+ * Deallocates or frees non-null entries of the argument table.
+ *
+ * The `arg_free` function is deprecated in favour of the `arg_freetable`
+ * function due to a flaw in its design. The flaw results in memory leak in the
+ * (very rare) case that an intermediate entry in the argtable array failed its
+ * memory allocation while others following that entry were still allocated ok.
+ * Those subsequent allocations will not be deallocated by `arg_free`.
+ *
+ * Despite the unlikeliness of the problem occurring, and the even unlikelier
+ * event that it has any deliterious effect, it is fixed regardless by replacing
+ * `arg_free` with the newer `arg_freetable` function. We still keep `arg_free`
+ * for backwards compatibility.
+ *
+ * @param argtable An array of argument table structs.
+ * @deprecated Use `arg_freetable` instead.
  */
 ARG_EXTERN void arg_free(void** argtable);
 
