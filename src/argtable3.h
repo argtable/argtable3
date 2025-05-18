@@ -561,8 +561,8 @@ typedef struct arg_cmd_info {
  *                  or NULL if not needed.
  *
  * @return
- *   If successful, returns a pointer to the allocated `struct arg_rem`.
- *   Otherwise, returns `NULL` if there is insufficient memory available.
+ *   If successful, returns a pointer to the allocated `arg_rem_t`. Otherwise,
+ *   returns `NULL` if there is insufficient memory available.
  */
 ARG_EXTERN arg_rem_t* arg_rem(const char* datatype, const char* glossary);
 
@@ -624,7 +624,7 @@ ARG_EXTERN arg_rem_t* arg_rem(const char* datatype, const char* glossary);
  *                  output. Pass `NULL` to omit.
  *
  * @return
- *   If successful, returns a pointer to the allocated `struct arg_lit`. Returns
+ *   If successful, returns a pointer to the allocated `arg_lit_t`. Returns
  *   `NULL` if there is insufficient memory.
  */
 ARG_EXTERN arg_lit_t* arg_litn(const char* shortopts, const char* longopts, int mincount, int maxcount, const char* glossary);
@@ -681,7 +681,7 @@ ARG_EXTERN arg_lit_t* arg_lit1(const char* shortopts, const char* longopts, cons
  *                  output. Pass `NULL` to omit.
  *
  * @return
- *   If successful, returns a pointer to the allocated `struct arg_int`. Returns
+ *   If successful, returns a pointer to the allocated `arg_int_t`. Returns
  *   `NULL` if there is insufficient memory.
  */
 ARG_EXTERN arg_int_t* arg_intn(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary);
@@ -739,7 +739,7 @@ ARG_EXTERN arg_int_t* arg_int1(const char* shortopts, const char* longopts, cons
  *                  output. Pass `NULL` to omit.
  *
  * @return
- *   If successful, returns a pointer to the allocated `struct arg_dbl`. Returns
+ *   If successful, returns a pointer to the allocated `arg_dbl_t`. Returns
  *   `NULL` if there is insufficient memory.
  */
 ARG_EXTERN arg_dbl_t* arg_dbln(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary);
@@ -796,7 +796,7 @@ ARG_EXTERN arg_dbl_t* arg_dbl1(const char* shortopts, const char* longopts, cons
  *                  output. Pass `NULL` to omit.
  *
  * @return
- *   If successful, returns a pointer to the allocated `struct arg_str`. Returns
+ *   If successful, returns a pointer to the allocated `arg_str_t`. Returns
  *   `NULL` if there is insufficient memory.
  */
 ARG_EXTERN arg_str_t* arg_strn(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary);
@@ -856,7 +856,7 @@ ARG_EXTERN arg_str_t* arg_str1(const char* shortopts, const char* longopts, cons
  *                  output. Pass `NULL` to omit.
  *
  * @return
- *   If successful, returns a pointer to the allocated `struct arg_rex`. Returns
+ *   If successful, returns a pointer to the allocated `arg_rex_t`. Returns
  *   `NULL` if there is insufficient memory.
  */
 ARG_EXTERN arg_rex_t* arg_rexn(const char* shortopts,
@@ -930,8 +930,8 @@ ARG_EXTERN arg_rex_t* arg_rex1(const char* shortopts,
  *                  output. Pass `NULL` to omit.
  *
  * @return
- *   If successful, returns a pointer to the allocated `struct arg_file`.
- *   Returns `NULL` if there is insufficient memory.
+ *   If successful, returns a pointer to the allocated `arg_file_t`. Returns
+ *   `NULL` if there is insufficient memory.
  */
 ARG_EXTERN arg_file_t* arg_filen(const char* shortopts, const char* longopts, const char* datatype, int mincount, int maxcount, const char* glossary);
 ARG_EXTERN arg_file_t* arg_file0(const char* shortopts, const char* longopts, const char* datatype, const char* glossary);
@@ -988,8 +988,8 @@ ARG_EXTERN arg_file_t* arg_file1(const char* shortopts, const char* longopts, co
  *                  output. Pass `NULL` to omit.
  *
  * @return
- *   If successful, returns a pointer to the allocated `struct arg_date`.
- *   Returns `NULL` if there is insufficient memory.
+ *   If successful, returns a pointer to the allocated `arg_date_t`. Returns
+ *   `NULL` if there is insufficient memory.
  */
 ARG_EXTERN arg_date_t*
 arg_daten(const char* shortopts, const char* longopts, const char* format, const char* datatype, int mincount, int maxcount, const char* glossary);
@@ -1027,12 +1027,12 @@ ARG_EXTERN arg_date_t* arg_date1(const char* shortopts, const char* longopts, co
  * @param maxcount The maximum number of errors to record during parsing.
  *                 Choose a value large enough to capture all possible errors.
  * @return
- *   If successful, returns a pointer to the allocated `struct arg_end`. Returns
+ *   If successful, returns a pointer to the allocated `arg_end_t`. Returns
  *   `NULL` if there is insufficient memory.
  *
  * @see arg_end_t, arg_parse, arg_print_errors
  */
-ARG_EXTERN struct arg_end* arg_end(int maxcount);
+ARG_EXTERN arg_end_t* arg_end(int maxcount);
 
 #define ARG_DSTR_STATIC ((arg_dstr_freefn*)0)
 #define ARG_DSTR_VOLATILE ((arg_dstr_freefn*)1)
