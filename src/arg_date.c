@@ -41,12 +41,14 @@
 
 char* arg_strptime(const char* buf, const char* fmt, struct tm* tm);
 
-static void arg_date_resetfn(struct arg_date* parent) {
+static void arg_date_resetfn(void* parent_) {
+    struct arg_date* parent = parent_;
     ARG_TRACE(("%s:resetfn(%p)\n", __FILE__, parent));
     parent->count = 0;
 }
 
-static int arg_date_scanfn(struct arg_date* parent, const char* argval) {
+static int arg_date_scanfn(void* parent_, const char* argval) {
+    struct arg_date* parent = parent_;
     int errorcode = 0;
 
     if (parent->count == parent->hdr.maxcount) {
@@ -70,14 +72,16 @@ static int arg_date_scanfn(struct arg_date* parent, const char* argval) {
     return errorcode;
 }
 
-static int arg_date_checkfn(struct arg_date* parent) {
+static int arg_date_checkfn(void* parent_) {
+    struct arg_date* parent = parent_;
     int errorcode = (parent->count < parent->hdr.mincount) ? ARG_ERR_MINCOUNT : 0;
 
     ARG_TRACE(("%s:checkfn(%p) returns %d\n", __FILE__, parent, errorcode));
     return errorcode;
 }
 
-static void arg_date_errorfn(struct arg_date* parent, arg_dstr_t ds, int errorcode, const char* argval, const char* progname) {
+static void arg_date_errorfn(void* parent_, arg_dstr_t ds, int errorcode, const char* argval, const char* progname) {
+    struct arg_date* parent = parent_;
     const char* shortopts = parent->hdr.shortopts;
     const char* longopts = parent->hdr.longopts;
     const char* datatype = parent->hdr.datatype;
@@ -147,10 +151,10 @@ arg_daten(const char* shortopts, const char* longopts, const char* format, const
     result->hdr.mincount = mincount;
     result->hdr.maxcount = maxcount;
     result->hdr.parent = result;
-    result->hdr.resetfn = (arg_resetfn*)arg_date_resetfn;
-    result->hdr.scanfn = (arg_scanfn*)arg_date_scanfn;
-    result->hdr.checkfn = (arg_checkfn*)arg_date_checkfn;
-    result->hdr.errorfn = (arg_errorfn*)arg_date_errorfn;
+    result->hdr.resetfn = arg_date_resetfn;
+    result->hdr.scanfn = arg_date_scanfn;
+    result->hdr.checkfn = arg_date_checkfn;
+    result->hdr.errorfn = arg_date_errorfn;
 
     /* store the tmval[maxcount] array immediately after the arg_date struct */
     result->tmval = (struct tm*)(result + 1);

@@ -47,7 +47,8 @@
 #define FILESEPARATOR2 '/'
 #endif
 
-static void arg_file_resetfn(struct arg_file* parent) {
+static void arg_file_resetfn(void* parent_) {
+    struct arg_file* parent = parent_;
     ARG_TRACE(("%s:resetfn(%p)\n", __FILE__, parent));
     parent->count = 0;
 }
@@ -98,7 +99,8 @@ static const char* arg_extension(const char* basename) {
     return result;
 }
 
-static int arg_file_scanfn(struct arg_file* parent, const char* argval) {
+static int arg_file_scanfn(void* parent_, const char* argval) {
+    struct arg_file* parent = parent_;
     int errorcode = 0;
 
     if (parent->count == parent->hdr.maxcount) {
@@ -121,14 +123,16 @@ static int arg_file_scanfn(struct arg_file* parent, const char* argval) {
     return errorcode;
 }
 
-static int arg_file_checkfn(struct arg_file* parent) {
+static int arg_file_checkfn(void* parent_) {
+    struct arg_file* parent = parent_;
     int errorcode = (parent->count < parent->hdr.mincount) ? ARG_ERR_MINCOUNT : 0;
 
     ARG_TRACE(("%s:checkfn(%p) returns %d\n", __FILE__, parent, errorcode));
     return errorcode;
 }
 
-static void arg_file_errorfn(struct arg_file* parent, arg_dstr_t ds, int errorcode, const char* argval, const char* progname) {
+static void arg_file_errorfn(void* parent_, arg_dstr_t ds, int errorcode, const char* argval, const char* progname) {
+    struct arg_file* parent = parent_;
     const char* shortopts = parent->hdr.shortopts;
     const char* longopts = parent->hdr.longopts;
     const char* datatype = parent->hdr.datatype;
@@ -185,10 +189,10 @@ struct arg_file* arg_filen(const char* shortopts, const char* longopts, const ch
     result->hdr.mincount = mincount;
     result->hdr.maxcount = maxcount;
     result->hdr.parent = result;
-    result->hdr.resetfn = (arg_resetfn*)arg_file_resetfn;
-    result->hdr.scanfn = (arg_scanfn*)arg_file_scanfn;
-    result->hdr.checkfn = (arg_checkfn*)arg_file_checkfn;
-    result->hdr.errorfn = (arg_errorfn*)arg_file_errorfn;
+    result->hdr.resetfn = arg_file_resetfn;
+    result->hdr.scanfn = arg_file_scanfn;
+    result->hdr.checkfn = arg_file_checkfn;
+    result->hdr.errorfn = arg_file_errorfn;
 
     /* store the filename,basename,extension arrays immediately after the arg_file struct */
     result->filename = (const char**)(result + 1);

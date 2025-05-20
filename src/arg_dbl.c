@@ -38,12 +38,14 @@
 
 #include <stdlib.h>
 
-static void arg_dbl_resetfn(struct arg_dbl* parent) {
+static void arg_dbl_resetfn(void* parent_) {
+    struct arg_dbl* parent = parent_;
     ARG_TRACE(("%s:resetfn(%p)\n", __FILE__, parent));
     parent->count = 0;
 }
 
-static int arg_dbl_scanfn(struct arg_dbl* parent, const char* argval) {
+static int arg_dbl_scanfn(void* parent_, const char* argval) {
+    struct arg_dbl* parent = parent_;
     int errorcode = 0;
 
     if (parent->count == parent->hdr.maxcount) {
@@ -72,14 +74,16 @@ static int arg_dbl_scanfn(struct arg_dbl* parent, const char* argval) {
     return errorcode;
 }
 
-static int arg_dbl_checkfn(struct arg_dbl* parent) {
+static int arg_dbl_checkfn(void* parent_) {
+    struct arg_dbl* parent = parent_;
     int errorcode = (parent->count < parent->hdr.mincount) ? ARG_ERR_MINCOUNT : 0;
 
     ARG_TRACE(("%s:checkfn(%p) returns %d\n", __FILE__, parent, errorcode));
     return errorcode;
 }
 
-static void arg_dbl_errorfn(struct arg_dbl* parent, arg_dstr_t ds, int errorcode, const char* argval, const char* progname) {
+static void arg_dbl_errorfn(void* parent_, arg_dstr_t ds, int errorcode, const char* argval, const char* progname) {
+    struct arg_dbl* parent = parent_;
     const char* shortopts = parent->hdr.shortopts;
     const char* longopts = parent->hdr.longopts;
     const char* datatype = parent->hdr.datatype;
@@ -137,10 +141,10 @@ struct arg_dbl* arg_dbln(const char* shortopts, const char* longopts, const char
     result->hdr.mincount = mincount;
     result->hdr.maxcount = maxcount;
     result->hdr.parent = result;
-    result->hdr.resetfn = (arg_resetfn*)arg_dbl_resetfn;
-    result->hdr.scanfn = (arg_scanfn*)arg_dbl_scanfn;
-    result->hdr.checkfn = (arg_checkfn*)arg_dbl_checkfn;
-    result->hdr.errorfn = (arg_errorfn*)arg_dbl_errorfn;
+    result->hdr.resetfn = arg_dbl_resetfn;
+    result->hdr.scanfn = arg_dbl_scanfn;
+    result->hdr.checkfn = arg_dbl_checkfn;
+    result->hdr.errorfn = arg_dbl_errorfn;
 
     /* Store the dval[maxcount] array on the first double boundary that
      * immediately follows the arg_dbl struct. We do the memory alignment
