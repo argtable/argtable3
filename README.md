@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/argtable/argtable3.svg?branch=master)](https://travis-ci.org/argtable/argtable3)
+[![clang-tidy](https://github.com/argtable/argtable3/actions/workflows/clang-tidy.yml/badge.svg)](https://github.com/argtable/argtable3/actions/workflows/clang-tidy.yml)
+[![coverity](https://github.com/argtable/argtable3/actions/workflows/coverity.yml/badge.svg)](https://github.com/argtable/argtable3/actions/workflows/coverity.yml)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 

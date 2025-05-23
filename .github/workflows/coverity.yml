@@ -1,0 +1,47 @@
+name: Coverity Scan
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  coverity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential wget
+
+      - name: Download Coverity Build Tool
+        run: |
+          wget -q https://scan.coverity.com/download/cxx/linux64 --post-data "token=${{ secrets.COVERITY_TOKEN }}&project=Argtable3" -O coverity_tool.tgz
+          tar xzf coverity_tool.tgz
+          export COV_DIR=$(find . -type d -name 'cov-analysis*' | head -n 1)
+          echo "COV_DIR=$COV_DIR" >> $GITHUB_ENV
+
+      - name: Build with Coverity
+        run: |
+          mkdir build && cd build
+          cmake ..
+          cd ..
+          $COV_DIR/bin/cov-build --dir cov-int cmake --build build
+
+      - name: Create tarball
+        run: tar czf cov-int.tgz cov-int
+
+      - name: Submit to Coverity Scan
+        env:
+          COVERITY_TOKEN: ${{ secrets.COVERITY_TOKEN }}
+        run: |
+          curl --form token=$COVERITY_TOKEN \
+               --form email=${{ secrets.COVERITY_EMAIL }} \
+               --form file=@cov-int.tgz \
+               --form version="$(date +'%Y-%m-%d')-$(git rev-parse --short HEAD)" \
+               --form description="GitHub Actions Coverity Scan" \
+               https://scan.coverity.com/builds?project=Argtable3
