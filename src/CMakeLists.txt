@@ -1,7 +1,7 @@
 ################################################################################
 # This file is part of the argtable3 library.
 #
-# Copyright (C) 2016-2021 Tom G. Huang
+# Copyright (C) 2016-2025 Tom G. Huang
 # <tomghuang@gmail.com>
 # All rights reserved.
 #
@@ -26,6 +26,10 @@
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+################################################################################
+
+################################################################################
+# Compiler and build options
 ################################################################################
 
 if(CMAKE_C_COMPILER_ID MATCHES "MSVC")
@@ -62,13 +66,10 @@ endif()
 
 add_definitions(-D_XOPEN_SOURCE=700)
 
-if(BUILD_SHARED_LIBS AND (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC"))
-  set(COMPANY_NAME "The Argtable3 Project")
-  set(FILE_DESC "ANSI C command-line parsing library")
-  set(INTERNAL_NAME "${PROJECT_NAME}")
-  set(LEGAL_COPYRIGHT "Copyright (C) 1998-2001,2003-2011,2013 Stewart Heitmann. All rights reserved.")
-  set(ORIGINAL_FILE_NAME "${PROJECT_NAME}")
-  set(PRODUCT_NAME "${PROJECT_NAME}")
+################################################################################
+# Library target definition
+################################################################################
+if(BUILD_SHARED_LIBS AND (CMAKE_C_COMPILER_ID STREQUAL "MSVC"))
   configure_file(
     "${PROJECT_SOURCE_DIR}/src/version.rc.in"
     "${PROJECT_BINARY_DIR}/src/version.rc"
@@ -86,12 +87,16 @@ target_include_directories(argtable3 PUBLIC
 )
 
 set_target_properties(argtable3 PROPERTIES
-  VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
-  SOVERSION ${PROJECT_VERSION_MAJOR}
+  VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
+  SOVERSION "${PROJECT_VERSION_MAJOR}"
   DEBUG_POSTFIX "d"
+  PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/src/argtable3.h"
 )
 
-include(GNUInstallDirs)
+################################################################################
+# Install rules
+################################################################################
+
 if(UNIX OR MSYS OR MINGW OR PSP)
   set(ARGTABLE3_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/cmake/argtable3)
 elseif(WIN32)
@@ -100,14 +105,10 @@ endif()
 
 install(TARGETS argtable3
   EXPORT ${ARGTABLE3_PACKAGE_NAME}Config
-  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-)
-
-install(FILES "${PROJECT_SOURCE_DIR}/src/argtable3.h"
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 install(EXPORT ${ARGTABLE3_PACKAGE_NAME}Config

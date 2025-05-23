@@ -1,7 +1,7 @@
 ################################################################################
 # This file is part of the argtable3 library.
 #
-# Copyright (C) 2016-2021 Tom G. Huang
+# Copyright (C) 2016-2025 Tom G. Huang
 # <tomghuang@gmail.com>
 # All rights reserved.
 #
@@ -30,10 +30,23 @@
 
 cmake_minimum_required(VERSION 3.5)
 
+################################################################################
+# Project metadata and build options
+################################################################################
+
 set(ARGTABLE3_PROJECT_NAME "argtable3")
 set(ARGTABLE3_PACKAGE_NAME "Argtable3")
 
 project(${ARGTABLE3_PROJECT_NAME} "C")
+set(PROJECT_DESCRIPTION "ANSI C command-line parsing library")
+set(PROJECT_HOMEPAGE_URL "https://www.argtable.org")
+set(COMPANY_NAME "The Argtable3 Project")
+set(FILE_DESC "${PROJECT_DESCRIPTION}")
+set(INTERNAL_NAME "${PROJECT_NAME}")
+set(LEGAL_COPYRIGHT "Copyright (C) 1998-2001,2003-2011,2013 Stewart Heitmann. All rights reserved.")
+set(ORIGINAL_FILE_NAME "${PROJECT_NAME}")
+set(PRODUCT_NAME "${PROJECT_NAME}")
+set(MAINTAINER_CONTACT "tomghuang@gmail.com")
 
 option(BUILD_SHARED_LIBS "Build shared library" OFF)
 option(ARGTABLE3_ENABLE_CONAN "Enable Conan dependency manager" OFF)
@@ -43,9 +56,16 @@ option(ARGTABLE3_ENABLE_ARG_REX_DEBUG "Enable arg_rex debug output" OFF)
 option(ARGTABLE3_REPLACE_GETOPT "Replace getopt in the system C library" ON)
 option(ARGTABLE3_LONG_ONLY "Use getopt_long_only instead of getopt_long" OFF)
 
+include(GNUInstallDirs)
+
+################################################################################
+# Version handling: read from version.tag if present, otherwise use defaults.
+# version.tag format: major.minor.patch.build (e.g., 3.2.1.0)
+################################################################################
+
 get_filename_component(VERSION_TAG_PATH "version.tag" ABSOLUTE)
-if(EXISTS ${VERSION_TAG_PATH})
-  file(READ version.tag VERSION_TAG OFFSET 1)
+if(EXISTS "${VERSION_TAG_PATH}")
+  file(READ "${VERSION_TAG_PATH}" VERSION_TAG OFFSET 1) # Skip the first "v" character.
   string(REPLACE "." ";" VERSION_LIST ${VERSION_TAG})
   list(GET VERSION_LIST 0 PROJECT_VERSION_MAJOR)
   list(GET VERSION_LIST 1 PROJECT_VERSION_MINOR)
@@ -57,9 +77,14 @@ else()
   set(PROJECT_VERSION_PATCH 0)
   set(PROJECT_VERSION_BUILD "mainline")
 endif()
+set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 set(PROJECT_VERSION_TWEAK 0)
-set(ARGTABLE3_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK})
-set(ARGTABLE3_FULL_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_BUILD})
+set(ARGTABLE3_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK}")
+set(ARGTABLE3_FULL_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_BUILD}")
+
+################################################################################
+# Conan dependency manager integration (optional)
+################################################################################
 
 if(ARGTABLE3_ENABLE_CONAN AND EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
@@ -68,6 +93,10 @@ if(ARGTABLE3_ENABLE_CONAN AND EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-rpath-link,${LINK_FLAGS}")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath-link,${LINK_FLAGS}")
 endif()
+
+################################################################################
+# Source files for the argtable3 library
+################################################################################
 
 set(ARGTABLE3_AMALGAMATION_SRC_FILE ${PROJECT_SOURCE_DIR}/dist/argtable3.c)
 set(ARGTABLE3_SRC_FILES
@@ -88,9 +117,25 @@ set(ARGTABLE3_SRC_FILES
   ${PROJECT_SOURCE_DIR}/src/arg_getopt_long.c
 )
 
+################################################################################
+# Packaging configuration (CPack)
+################################################################################
+
+set(PackagingTemplatesDir "${CMAKE_CURRENT_SOURCE_DIR}/packaging")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+
+################################################################################
+# Platform-specific settings
+################################################################################
+
 if(APPLE)
   set(CMAKE_MACOSX_RPATH ON)
 endif()
+
+################################################################################
+# Add subdirectories for library, examples, and tests
+################################################################################
 
 add_subdirectory(src)
 
@@ -102,3 +147,51 @@ if(ARGTABLE3_ENABLE_TESTS)
   enable_testing()
   add_subdirectory(tests)
 endif()
+
+################################################################################
+# Pkg-config file generation and installation
+################################################################################
+
+set(PKG_CONFIG_FILE_NAME "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pc")
+configure_file("${PackagingTemplatesDir}/pkgconfig.pc.in" "${PKG_CONFIG_FILE_NAME}" @ONLY)
+install(FILES "${PKG_CONFIG_FILE_NAME}"
+	DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+)
+
+################################################################################
+# Packaging (CPack) configuration
+################################################################################
+
+set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+set(CPACK_PACKAGE_VENDOR "${COMPANY_NAME}")
+set(CPACK_PACKAGE_DESCRIPTION "${PROJECT_DESCRIPTION}")
+set(CPACK_PACKAGE_HOMEPAGE_URL "${PROJECT_HOMEPAGE_URL}")
+set(CPACK_PACKAGE_MAINTAINER "${CPACK_PACKAGE_VENDOR}")
+set(CPACK_PACKAGE_CONTACT "${MAINTAINER_CONTACT}")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CPACK_RESOURCE_FILE_README}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${CPACK_PACKAGE_DESCRIPTION}")
+
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_PACKAGE_MAINTAINER}")
+set(CPACK_DEBIAN_PACKAGE_NAME "lib${PROJECT_NAME}-dev")
+set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6-dev")
+set(CPACK_DEBIAN_PACKAGE_SUGGESTS "cmake, pkg-config")
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${CPACK_PACKAGE_HOMEPAGE_URL}")
+
+set(CPACK_RPM_PACKAGE_NAME "lib${PROJECT_NAME}-devel")
+set(CPACK_RPM_PACKAGE_SUGGESTS "${CPACK_DEBIAN_PACKAGE_SUGGESTS}")
+set(CPACK_RPM_PACKAGE_GROUP "Development/Libraries")
+set(CPACK_RPM_PACKAGE_URL "${CPACK_PACKAGE_HOMEPAGE_URL}")
+set(CPACK_RPM_PACKAGE_RELEASE 1)
+
+set(CPACK_DEB_COMPONENT_INSTALL ON)
+set(CPACK_RPM_COMPONENT_INSTALL ON)
+set(CPACK_NSIS_COMPONENT_INSTALL ON)
+set(CPACK_DEBIAN_COMPRESSION_TYPE "xz")
+
+################################################################################
+# Enable CPack
+################################################################################
+
+include(CPack)
