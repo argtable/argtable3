@@ -1,4 +1,4 @@
-name: Run clang-tidy
+name: Clang-Tidy
 
 on:
   pull_request:
@@ -9,32 +9,39 @@ on:
 jobs:
   build:
     name: Run clang-tidy
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install clang-tidy
+        run: sudo apt-get install -y clang-tidy
+
       - name: Run CMake to generate the compilation database
-        run: |
-          mkdir build
-          cmake -B build -DARGTABLE3_ENABLE_TESTS=0 -DARGTABLE3_ENABLE_EXAMPLES=0 -DCMAKE_EXPORT_COMPILE_COMMANDS=1 .
+        run: cmake -B build -DARGTABLE3_ENABLE_TESTS=0 -DARGTABLE3_ENABLE_EXAMPLES=0 -DCMAKE_EXPORT_COMPILE_COMMANDS=1 .
+
       - name: Run clang-tidy on files in src/
-        run: |
-          clang-tidy -p build/compile_commands.json src/*.c | tee warnings.txt
+        run: clang-tidy -p build/compile_commands.json src/*.c | tee warnings.txt
+
       - name: Convert absolute paths to relative ones
-        run: |
-          sed -i "s|${GITHUB_WORKSPACE}/||g" warnings.txt
+        run: sed -i "s|${GITHUB_WORKSPACE}/||g" warnings.txt
+
       - name: Download clang-tidy-sarif
         run: |
           curl -sSL https://github.com/psastras/sarif-rs/releases/download/clang-tidy-sarif-v0.3.3/clang-tidy-sarif-x86_64-unknown-linux-gnu -o clang-tidy-sarif
           chmod +x clang-tidy-sarif
+
       - name: Convert clang-tidy warnings to SARIF
-        run: |
-          ./clang-tidy-sarif -o results.sarif warnings.txt
-      - uses: actions/upload-artifact@v4
+        run: ./clang-tidy-sarif -o results.sarif warnings.txt
+
+      - name: Upload warnings and SARIF file
+        uses: actions/upload-artifact@v4
         with:
           path: |
             warnings.txt
             results.sarif
-      - name: Upload SARIF file
+
+      - name: Upload SARIF file to GitHub
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: results.sarif
