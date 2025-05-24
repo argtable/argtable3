@@ -1,13 +1,11 @@
-name: Coverity Scan
+name: Coverity
 
 on:
-  pull_request:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
 
 jobs:
   coverity:
+    name: Run Coverity Scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
