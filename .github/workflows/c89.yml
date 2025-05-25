@@ -1,0 +1,41 @@
+name: C89 Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  build:
+    name: Build and test with GCC C89
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential
+
+      - name: Configure Debug build (C89)
+        run: cmake -B build/debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_STANDARD=90 -DCMAKE_C_STANDARD_REQUIRED=ON  -DCMAKE_C_EXTENSIONS=OFF
+
+      - name: Build Debug version with GCC (C89)
+        run: cmake --build build/debug
+
+      - name: Run Debug tests (fail if any test fails)
+        working-directory: build/debug
+        run: ctest --output-on-failure
+
+      - name: Configure Release build (C89)
+        run: cmake -B build/release -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_STANDARD=90 -DCMAKE_C_STANDARD_REQUIRED=ON  -DCMAKE_C_EXTENSIONS=OFF
+
+      - name: Build Release version with GCC (C89)
+        run: cmake --build build/release
+
+      - name: Run Release tests (fail if any test fails)
+        working-directory: build/release
+        run: ctest --output-on-failure
