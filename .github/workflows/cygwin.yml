@@ -1,0 +1,59 @@
+name: Cygwin Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  build:
+    name: Build with Cygwin (${{ matrix.configuration }})
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        configuration: [Release, Debug]
+
+    steps:
+      - name: Install Cygwin and dependencies
+        uses: cygwin/cygwin-install-action@v4
+        with:
+          packages: >-
+            gcc-core
+            gcc-g++
+            make
+            cmake
+
+      - name: Add Cygwin to PATH
+        run: echo "C:\\cygwin64\\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        shell: pwsh
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get Cygwin path for workspace
+        id: cygpath
+        shell: C:\cygwin64\bin\bash.exe --login -eo pipefail {0}
+        env:
+          WIN_WORKSPACE: ${{ github.workspace }}
+        run: |
+          echo "cygwin_path=$(cygpath -u "$WIN_WORKSPACE")" >> $GITHUB_ENV
+
+      - name: Configure with CMake (Cygwin)
+        shell: C:\cygwin64\bin\bash.exe --login -eo pipefail {0}
+        run: |
+          cd "$cygwin_path"
+          cmake -B build/${{ matrix.configuration }} \
+            -G "Unix Makefiles" \
+            -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
+
+      - name: Build with CMake (Cygwin)
+        shell: C:\cygwin64\bin\bash.exe --login -eo pipefail {0}
+        run: |
+          cd "$cygwin_path"
+          cmake --build build/${{ matrix.configuration }} -- -j
+
+      - name: Run tests (fail if any test fails)
+        shell: C:\cygwin64\bin\bash.exe --login -eo pipefail {0}
+        working-directory: ${{ env.cygwin_path }}/build/${{ matrix.configuration }}
+        run: ctest --output-on-failure
