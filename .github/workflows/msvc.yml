@@ -10,6 +10,9 @@ jobs:
   build:
     name: Build with Visual Studio C++
     runs-on: windows-latest
+    strategy:
+      matrix:
+        configuration: [Release, Debug]
 
     steps:
       - name: Checkout code
@@ -18,16 +21,9 @@ jobs:
       - name: Configure with CMake (Visual Studio generator)
         run: cmake -B build -G "Visual Studio 17 2022" -A x64
 
-      - name: Build the release version with MSVC
-        run: cmake --build build --config Release
+      - name: Build with MSVC
+        run: cmake --build build --config ${{ matrix.configuration }}
 
-      - name: Run the release version tests (fail if any test fails)
+      - name: Run tests (fail if any test fails)
         working-directory: build
-        run: ctest --output-on-failure -C Release
-
-      - name: Build the debug version with MSVC
-        run: cmake --build build --config Debug
-
-      - name: Run the debug version tests (fail if any test fails)
-        working-directory: build
-        run: ctest --output-on-failure -C Debug
+        run: ctest --output-on-failure -C ${{ matrix.configuration }}
