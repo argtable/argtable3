@@ -1,0 +1,41 @@
+name: MSYS2 MinGW64 Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  build:
+    name: Build with MSYS2 MinGW64 (${{ matrix.configuration }})
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        configuration: [Release, Debug]
+
+    steps:
+      - name: Install MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-make
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure with CMake (MinGW64)
+        shell: msys2 {0}
+        run: cmake -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
+
+      - name: Build with MinGW64
+        shell: msys2 {0}
+        run: cmake --build build --config ${{ matrix.configuration }}
+
+      - name: Run tests (fail if any test fails)
+        shell: msys2 {0}
+        working-directory: build
+        run: ctest --output-on-failure -C ${{ matrix.configuration }}
