@@ -48,6 +48,75 @@
 
 #define START_VSNBUFF 16
 
+#if defined(_MSC_VER)
+    #define arg_vsnprintf _vsnprintf
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+    #define arg_vsnprintf vsnprintf
+#else
+/**
+ * A C89-compatible replacement for vsnprintf().
+ *
+ * Writes at most (size - 1) characters to str and always null-terminates,
+ * unless size is 0. The output is truncated if necessary.
+ *
+ * @param str  Output buffer.
+ * @param size Size of output buffer.
+ * @param format printf-style format string.
+ * @param ap    va_list of arguments.
+ * @return The number of characters that would have been written, excluding the null byte.
+ */
+int arg_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
+    char *temp_buffer;
+    int result;
+    size_t temp_size;
+
+    if (str == NULL || size == 0) {
+        /* Just calculate required size using a temporary large buffer */
+        temp_size = 65536; /* Large temporary buffer */
+        temp_buffer = malloc(temp_size);
+        if (temp_buffer == NULL) {
+            return -1;
+        }
+
+        result = vsprintf(temp_buffer, format, ap);
+        free(temp_buffer);
+        return result;
+    }
+
+    if (size == 1) {
+        str[0] = '\0';
+        return 0;
+    }
+
+    /* Use a large temporary buffer to safely format */
+    temp_size = size * 4; /* Start with 4x the target size */
+    if (temp_size < 1024) {
+        temp_size = 1024;
+    }
+
+    temp_buffer = malloc(temp_size);
+    if (temp_buffer == NULL) {
+        return -1;
+    }
+
+    result = vsprintf(temp_buffer, format, ap);
+    if (result < 0) {
+        free(temp_buffer);
+        return -1;
+    }
+
+    /* Copy to destination buffer, truncating if necessary */
+    strncpy(str, temp_buffer, size - 1);
+    if ((size_t)result >= size) {
+        /* Truncate */
+        str[size - 1] = '\0';
+    }
+
+    free(temp_buffer);
+    return result; /* Return the number of chars that would be written */
+}
+#endif
+
 /*
  * This dynamic string module is adapted from TclResult.c in the Tcl library.
  * Here is the copyright notice from the library:
@@ -240,7 +309,7 @@ void arg_dstr_catf(arg_dstr_t ds, const char* fmt, ...) {
 
     for (;;) {
         va_start(arglist, fmt);
-        r = vsnprintf(buff, (size_t)(n + 1), fmt, arglist);
+        r = arg_vsnprintf(buff, (size_t)(n + 1), fmt, arglist);
         va_end(arglist);
 
         slen = strlen(buff);
