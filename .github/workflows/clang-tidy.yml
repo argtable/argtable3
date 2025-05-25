@@ -26,6 +26,13 @@ jobs:
       - name: Convert absolute paths to relative ones
         run: sed -i "s|${GITHUB_WORKSPACE}/||g" warnings.txt
 
+      - name: Fail if clang-tidy found warnings or errors
+        run: |
+          if grep -q . warnings.txt; then
+            echo "clang-tidy found warnings or errors."
+            exit 1
+          fi
+
       - name: Download clang-tidy-sarif
         run: |
           curl -sSL https://github.com/psastras/sarif-rs/releases/download/clang-tidy-sarif-v0.3.3/clang-tidy-sarif-x86_64-unknown-linux-gnu -o clang-tidy-sarif

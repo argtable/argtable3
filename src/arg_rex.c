@@ -495,6 +495,7 @@ static int trex_charnode(TRex* exp, TRexBool isclass) {
     exp->_p++;
     return trex_newnode(exp, t);
 }
+
 static int trex_class(TRex* exp) {
     int ret = -1;
     int first = -1, chain;
@@ -534,12 +535,12 @@ static int trex_class(TRex* exp) {
             }
         }
     }
+
     if (first != -1) {
         int c = first;
         exp->_nodes[chain].next = c;
-        chain = c;
-        first = -1;
     }
+
     /* hack? */
     exp->_nodes[ret].left = exp->_nodes[ret].next;
     exp->_nodes[ret].next = -1;

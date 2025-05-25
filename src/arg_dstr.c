@@ -36,6 +36,7 @@
 #include "argtable3_private.h"
 #endif
 
+#include <assert.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -134,13 +135,16 @@ void arg_dstr_set(arg_dstr_t ds, char* str, arg_dstr_freefn* free_proc) {
     } else if (free_proc == ARG_DSTR_VOLATILE) {
         length = (int)strlen(str);
         if (length > ARG_DSTR_SIZE) {
-            ds->data = (char*)xmalloc((unsigned)length + 1);
+            ds->data = (char*)xmalloc((size_t)length + 1);
             ds->free_proc = ARG_DSTR_DYNAMIC;
+            strncpy(ds->data, str, (size_t)length + 1); /* NOSONAR */
+            assert(ds->data[length] == '\0');
         } else {
             ds->data = ds->sbuf;
             ds->free_proc = ARG_DSTR_STATIC;
+            strncpy(ds->data, str, sizeof(ds->sbuf)); /* NOSONAR */
+            assert(ds->data[ARG_DSTR_SIZE] == '\0');
         }
-        strcpy(ds->data, str);
     } else {
         ds->data = str;
         ds->free_proc = free_proc;
@@ -288,7 +292,7 @@ static void setup_append_buf(arg_dstr_t ds, int new_space) {
 
     total_space = new_space + ds->append_used;
     if (total_space >= ds->append_data_size) {
-        char* newbuf;
+        char* newbuf = NULL;
 
         if (total_space < 100) {
             total_space = 200;
@@ -297,16 +301,20 @@ static void setup_append_buf(arg_dstr_t ds, int new_space) {
         }
         newbuf = (char*)xmalloc((unsigned)total_space);
         memset(newbuf, 0, (size_t)total_space);
-        strcpy(newbuf, ds->data);
+        strncpy(newbuf, ds->data, (size_t)total_space); /* NOSONAR */
+        assert(newbuf[total_space - 1] == '\0');
         if (ds->append_data != NULL) {
             xfree(ds->append_data);
         }
+
         ds->append_data = newbuf;
         ds->append_data_size = total_space;
-    } else if (ds->data != ds->append_data) {
-        strcpy(ds->append_data, ds->data);
+    } else if (ds->data != ds->append_data && ds->append_data != NULL) {
+        strncpy(ds->append_data, ds->data, (size_t)ds->append_data_size); /* NOSONAR */
+        assert(ds->append_data[ds->append_data_size - 1] == '\0');
     }
 
+    assert(ds->append_data != NULL);
     arg_dstr_free(ds);
     ds->data = ds->append_data;
 }
