@@ -1,4 +1,4 @@
-name: SonarQube Analysis
+name: SonarQube
 
 on:
   workflow_dispatch:
@@ -50,3 +50,4 @@ jobs:
             -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
             -Dsonar.organization=${{ env.SONAR_ORGANIZATION }}
             -Dsonar.cfamily.compile-commands="${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json"
+            -Dsonar.coverage.skip=true
