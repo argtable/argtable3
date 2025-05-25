@@ -7,9 +7,15 @@ jobs:
   sonarqube:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
+    env:
+      BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory
+      SONAR_PROJECT_KEY: argtable_argtable3
+      SONAR_ORGANIZATION: argtable3
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -20,17 +26,15 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake build-essential gcov
+          sudo apt-get install -y cmake build-essential
 
-      - name: Download build-wrapper
-        run: |
-          wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
-          unzip build-wrapper-linux-x86.zip
+      - name: Install build-wrapper
+        uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v4
 
       - name: Build with build-wrapper
         run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS="--coverage"
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build_wrapper_output_directory cmake --build build
+          cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS="--coverage" -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build
 
       - name: Run tests (optional, for coverage)
         run: |
@@ -38,25 +42,11 @@ jobs:
           ctest
 
       - name: SonarQube Scan
-        uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          args: >
-            -Dsonar.projectKey=argtable_argtable3
-            -Dsonar.organization=argtable3
-            -Dsonar.cfamily.build-wrapper-output=build_wrapper_output_directory
+        uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      - name: Generate coverage report (optional)
-        run: |
-          gcovr -r . --xml -o coverage.xml || true
-
-      - name: Upload coverage to SonarQube (optional)
-        if: always()
-        uses: SonarSource/sonarcloud-github-action@v2
         with:
           args: >
-            -Dsonar.cfamily.build-wrapper-output=build_wrapper_output_directory
-            -Dsonar.coverageReportPaths=coverage.xml
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ env.SONAR_ORGANIZATION }}
+            -Dsonar.cfamily.compile-commands="${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json"
