@@ -52,3 +52,12 @@ foreach(examples_src ${EXAMPLES_SOURCES})
   target_include_directories(${examplename} PRIVATE ${PROJECT_SOURCE_DIR}/src)
   target_link_libraries(${examplename} argtable3 ${ARGTABLE3_EXTRA_LIBS})
 endforeach()
+
+add_executable(multicmd
+  ${PROJECT_SOURCE_DIR}/examples/multicmd/app.c
+  ${PROJECT_SOURCE_DIR}/examples/multicmd/cmdhelp.c
+  ${PROJECT_SOURCE_DIR}/examples/multicmd/cmdlist.c
+  ${PROJECT_SOURCE_DIR}/examples/multicmd/cmdversion.c
+)
+target_include_directories(multicmd PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/examples/multicmd)
+target_link_libraries(multicmd argtable3 ${ARGTABLE3_EXTRA_LIBS})
