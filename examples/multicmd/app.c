@@ -5,8 +5,8 @@
  *
  * This file is part of the argtable3 library.
  *
- * Copyright (C) 1998-2001,2003-2011,2013 Stewart Heitmann
- * <sheitmann@users.sourceforge.net>
+ * Copyright (C) 2016-2025 Tom G. Huang
+ * <tomghuang@gmail.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
