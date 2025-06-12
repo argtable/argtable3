@@ -49,7 +49,6 @@ set(PRODUCT_NAME "${PROJECT_NAME}")
 set(MAINTAINER_CONTACT "tomghuang@gmail.com")
 
 option(BUILD_SHARED_LIBS "Build shared library" OFF)
-option(ARGTABLE3_ENABLE_CONAN "Enable Conan dependency manager" OFF)
 option(ARGTABLE3_ENABLE_TESTS "Enable unit tests" ON)
 option(ARGTABLE3_ENABLE_EXAMPLES "Enable examples" ON)
 option(ARGTABLE3_ENABLE_ARG_REX_DEBUG "Enable arg_rex debug output" OFF)
@@ -81,18 +80,6 @@ set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT
 set(PROJECT_VERSION_TWEAK 0)
 set(ARGTABLE3_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK}")
 set(ARGTABLE3_FULL_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_BUILD}")
-
-################################################################################
-# Conan dependency manager integration (optional)
-################################################################################
-
-if(ARGTABLE3_ENABLE_CONAN AND EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-  include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-  conan_basic_setup()
-  string(REPLACE ";" ":" LINK_FLAGS "${CONAN_LIB_DIRS}")
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-rpath-link,${LINK_FLAGS}")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath-link,${LINK_FLAGS}")
-endif()
 
 ################################################################################
 # Source files for the argtable3 library
