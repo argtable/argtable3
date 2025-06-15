@@ -108,7 +108,7 @@ set(ARGTABLE3_SRC_FILES
 # Packaging configuration (CPack)
 ################################################################################
 
-set(PackagingTemplatesDir "${CMAKE_CURRENT_SOURCE_DIR}/packaging")
+set(PackagingTemplatesDir "${CMAKE_CURRENT_SOURCE_DIR}")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 
