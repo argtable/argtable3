@@ -211,7 +211,8 @@ void arg_dstr_set(arg_dstr_t ds, char* str, arg_dstr_freefn* free_proc) {
         } else {
             ds->data = ds->sbuf;
             ds->free_proc = ARG_DSTR_STATIC;
-            strncpy(ds->data, str, sizeof(ds->sbuf)); /* NOSONAR */
+            strncpy(ds->data, str, sizeof(ds->sbuf) - 1); /* NOSONAR */
+            ds->data[sizeof(ds->sbuf) - 1] = '\0';
             assert(ds->data[ARG_DSTR_SIZE] == '\0');
         }
     } else {
