@@ -6,6 +6,7 @@ dist/
 .archive/
 .tags/
 .misc/
+.venv/
 .py*/
 docs/source/xml/
 docs/build/
