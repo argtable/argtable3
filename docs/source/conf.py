@@ -6,10 +6,9 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'Argtable'
+project = 'Argtable3'
 copyright = '2025, Argtable Project members and individual contributors'
 author = 'Tom G. Huang'
-release = '3.3.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

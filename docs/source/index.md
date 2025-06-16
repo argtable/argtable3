@@ -188,6 +188,9 @@ arg_api_deprecated.md
 :maxdepth: 1
 :hidden: true
 
+arg_dev_conan.md
+arg_dev_meson.md
+arg_dev_vcpkg.md
 arg_dev_tests.md
 arg_dev_docs.md
 arg_dev_internals.md
