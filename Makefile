@@ -33,6 +33,7 @@ DOCKER_CONTAINER_NAME := argtable3-builder-container
 
 BUILD_DIR             := build
 OUTPUT_DIR	          := output
+DOCS_DIR              := docs
 DOXYGEN_XML_DIR       := docs/source/xml
 DOCS_BUILD_DIR        := docs/build
 ARCHIVE_DIR           := .archive
@@ -80,7 +81,7 @@ Here are some <TAG_NAME> examples (use 'make taglist' to get all available tags)
 
 
 .PHONY: build-docker-image
-build-docker-image:
+build-docker-image: tools/Dockerfile
 	@if [ ! -f /.dockerenv ] && ! docker image inspect $(DOCKER_IMAGE_NAME) >/dev/null 2>&1; then \
 		docker build -f tools/Dockerfile -t $(DOCKER_IMAGE_NAME) .; \
 	fi
@@ -131,6 +132,16 @@ archive: build-docker-image co
 		printf '\n************************************************************\n' && \
 		printf 'Clean %s...\n' $(ARCHIVE_DIR)/argtable-$(TAG) && \
 		rm -rf $(ARCHIVE_DIR)/argtable-$(TAG) \
+	"
+
+
+.PHONY: docs
+docs: build-docker-image
+	@$(DOCKER_CMD_PREFIX) bash -c "\
+		printf 'Generate documentation...\n' && \
+		pushd $(DOCS_DIR) && \
+		doxygen && \
+		make html \
 	"
 
 
