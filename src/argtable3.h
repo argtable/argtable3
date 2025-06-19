@@ -234,7 +234,7 @@ typedef void(arg_dstr_freefn)(char* buf);
  * @param ctx  User-defined context pointer, as provided during registration.
  * @return 0 on success, or a nonzero error code on failure.
  */
-typedef int(arg_cmdfn)(int argc, char* argv[], arg_dstr_t res, void* ctx);
+typedef int (*arg_cmdfn)(int argc, char* argv[], arg_dstr_t res, void* ctx);
 
 /**
  * Function pointer type for custom comparison functions used in sorting.
@@ -655,7 +655,7 @@ typedef struct arg_end {
 typedef struct arg_cmd_info {
     char name[ARG_CMD_NAME_LEN];               /**< Sub-command name */
     char description[ARG_CMD_DESCRIPTION_LEN]; /**< Short description of the sub-command */
-    arg_cmdfn* proc;                           /**< Sub-command handler function */
+    arg_cmdfn proc;                            /**< Sub-command handler function */
     void* ctx;                                 /**< User-defined context pointer for the sub-command */
 } arg_cmd_info_t;
 
@@ -2045,7 +2045,7 @@ ARG_EXTERN void arg_cmd_uninit(void);
  *
  * @see arg_cmd_unregister, arg_cmd_dispatch, arg_cmd_info, arg_cmd_count
  */
-ARG_EXTERN void arg_cmd_register(const char* name, arg_cmdfn* proc, const char* description, void* ctx);
+ARG_EXTERN void arg_cmd_register(const char* name, arg_cmdfn proc, const char* description, void* ctx);
 
 /**
  * Unregisters a sub-command by name.

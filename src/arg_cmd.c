@@ -129,7 +129,7 @@ void arg_cmd_uninit(void) {
     arg_hashtable_destroy(s_hashtable, 1);
 }
 
-void arg_cmd_register(const char* name, arg_cmdfn* proc, const char* description, void* ctx) {
+void arg_cmd_register(const char* name, arg_cmdfn proc, const char* description, void* ctx) {
     arg_cmd_info_t* cmd_info;
     size_t slen_name;
     void* k;
