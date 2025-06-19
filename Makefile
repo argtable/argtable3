@@ -1,7 +1,7 @@
 ################################################################################
 # This file is part of the argtable3 library.
 #
-# Copyright (C) 2014-2019 Tom G. Huang
+# Copyright (C) 2014-2025 Tom G. Huang
 # <tomghuang@gmail.com>
 # All rights reserved.
 #
@@ -28,96 +28,149 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-MKDIR    = mkdir -p
-RM       = rm -rf
-MV       = mv
-CP       = cp
-CD       = cd
-ZIP      = zip
-TAR      = tar
-PUSHD    = pushd
-POPD     = popd
-MKINDEX  = makeindex
-PRINTF   = printf
-GIT      = git
+DOCKER_IMAGE_NAME     := argtable3-builder
+DOCKER_CONTAINER_NAME := argtable3-builder-container
 
-BUILD_DIR       = build
-DOXYGEN_XML_DIR = docs/source/xml
-DOCS_BUILD_DIR  = docs/build
-ARCHIVE_DIR     = .archive
-TAGS_DIR        = .tags
+BUILD_DIR             := build
+OUTPUT_DIR	          := output
+DOXYGEN_XML_DIR       := docs/source/xml
+DOCS_BUILD_DIR        := docs/build
+ARCHIVE_DIR           := .archive
+AMALGAMATION_DIST_DIR := dist
+MAKEFILE_PATH         := $(abspath $(lastword $(MAKEFILE_LIST)))
+MAKEFILE_DIR          := $(abspath $(dir $(MAKEFILE_PATH)))
 
-MAKEFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
-MAKEFILE_DIR := $(abspath $(dir $(MAKEFILE_PATH)))
+# For Windows, we don't use --user as it can cause issues with Docker Desktop's
+# volume mounting. Docker Desktop handles permissions for mounted volumes.
+ifeq ($(OS),Windows_NT)
+	MAKEFILE_PATH := $(shell cygpath -m $(MAKEFILE_PATH))
+	MAKEFILE_DIR := $(shell cygpath -m $(MAKEFILE_DIR))
+	PLATFORM_CURDIR := $(shell cygpath -m $(CURDIR))
+	USER_MOUNT_OPTION :=
+	DOCKER_CMD_PREFIX := docker run --rm -v "$(PLATFORM_CURDIR):/workdir" -w /workdir $(DOCKER_IMAGE_NAME)
+else
+	PLATFORM_CURDIR := $(CURDIR)
+	USER_MOUNT_OPTION := --user $(shell id -u):$(shell id -g)
+	DOCKER_CMD_PREFIX :=
+endif
 
 
 .PHONY: help
 help:
-	@printf "Usage: make <target> [options]\n"
-	@printf "  make co TAG=<TAG_NAME>      : checkout the specified tag\n"
-	@printf "  make archive TAG=<TAG_NAME> : create src archive in the .archive directory\n"
-	@printf "  make tag TAG=<TAG_NAME>     : tag the master branch\n"
-	@printf "  make taglist                : list all available tags\n"
-	@printf "  make cleanall               : clean the distribution package and temp files\n"
-	@printf "  make help                   : display this message\n"
-	@printf "  make githead                : show the first 7-digit of the HEAD commit SHA-1\n"
-	@printf "\n"
-	@printf "The <TAG_NAME> format is: v<MAJOR>.<MINOR>.<PATCH>.<BUILD>. The <BUILD> field is the\n"
-	@printf "first 7-digit of the HEAD commit SHA-1, which you can get by running 'make githead'.\n"
-	@printf "Here are some <TAG_NAME> examples (use 'make taglist' to get all available tags):\n"
-	@printf "  v0.0.1.189221c\n"
-	@printf "  v1.1.0.bbf3b42\n"
-	@printf "  v2.0.0.3b42778\n"
+	@$(DOCKER_CMD_PREFIX) sh -c "printf \"Usage: make <target> [options]\n\
+  make help                   - Display this message (default)\n\
+  make co TAG=<TAG_NAME>      - Checkout the specified tag\n\
+  make archive TAG=<TAG_NAME> - Create distribution archives in the .archive directory\n\
+  make tag TAG=<TAG_NAME>     - Tag the master branch\n\
+  make dist TAG=<TAG_NAME>    - Create distribution archives in the dist directory\n\
+  make taglist                - List all available tags\n\
+  make clean                  - Remove build artifacts\n\
+  make cleanall               - Remove build artifacts and temp files\n\
+  make githead                - Show the first 7-digit of the HEAD commit SHA-1\n\
+  make build-docker-image     - Build the Docker image for the builder environment\n\
+  make output-dir             - Create the host output directory\n\
+  make shell                  - Open an interactive shell inside the Docker container\n\
+\n\
+The <TAG_NAME> format is: v<MAJOR>.<MINOR>.<PATCH>.<BUILD>. The <BUILD> field is the\n\
+first 7-digit of the HEAD commit SHA-1, which you can get by running 'make githead'.\n\
+Here are some <TAG_NAME> examples (use 'make taglist' to get all available tags):\n\
+  v0.0.1.189221c\n\
+  v1.1.0.bbf3b42\n\
+  v2.0.0.3b42778\n\""
+
+
+.PHONY: build-docker-image
+build-docker-image:
+	@if [ ! -f /.dockerenv ] && ! docker image inspect $(DOCKER_IMAGE_NAME) >/dev/null 2>&1; then \
+		docker build -f tools/Dockerfile -t $(DOCKER_IMAGE_NAME) .; \
+	fi
+
+
+.PHONY: output-dir
+output-dir: build-docker-image
+	@$(DOCKER_CMD_PREFIX) sh -c "mkdir -p output"
 
 
 .PHONY: co
-co:
-	@$(MKDIR) $(ARCHIVE_DIR)
-	@$(MKDIR) $(ARCHIVE_DIR)/$(TAG)
-	@$(PRINTF) "Export tag %s...\n" $(TAG)
-	@$(GIT) -c core.autocrlf=true archive $(TAG) | $(TAR) -x -C $(ARCHIVE_DIR)/$(TAG)
-	@$(MKDIR) $(TAGS_DIR)
-	@$(MV) $(ARCHIVE_DIR)/$(TAG) $(TAGS_DIR)/$(TAG)
-	@$(PRINTF) $(TAG) > $(TAGS_DIR)/$(TAG)/version.tag
+co: build-docker-image
+	@$(DOCKER_CMD_PREFIX) sh -c "\
+		printf 'Export tag %s to temp directory %s...\n' $(TAG) $(ARCHIVE_DIR)/argtable-$(TAG) && \
+		mkdir -p $(ARCHIVE_DIR) && \
+		mkdir -p $(ARCHIVE_DIR)/argtable-$(TAG) && \
+		git archive $(TAG) | tar -x -C $(ARCHIVE_DIR)/argtable-$(TAG) && \
+		printf $(TAG) > $(ARCHIVE_DIR)/argtable-$(TAG)/version.tag \
+	"
 
 
 .PHONY: archive
-archive:
-	@$(MKDIR) $(ARCHIVE_DIR)
-	@$(MKDIR) $(ARCHIVE_DIR)/argtable-$(TAG)
-	@$(PRINTF) "Archive tag %s in %s...\n" $(TAG) $(ARCHIVE_DIR)/argtable-$(TAG).zip
-	@$(GIT) -c core.autocrlf=true archive $(TAG) | $(TAR) -x -C $(ARCHIVE_DIR)/argtable-$(TAG)
-	@$(PRINTF) $(TAG) > $(ARCHIVE_DIR)/argtable-$(TAG)/version.tag
-	@$(CD) $(ARCHIVE_DIR); $(ZIP) -rq argtable-$(TAG).zip argtable-$(TAG)
-	@$(RM) $(ARCHIVE_DIR)/argtable-$(TAG)
+archive: build-docker-image co
+	@$(DOCKER_CMD_PREFIX) bash -c "\
+		printf 'Archive tag %s in %s...\n' $(TAG) $(ARCHIVE_DIR)/argtable-$(TAG).zip && \
+		find $(ARCHIVE_DIR)/argtable-$(TAG) -type f -exec unix2dos {} \; && \
+		pushd $(ARCHIVE_DIR) && \
+		zip -rq argtable-$(TAG).zip argtable-$(TAG) && \
+		popd && \
+		printf '\n************************************************************\n' && \
+		printf 'Archive tag %s in %s...\n' $(TAG) $(ARCHIVE_DIR)/argtable-$(TAG).tar.gz && \
+		find $(ARCHIVE_DIR)/argtable-$(TAG) -type f -exec dos2unix {} \; && \
+		pushd $(ARCHIVE_DIR) && \
+		tar -zcf argtable-$(TAG).tar.gz argtable-$(TAG) && \
+		popd && \
+		printf '\n************************************************************\n' && \
+		printf 'Archive tag %s in %s...\n' $(TAG) $(ARCHIVE_DIR)/argtable-$(TAG)-amalgamation.tar.gz && \
+		pushd $(ARCHIVE_DIR)/argtable-$(TAG)/tools && \
+		./build tar && \
+		popd && \
+		mv $(ARCHIVE_DIR)/argtable-$(TAG)/tools/argtable-$(TAG)-amalgamation.tar.gz $(ARCHIVE_DIR) && \
+		printf '\n************************************************************\n' && \
+		printf 'Archive tag %s in %s...\n' $(TAG) $(ARCHIVE_DIR)/argtable-$(TAG)-amalgamation.zip && \
+		pushd $(ARCHIVE_DIR)/argtable-$(TAG)/tools && \
+		./build zip && \
+		popd && \
+		mv $(ARCHIVE_DIR)/argtable-$(TAG)/tools/argtable-$(TAG)-amalgamation.zip $(ARCHIVE_DIR) && \
+		printf '\n************************************************************\n' && \
+		printf 'Clean %s...\n' $(ARCHIVE_DIR)/argtable-$(TAG) && \
+		rm -rf $(ARCHIVE_DIR)/argtable-$(TAG) \
+	"
 
-	@$(MKDIR) $(ARCHIVE_DIR)/argtable-$(TAG)
-	@$(PRINTF) "Archive tag %s in %s...\n" $(TAG) $(ARCHIVE_DIR)/argtable-$(TAG).tar.gz
-	@$(GIT) archive $(TAG) | $(TAR) -x -C $(ARCHIVE_DIR)/argtable-$(TAG)
-	@$(PRINTF) $(TAG) > $(ARCHIVE_DIR)/argtable-$(TAG)/version.tag
-	@$(CD) $(ARCHIVE_DIR); $(TAR) -zcf argtable-$(TAG).tar.gz argtable-$(TAG)
-	@$(RM) $(ARCHIVE_DIR)/argtable-$(TAG)
+
+.PHONY: shell
+shell: build-docker-image
+	@if [ ! -f /.dockerenv ]; then \
+		$(DOCKER_CMD_PREFIX) sh -c "echo 'Opening shell in Docker container...'"; \
+		docker run --rm -it -v "$(PLATFORM_CURDIR):/workdir" $(USER_MOUNT_OPTION) -w /workdir $(DOCKER_IMAGE_NAME) bash; \
+	else \
+		$(DOCKER_CMD_PREFIX) sh -c "echo 'You are already inside the Docker container.'"; \
+	fi
 
 
 .PHONY: tag
-tag:
-	@$(GIT) tag -a $(TAG) -m "tagging: $(TAG)"
+tag: build-docker-image
+	@$(DOCKER_CMD_PREFIX) sh -c "git tag -a $(TAG) -m 'tagging: $(TAG)'"
 
 
 .PHONY: taglist
-taglist:
-	@$(PRINTF) "Available tags:\n"
-	@$(GIT) tag -l
+taglist: build-docker-image
+	@$(DOCKER_CMD_PREFIX) sh -c "printf 'Available tags:\n'; git tag -l"
+
+
+.PHONY: clean
+clean: build-docker-image
+	@$(DOCKER_CMD_PREFIX) sh -c "rm -rf $(BUILD_DIR) $(OUTPUT_DIR)"
 
 
 .PHONY: cleanall
-cleanall:
-	@$(PRINTF) "Clean the distribution package and temp files...\n"
-	@$(RM) $(BUILD_DIR)
-	@$(RM) $(DOXYGEN_XML_DIR)
-	@$(RM) $(DOCS_BUILD_DIR)
+cleanall: build-docker-image
+	@$(DOCKER_CMD_PREFIX) sh -c "rm -rf \
+		$(BUILD_DIR) \
+		$(OUTPUT_DIR) \
+		$(DOXYGEN_XML_DIR) \
+		$(DOCS_BUILD_DIR) \
+		$(ARCHIVE_DIR) \
+		$(AMALGAMATION_DIST_DIR) \
+	"
 
 
 .PHONY: githead
-githead:
-	@$(GIT) rev-parse --short=7 HEAD
+githead: build-docker-image
+	@$(DOCKER_CMD_PREFIX) sh -c "git rev-parse --short=7 HEAD"
