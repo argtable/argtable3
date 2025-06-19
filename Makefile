@@ -48,16 +48,20 @@ ifeq ($(OS),Windows_NT)
 	MAKEFILE_DIR := $(shell cygpath -m $(MAKEFILE_DIR))
 	PLATFORM_CURDIR := $(shell cygpath -m $(CURDIR))
 	USER_MOUNT_OPTION :=
-	DOCKER_CMD_PREFIX := docker run --rm -v "$(PLATFORM_CURDIR):/workdir" -w /workdir $(DOCKER_IMAGE_NAME)
 else
 	PLATFORM_CURDIR := $(CURDIR)
 	USER_MOUNT_OPTION := --user $(shell id -u):$(shell id -g)
-	DOCKER_CMD_PREFIX :=
+endif
+
+ifneq ($(wildcard /.dockerenv),)
+    DOCKER_CMD_PREFIX :=
+else
+    DOCKER_CMD_PREFIX := docker run --rm -v "$(PLATFORM_CURDIR):/workdir" -w /workdir $(DOCKER_IMAGE_NAME)
 endif
 
 
 .PHONY: help
-help:
+help: build-docker-image
 	@$(DOCKER_CMD_PREFIX) sh -c "printf \"Usage: make <target> [options]\n\
   make help                   - Display this message (default)\n\
   make co TAG=<TAG_NAME>      - Checkout the specified tag\n\
@@ -83,7 +87,7 @@ Here are some <TAG_NAME> examples (use 'make taglist' to get all available tags)
 .PHONY: build-docker-image
 build-docker-image: tools/Dockerfile
 	@if [ ! -f /.dockerenv ] && ! docker image inspect $(DOCKER_IMAGE_NAME) >/dev/null 2>&1; then \
-		docker build -f tools/Dockerfile -t $(DOCKER_IMAGE_NAME) .; \
+		docker buildx build -f tools/Dockerfile -t $(DOCKER_IMAGE_NAME) --load .; \
 	fi
 
 
