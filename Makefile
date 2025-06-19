@@ -53,7 +53,15 @@ else
 	USER_MOUNT_OPTION := --user $(shell id -u):$(shell id -g)
 endif
 
-ifneq ($(wildcard /.dockerenv),)
+IN_CONTAINER := $(shell \
+    if [ -f /.dockerenv ] || env | grep -q container; then \
+        echo "true"; \
+    else \
+        echo "false"; \
+    fi \
+)
+
+ifeq ($(IN_CONTAINER),true)
     DOCKER_CMD_PREFIX :=
 else
     DOCKER_CMD_PREFIX := docker run --rm -v "$(PLATFORM_CURDIR):/workdir" -w /workdir $(DOCKER_IMAGE_NAME)
@@ -86,7 +94,7 @@ Here are some <TAG_NAME> examples (use 'make taglist' to get all available tags)
 
 .PHONY: build-docker-image
 build-docker-image: tools/Dockerfile
-	@if [ ! -f /.dockerenv ] && ! docker image inspect $(DOCKER_IMAGE_NAME) >/dev/null 2>&1; then \
+	@if [ "$(IN_CONTAINER)" != "true" ] && ! docker image inspect $(DOCKER_IMAGE_NAME) >/dev/null 2>&1; then \
 		docker buildx build -f tools/Dockerfile -t $(DOCKER_IMAGE_NAME) --load .; \
 	fi
 
@@ -151,7 +159,7 @@ docs: build-docker-image
 
 .PHONY: shell
 shell: build-docker-image
-	@if [ ! -f /.dockerenv ]; then \
+	@if [ "$(IN_CONTAINER)" != "true" ]; then \
 		$(DOCKER_CMD_PREFIX) sh -c "echo 'Opening shell in Docker container...'"; \
 		docker run --rm -it -v "$(PLATFORM_CURDIR):/workdir" $(USER_MOUNT_OPTION) -w /workdir $(DOCKER_IMAGE_NAME) bash; \
 	else \
