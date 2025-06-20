@@ -47,10 +47,8 @@ ifeq ($(OS),Windows_NT)
 	MAKEFILE_PATH := $(shell cygpath -m $(MAKEFILE_PATH))
 	MAKEFILE_DIR := $(shell cygpath -m $(MAKEFILE_DIR))
 	PLATFORM_CURDIR := $(shell cygpath -m $(CURDIR))
-	USER_MOUNT_OPTION :=
 else
 	PLATFORM_CURDIR := $(CURDIR)
-	USER_MOUNT_OPTION := --user $(shell id -u):$(shell id -g)
 endif
 
 IN_CONTAINER := $(shell \
@@ -161,7 +159,7 @@ docs: build-docker-image
 shell: build-docker-image
 	@if [ "$(IN_CONTAINER)" != "true" ]; then \
 		$(DOCKER_CMD_PREFIX) sh -c "echo 'Opening shell in Docker container...'"; \
-		docker run --rm -it -v "$(PLATFORM_CURDIR):/workdir" $(USER_MOUNT_OPTION) -w /workdir $(DOCKER_IMAGE_NAME) bash; \
+		docker run --rm -it -v "$(PLATFORM_CURDIR):/workdir" -w /workdir $(DOCKER_IMAGE_NAME) bash; \
 	else \
 		$(DOCKER_CMD_PREFIX) sh -c "echo 'You are already inside the Docker container.'"; \
 	fi
