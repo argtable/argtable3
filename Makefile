@@ -106,8 +106,10 @@ co: build-docker-image
 	@$(DOCKER_CMD_PREFIX) sh -c "\
 		printf 'Export tag %s to temp directory %s...\n' $(TAG) $(ARCHIVE_DIR)/argtable-$(TAG) && \
 		mkdir -p $(ARCHIVE_DIR) && \
-		mkdir -p $(ARCHIVE_DIR)/argtable-$(TAG) && \
-		git archive $(TAG) | tar -x -C $(ARCHIVE_DIR)/argtable-$(TAG) && \
+		mkdir -p $(ARCHIVE_DIR)/argtable-$(TAG) \
+	"
+	@git archive $(TAG) | tar -x -C $(ARCHIVE_DIR)/argtable-$(TAG)
+	@$(DOCKER_CMD_PREFIX) sh -c "\
 		printf $(TAG) > $(ARCHIVE_DIR)/argtable-$(TAG)/version.tag \
 	"
 
@@ -166,12 +168,18 @@ shell: build-docker-image
 
 .PHONY: tag
 tag: build-docker-image
-	@$(DOCKER_CMD_PREFIX) sh -c "git tag -a $(TAG) -m 'tagging: $(TAG)'"
+	@git tag -a $(TAG) -m "tagging: $(TAG)"
 
 
 .PHONY: taglist
 taglist: build-docker-image
-	@$(DOCKER_CMD_PREFIX) sh -c "printf 'Available tags:\n'; git tag -l"
+	@$(DOCKER_CMD_PREFIX) sh -c "printf 'Available tags:\n'"
+	@git tag -l
+
+
+.PHONY: githead
+githead: build-docker-image
+	@git rev-parse --short=7 HEAD
 
 
 .PHONY: clean
@@ -189,8 +197,3 @@ cleanall: build-docker-image
 		$(ARCHIVE_DIR) \
 		$(AMALGAMATION_DIST_DIR) \
 	"
-
-
-.PHONY: githead
-githead: build-docker-image
-	@$(DOCKER_CMD_PREFIX) sh -c "git rev-parse --short=7 HEAD"
