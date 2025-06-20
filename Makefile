@@ -75,7 +75,6 @@ help: build-docker-image
   make co TAG=<TAG_NAME>      - Checkout the specified tag\n\
   make archive TAG=<TAG_NAME> - Create distribution archives in the .archive directory\n\
   make tag TAG=<TAG_NAME>     - Tag the master branch\n\
-  make dist TAG=<TAG_NAME>    - Create distribution archives in the dist directory\n\
   make taglist                - List all available tags\n\
   make clean                  - Remove build artifacts\n\
   make cleanall               - Remove build artifacts and temp files\n\
