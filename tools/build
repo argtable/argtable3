@@ -70,8 +70,10 @@ get_ver () {
   local argtable_ver
   if [ -f "../version.tag" ]; then
     argtable_ver=$(<../version.tag)
+    # Remove build metadata (everything after and including "+")
+    argtable_ver=${argtable_ver%%+*}
   else
-    argtable_ver="master"
+    argtable_ver="v0.0.0"
   fi
   echo "$argtable_ver"
 }

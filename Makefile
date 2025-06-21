@@ -81,12 +81,12 @@ help: build-docker-image
   make output-dir             - Create the host output directory\n\
   make shell                  - Open an interactive shell inside the Docker container\n\
 \n\
-The <TAG_NAME> format is: v<MAJOR>.<MINOR>.<PATCH>.<BUILD>. The <BUILD> field is the\n\
-first 7-digit of the HEAD commit SHA-1, which you can get by running 'make githead'.\n\
+The <TAG_NAME> format follows the SemVer standard but excludes build metadata:\n\
+v<MAJOR>.<MINOR>.<PATCH>[-<PRE_RELEASE>], where the <PRE_RELEASE> field is optional.\n\
 Here are some <TAG_NAME> examples (use 'make taglist' to get all available tags):\n\
-  v0.0.1.189221c\n\
-  v1.1.0.bbf3b42\n\
-  v2.0.0.3b42778\n\""
+  v0.0.1\n\
+  v1.1.0-alpha.1\n\
+  v2.0.0-rc.3\n\""
 
 
 .PHONY: build-docker-image
@@ -110,7 +110,7 @@ co: build-docker-image
 	"
 	@git archive $(TAG) | tar -x -C $(ARCHIVE_DIR)/argtable-$(TAG)
 	@$(DOCKER_CMD_PREFIX) sh -c "\
-		printf $(TAG) > $(ARCHIVE_DIR)/argtable-$(TAG)/version.tag \
+		printf "$(TAG)+git.$(shell git rev-parse --short=7 HEAD)" > $(ARCHIVE_DIR)/argtable-$(TAG)/version.tag \
 	"
 
 
