@@ -1,0 +1,33 @@
+name: ASan
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  asan-check:
+    name: AddressSanitizer Memory Check
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake
+
+    - name: Build with ASan
+      run: |
+        mkdir -p build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fsanitize=address -fno-omit-frame-pointer" ..
+        make
+
+    - name: Run Tests
+      run: |
+        cd build
+        CTEST_OUTPUT_ON_FAILURE=1 make test
