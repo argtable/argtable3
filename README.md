@@ -1,7 +1,8 @@
 [![clang-tidy](https://github.com/argtable/argtable3/actions/workflows/clang-tidy.yml/badge.svg)](https://github.com/argtable/argtable3/actions/workflows/clang-tidy.yml)
 [![coverity](https://github.com/argtable/argtable3/actions/workflows/coverity.yml/badge.svg)](https://github.com/argtable/argtable3/actions/workflows/coverity.yml)
-[![coverity](https://github.com/argtable/argtable3/actions/workflows/asan.yml/badge.svg)](https://github.com/argtable/argtable3/actions/workflows/asan.yml)
-[![coverity](https://github.com/argtable/argtable3/actions/workflows/valgrind.yml/badge.svg)](https://github.com/argtable/argtable3/actions/workflows/valgrind.yml)
+[![asan](https://github.com/argtable/argtable3/actions/workflows/asan.yml/badge.svg)](https://github.com/argtable/argtable3/actions/workflows/asan.yml)
+[![valgrind](https://github.com/argtable/argtable3/actions/workflows/valgrind.yml/badge.svg)](https://github.com/argtable/argtable3/actions/workflows/valgrind.yml)
+[![license](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 
 Introduction of Argtable3
