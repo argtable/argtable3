@@ -48,7 +48,10 @@ else(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
   if ((CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 4.3)
     OR CMAKE_C_COMPILER_ID MATCHES "Clang")
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
+      # Only enable -Werror for Debug builds, as we cannot predict
+      # (or retroactively fix) what GCC/clang will warn about in
+      # the future.
+      set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS} -Werror")
       set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wpedantic")
   endif()
 endif()
