@@ -180,6 +180,11 @@ void arg_cmd_unregister(const char* name) {
 int arg_cmd_dispatch(const char* name, int argc, char* argv[], arg_dstr_t res) {
     arg_cmd_info_t* cmd_info = arg_cmd_info(name);
 
+    if (cmd_info == NULL) {
+        arg_dstr_catf(res, "The command '%s' was not found. Type 'help' to get more information.\n", name);
+        return 1;
+    }
+
     assert(cmd_info != NULL);
     assert(cmd_info->proc != NULL);
 
