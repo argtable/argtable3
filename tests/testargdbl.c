@@ -426,6 +426,118 @@ void test_argdbl_basic_015(CuTest* tc) {
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }
 
+void test_argdbl_empty_short_value(CuTest* tc) {
+    struct arg_dbl* value = arg_dbl0("d", "double", NULL, NULL);
+    struct arg_end* end = arg_end(20);
+    void* argtable[] = {value, end};
+    char* argv[] = {"program", "-d", "", NULL};
+
+    value->dval[0] = 42.5;
+    CuAssertIntEquals(tc, 1, arg_parse(3, argv, argtable));
+    CuAssertIntEquals(tc, 0, value->count);
+    CuAssertDblEquals(tc, 42.5, value->dval[0], DBL_EPSILON);
+    CuAssertPtrEquals(tc, value, end->parent[0]);
+    CuAssertStrEquals(tc, "", end->argval[0]);
+
+    arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+}
+
+void test_argdbl_empty_positional_value(CuTest* tc) {
+    struct arg_dbl* value = arg_dbl1(NULL, NULL, NULL, NULL);
+    struct arg_end* end = arg_end(20);
+    void* argtable[] = {value, end};
+    char* argv[] = {"program", "", NULL};
+
+    value->dval[0] = 42.5;
+    CuAssertIntEquals(tc, 1, arg_parse(2, argv, argtable));
+    CuAssertIntEquals(tc, 0, value->count);
+    CuAssertDblEquals(tc, 42.5, value->dval[0], DBL_EPSILON);
+    CuAssertPtrEquals(tc, value, end->parent[0]);
+    CuAssertStrEquals(tc, "", end->argval[0]);
+
+    arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+}
+
+void test_argdbl_empty_long_value(CuTest* tc) {
+    struct arg_dbl* value = arg_dbl0("d", "double", NULL, NULL);
+    struct arg_end* end = arg_end(20);
+    void* argtable[] = {value, end};
+    char* argv[] = {"program", "--double=", NULL};
+
+    value->dval[0] = 42.5;
+    /* Long options also report the existing missing-argument error. */
+    CuAssertIntEquals(tc, 2, arg_parse(2, argv, argtable));
+    CuAssertIntEquals(tc, 0, value->count);
+    CuAssertDblEquals(tc, 42.5, value->dval[0], DBL_EPSILON);
+    CuAssertPtrEquals(tc, value, end->parent[1]);
+    CuAssertStrEquals(tc, "", end->argval[1]);
+
+    arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+}
+
+void test_argdbl_optional_value(CuTest* tc) {
+    struct arg_dbl* value = arg_dbl0("d", "double", NULL, NULL);
+    struct arg_end* end = arg_end(20);
+    void* argtable[] = {value, end};
+    char* omitted[] = {"program", "--double", NULL};
+    char* empty[] = {"program", "--double=", NULL};
+
+    value->hdr.flag |= ARG_HASOPTVALUE;
+    value->dval[0] = 42.5;
+    CuAssertIntEquals(tc, 0, arg_parse(2, omitted, argtable));
+    CuAssertIntEquals(tc, 1, value->count);
+    CuAssertDblEquals(tc, 42.5, value->dval[0], DBL_EPSILON);
+
+    CuAssertIntEquals(tc, 2, arg_parse(2, empty, argtable));
+    CuAssertIntEquals(tc, 0, value->count);
+    CuAssertDblEquals(tc, 42.5, value->dval[0], DBL_EPSILON);
+
+    arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+}
+
+void test_argdbl_empty_repeated_value(CuTest* tc) {
+    struct arg_dbl* value = arg_dbln("d", "double", NULL, 0, 3, NULL);
+    struct arg_end* end = arg_end(20);
+    void* argtable[] = {value, end};
+    char* argv[] = {"program", "-d1.5", "-d", "", "-d2.5", NULL};
+
+    value->dval[2] = 42.5;
+    CuAssertIntEquals(tc, 1, arg_parse(5, argv, argtable));
+    CuAssertIntEquals(tc, 2, value->count);
+    CuAssertDblEquals(tc, 1.5, value->dval[0], DBL_EPSILON);
+    CuAssertDblEquals(tc, 2.5, value->dval[1], DBL_EPSILON);
+    CuAssertDblEquals(tc, 42.5, value->dval[2], DBL_EPSILON);
+
+    arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+}
+
+void test_argdbl_conversion_controls(CuTest* tc) {
+    struct arg_dbl* value = arg_dbl0("d", "double", NULL, NULL);
+    struct arg_end* end = arg_end(20);
+    void* argtable[] = {value, end};
+    char* argv[] = {"program", "-d", NULL, NULL};
+    char* valid[] = {"0", "-2.5", "  +1.25e2"};
+    double expected[] = {0, -2.5, 125};
+    char* invalid[] = {" ", "+", "1.5x"};
+    size_t i;
+
+    for (i = 0; i < sizeof(valid) / sizeof(valid[0]); i++) {
+        argv[2] = valid[i];
+        CuAssertIntEquals(tc, 0, arg_parse(3, argv, argtable));
+        CuAssertIntEquals(tc, 1, value->count);
+        CuAssertDblEquals(tc, expected[i], value->dval[0], DBL_EPSILON);
+    }
+    for (i = 0; i < sizeof(invalid) / sizeof(invalid[0]); i++) {
+        argv[2] = invalid[i];
+        value->dval[0] = 42.5;
+        CuAssertIntEquals(tc, 1, arg_parse(3, argv, argtable));
+        CuAssertIntEquals(tc, 0, value->count);
+        CuAssertDblEquals(tc, 42.5, value->dval[0], DBL_EPSILON);
+    }
+
+    arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+}
+
 CuSuite* get_argdbl_testsuite() {
     CuSuite* suite = CuSuiteNew();
     SUITE_ADD_TEST(suite, test_argdbl_basic_001);
@@ -443,6 +555,12 @@ CuSuite* get_argdbl_testsuite() {
     SUITE_ADD_TEST(suite, test_argdbl_basic_013);
     SUITE_ADD_TEST(suite, test_argdbl_basic_014);
     SUITE_ADD_TEST(suite, test_argdbl_basic_015);
+    SUITE_ADD_TEST(suite, test_argdbl_empty_short_value);
+    SUITE_ADD_TEST(suite, test_argdbl_empty_positional_value);
+    SUITE_ADD_TEST(suite, test_argdbl_empty_long_value);
+    SUITE_ADD_TEST(suite, test_argdbl_optional_value);
+    SUITE_ADD_TEST(suite, test_argdbl_empty_repeated_value);
+    SUITE_ADD_TEST(suite, test_argdbl_conversion_controls);
     return suite;
 }
 

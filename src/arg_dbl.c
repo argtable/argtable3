@@ -64,7 +64,7 @@ static int arg_dbl_scanfn(void* parent_, const char* argval) {
         val = strtod(argval, &end);
 
         /* if success then store result in parent->dval[] array otherwise return error*/
-        if (*end == 0)
+        if (end != argval && *end == 0)
             parent->dval[parent->count++] = val;
         else
             errorcode = ARG_ERR_BADDOUBLE;
